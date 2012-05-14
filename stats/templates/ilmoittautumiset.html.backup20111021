@@ -1,0 +1,67 @@
+
+<script type="text/javascript" src="http://nipsu.dyndns.org/tuhlaajapojat-media/tablesort.js"></script>
+
+<script language="javascript">
+  choice = new Array();
+  {% for player in players %}
+  choice[{{ forloop.counter0 }}] = {{ player.choice }};
+  {% endfor %}
+</script>
+
+{% include "ilmoittautuminen_funktiot.html" %}
+
+<table>
+  <thead>
+    <tr>
+      <th class="stringdesc" align="center">
+        in/out
+      </th>
+      <th class="numericgasc" align="center">
+        #
+      </th>
+      <th class="stringasc" align="left">
+        Nimi
+      </th>
+      <th />
+      <th />
+    </tr>
+  </thead>
+  <tbody>
+
+    {% for player in players %}
+    <tr>
+      <td class="choice{{ player.choice }}" align="center">
+        {% ifequal player.choice 1 %}IN{% endifequal %}
+        {% ifequal player.choice 2 %}OUT{% endifequal %}
+        {% ifequal player.choice 3 %}?{% endifequal %}
+      </td>
+      <td class="choice{{ player.choice }}" align="center">
+        {{ player.number }}
+      </td>
+      <td class="choice{{ player.choice }}">
+        <a href="{% url tuhlaajapojat.views.pelaaja player.player.id %}">{{ player.player }}</a>
+      </td>
+      <form action="" name="form-{{ forloop.counter0 }}" method="post">
+        {# csrf_token TODO: ENABLE THIS FOR FUTURE DJANGOS!! #}
+        <td id="edit-{{ forloop.counter0 }}">
+          <input type="button" id="edit_button-{{ forloop.counter0 }}" onclick="javascript:editChoice({{ forloop.counter0 }})" value="Ilmoittaudu" />
+        </td>
+        <td id="fields-{{ forloop.counter0 }}" visibility="false">
+          <span class="choice1">
+            <input type="radio" id="in_radio-{{ forloop.counter0 }}" name="choice" value="{{ player.id }}-1" disabled="true" {% ifequal player.choice 1 %}checked{% endifequal %} />IN
+          </span>
+          <span class="choice2">
+            <input type="radio" id="out_radio-{{ forloop.counter0 }}" name="choice" value="{{ player.id }}-2" disabled="true" {% ifequal player.choice 2 %}checked{% endifequal %} />OUT
+          </span>
+          <span class="choice3">
+            <input type="radio" id="na_radio-{{ forloop.counter0 }}" name="choice" value="{{ player.id }}-3" disabled="true" {% ifequal player.choice 3 %}checked{% endifequal %}/>?
+          </span>
+          <input type="submit" id="save_button-{{ forloop.counter0 }}" value="Tallenna" />
+          <input type="button" id="cancel_button-{{ forloop.counter0 }}" onclick="javascript:cancelChoice({{ forloop.counter0 }})" value="Peruuta" />
+        </td>
+      </form> 
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+

@@ -1,0 +1,92 @@
+
+<!-- include flowplayer JavaScript file that does Flash embedding
+     and provides the Flowplayer API. -->
+{% load static %}
+<script type="text/javascript" src="{% get_static_prefix %}flowplayer/flowplayer-3.2.6.min.js"></script>
+<script type="text/javascript">
+  function playVideo(video) {
+    $f("player").play(video);
+  }
+  function seekVideo(video,time) {
+    clip = $f("player").getClip(video);
+    if (clip == $f("player").getClip()) {
+      //$f("player").play();
+      if ($f("player").isPaused()) {
+        $f("player").resume();
+      }
+      $f("player").seek(time);
+    }
+    else {
+      clip.onStart(function() { $f("player").seek(time); });
+      $f("player").play(video);
+    }
+  }
+</script>
+
+<div id="video-div">
+
+<!-- The block for the video player -->
+<div id="videoplayer-div">
+<a  
+   href="#"
+   style="display:block;width:640px;height:360px"  
+   id="player"> 
+</a>
+</div>
+
+<div id="videoseek-div">
+
+<!-- this will install flowplayer inside previous A- tag. -->
+<script type="text/javascript">
+  $f("player", "{% get_static_prefix %}flowplayer/content/swf/flowplayer.swf", {
+
+  plugins: { 
+  // this will enable pseudostreaming support 
+  pseudo: { 
+  url: '{% get_static_prefix %}flowplayer/content/swf/flowplayer.pseudostreaming.swf'
+  },
+  controls: {
+  playlist: true
+  }
+  },
+  
+  // common clip properties 
+  clip: {
+  // make this clip use pseudostreaming
+  provider: 'pseudo',
+  autoPlay: false,
+  scaling: 'fit',
+  accelerated: false
+  },
+
+  canvas: {
+    backgroundGradient: 'none'
+  },
+
+  // playlist
+  playlist: [
+  {% for video in video_list %}
+    '{{ video.url }}',
+  {% endfor %}
+  ]
+  });
+</script>
+
+{% for video in video_list %}
+  <a href="javascript:seekVideo({{ forloop.counter0 }}, 0)">{{ video.title }}</a>
+  {% if video.seekpoint_list %}
+  <table>
+  {% for seekpoint in video.seekpoint_list %}
+    <tr>
+    <td align="right"><a href="javascript:seekVideo({{ forloop.parentloop.counter0 }}, {{ seekpoint.seconds }})">{{ seekpoint.minuteseconds }}</a></td> 
+    <td>{{ seekpoint.description }}</td>
+    </tr>
+  {% endfor %}
+  </table>
+  {% else %}
+  <br/>
+  {% endif %}
+{% endfor %}
+</div>
+
+</div>

@@ -1,0 +1,13 @@
+{% extends "base_season.html" %}
+
+{% block content %}
+
+  <h1>{{ season }}</h1>
+
+  <h2>Pelaajat</h2>
+    {% include "taulukko.html" %}
+
+  <h2>Ottelut</h2>
+  {% include "ottelulista.html" %}
+
+{% endblock %}

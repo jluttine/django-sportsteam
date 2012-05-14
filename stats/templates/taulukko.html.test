@@ -1,0 +1,29 @@
+<table id="sortTable" class="tablesorter">
+<thead>
+<tr>
+	<th>Eka</th>
+	<th>Toka</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+	<td>Aaa</td>
+	<td>999</td>
+</tr>
+<tr>
+	<td>ZZZ</td>
+	<td>111</td>
+</tr>
+</tbody>
+</table>
+
+
+<script type="text/javascript">
+  $(document).ready(
+    function() 
+    { 
+      $("#sortTable").tablesorter(); 
+    } 
+  ); 
+</script>
+

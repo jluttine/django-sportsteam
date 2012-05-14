@@ -1,0 +1,82 @@
+{% extends "base_season.html" %}
+
+{% block content %}
+
+{% if player %}
+  <h1>{{ player.firstname }} {{ player.lastname }}</h1>
+
+  <h2>Pistetilasto</h2>
+  {% include "taulukko.html" %}
+
+
+
+  {% if seasonplayer_list %}
+
+<script language="javascript">
+  choice = new Array();
+  var ind = 0;
+  {% for seasonplayer in seasonplayer_list %}
+  {% for matchplayer in seasonplayer.matchplayer_list %}
+  {% if not matchplayer.match.result %}
+  choice[ind] = {{ matchplayer.choice }};
+  ind = ind + 1;
+  {% endif %}
+  {% endfor %}
+  {% endfor %}
+</script>
+{% include "ilmoittautuminen_funktiot.html" %}
+
+    {% for seasonplayer in seasonplayer_list %}
+      <h2><a href="{% url tuhlaajapojat.views.kausitilasto seasonplayer.season.id %}">{{ seasonplayer.season }}</a></h2>
+      <table>
+        {% for matchplayer in seasonplayer.matchplayer_list %}
+          <tr>
+  	    <td align="center">{{ matchplayer.match.date|date:"D"|lower }}</td>
+	    <td align="right">{{ matchplayer.match.date|date:"j.n." }}</td>
+	    <td>{{ matchplayer.match.date|date:"G:i" }}</td>
+
+	    <td align="center">
+              <a href="{% url tuhlaajapojat.views.ottelu matchplayer.match.id %}">
+                {{ matchplayer.match.opponent }}
+              </a>
+            </td>
+	    {% if matchplayer.match.result %}
+	      <td align="right">{{ matchplayer.match.goals }}</td>
+	      <td align="center">-</td>
+	      <td align="left">{{ matchplayer.match.opponent_goals }}</td>
+	      <td align="right">({{ matchplayer.goals }}</td>
+	      <td align="center">+</td>
+	      <td align="left">{{ matchplayer.assists }})</td>
+	    {% else %}
+  	      <td/><td/><td/><td/><td/><td/>
+	    {% endif %}
+
+
+	    {# <td><a href="{% url tuhlaajapojat.views.ottelu matchplayer.match.id %}">[Ottelukortti]</a></td> #}
+
+            {% if matchplayer.match.result %}
+              <td/><td/><td/>
+            {% else %}
+              <td class="choice{{ matchplayer.choice }}" align="center">
+                {% ifequal matchplayer.choice 1 %}IN{% endifequal %}
+                {% ifequal matchplayer.choice 2 %}OUT{% endifequal %}
+                {% ifequal matchplayer.choice 3 %}?{% endifequal %}
+              </td>
+              {% with matchplayer.match.id as id %}
+              {% with matchplayer.choice as choice %}
+              {% include "ilmoittautuminen_napit.html" %}
+              {% endwith %}
+              {% endwith %}
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </table>
+    {% endfor %}
+  {% endif %}
+
+{% else %}
+    <p>Pelaajaa ei löytynyt.</p>
+{% endif %}
+
+
+{% endblock %}

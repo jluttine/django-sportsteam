@@ -1,0 +1,56 @@
+
+{% if match_list %}
+  <table>
+    {% for match in match_list %}
+      <tr>
+	<td align="center">{{ match.date|date:"D"|lower }}</td>
+	<td align="right">{{ match.date|date:"j.n." }}</td>
+	<td>{{ match.date|date:"G:i" }}</td>
+
+	  <td align="center">
+            <a href="{% url tuhlaajapojat.views.ottelu match.id %}">
+              {{ match.opponent }}
+            </a>
+          </td>
+	  {% if match.result %}
+	    <td align="right">{{ match.goals }}</td>
+	    <td align="center">-</td>
+	    <td align="left">{{ match.opponent_goals }}</td>
+	  {% else %}
+	    <td/><td/><td/>
+	  {% endif %}
+
+	{# <td><a href="{% url tuhlaajapojat.views.ottelu match.id %}">[Ottelukortti]</a></td> #}
+
+        {% if not match.result %}
+        <td  style="font-size:70%">
+          <span class="choice1">
+            IN:
+            {% for player in match.in_players %}
+            <a href="{% url tuhlaajapojat.views.pelaaja player.player.player.id %}">
+              {{ player.player.player.shortname }}
+            </a>
+            {% endfor %}
+          </span>
+          <span class="choice2">
+            OUT:
+            {% for player in match.out_players %}
+            <a href="{% url tuhlaajapojat.views.pelaaja player.player.player.id %}">
+              {{ player.player.player.shortname }}
+            </a>
+            {% endfor %}
+          </span>
+          <span class="choice3">
+            ?:
+            {% for player in match.unknown_players %}
+            <a href="{% url tuhlaajapojat.views.pelaaja player.player.id %}">
+              {{ player.player.shortname }}
+            </a>
+            {% endfor %}
+          </span>
+        </td>
+        {% endif %}        
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
