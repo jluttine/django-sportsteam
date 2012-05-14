@@ -61,7 +61,7 @@ MEDIA_ROOT = path('media/')
 MEDIA_URL = '/media/tuhlaajapojat/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'jlfksd)(flT#¤tsdj9fasdft43_:sdg9034%Qdf!#vfsd'
+SECRET_KEY = 'jlfksd)(flT#tsdj9fasdft43_:sdg9034%Qdf!#vfsd'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

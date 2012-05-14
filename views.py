@@ -81,7 +81,7 @@ def kausitilasto(request, season_id):
                 match.out_players = enrolledplayers.filter(enroll=False) #.order_by('player__player__firstname')
                 match.out_players = sorted(match.out_players, key=lambda player: player.player.player.shortname())
                 unknown = list()
-                for seasonplayer in SeasonPlayer.objects.filter(season=season): #.order_by('player__firstname'):
+                for seasonplayer in SeasonPlayer.objects.filter(season=season,passive=False):
                     # TODO: In future Djangos, use .exists() !!
                     if not enrolledplayers.filter(player=seasonplayer):
                         unknown.append(seasonplayer)
@@ -228,7 +228,7 @@ def ottelu(request, match_id):
 #                selected_choice = 1
 
             # Show in/out stats
-            players = SeasonPlayer.objects.filter(season=match.season).order_by('player')
+            players = SeasonPlayer.objects.filter(season=match.season,passive=False).order_by('player')
             enrollments = EnrolledPlayer.objects.filter(match=match).order_by('player__player')
             ind = 0
             for player in players:
@@ -311,7 +311,12 @@ def pelaaja(request, player_id):
                     matchplayer.match.goals = MatchPlayer.objects.filter(match=matchplayer.match).aggregate(Sum('goals')).values()[0] + matchplayer.match.opponent_owngoals
 
                 enrolledplayers = list()
-                matches = Match.objects.filter(season=season,opponent_goals__isnull=True)
+                
+                if SeasonPlayer.objects.filter(season=season,player=player,passive=False).exists():
+                    matches = Match.objects.filter(season=season,opponent_goals__isnull=True)
+                else:
+                    matches = []
+
                 for match in matches:
                     match.result = False
                     try:

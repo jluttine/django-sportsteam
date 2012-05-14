@@ -40,7 +40,7 @@ def get_addresses(list):
     if id:
         season = Season.objects.get(id__iexact=id.group('id'))
         if season:
-            players = SeasonPlayer.objects.filter(season__id=season.id)
+            players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
             emails = [player.player.email for player in players]
             emails = filter(None, emails)
             return emails, '[Tuhlaajapojat-' + unicode(season.league) + '] '

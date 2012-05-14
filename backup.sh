@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SUFFIX=`date +%Y%d%m_%H%M%S`
+SUFFIX=`date +%Y%m%d_%H%M%S`
 FILENAME=$HOME/tuhlaajapojat/fixtures/tuhlaajapojat_$SUFFIX.json
 MANAGE=$HOME/tuhlaajapojat/manage.py
 PYTHON=/usr/bin/python

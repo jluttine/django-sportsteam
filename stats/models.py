@@ -54,6 +54,7 @@ class SeasonPlayer(models.Model):
     season = models.ForeignKey(Season)
     player = models.ForeignKey(Player)
     number = models.IntegerField()
+    passive = models.BooleanField()
 
     class Meta:
         ordering = ('number',)
