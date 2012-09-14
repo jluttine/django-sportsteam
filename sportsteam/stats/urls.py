@@ -3,20 +3,23 @@ from django.conf.urls.defaults import *
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+
+
+
 admin.autodiscover()
+
 
 urlpatterns = patterns('',
 
-    (r'^/$', include(stats.urls)),
+    (r'^ottelut/(?P<match_id>\d+)/$', 'sportsteam.views.ottelu'),
 
+    (r'^kaudet/(?P<season_id>.+)/$', 'sportsteam.views.kausitilasto'),
 
-    # Uncomment the next line to enable the admin:
-    (r'^admin/', include(admin.site.urls)),
+    (r'^pelaajat/$', 'sportsteam.views.pelaajat'),
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^pelaajat/(?P<player_id>.+)/$', 'sportsteam.views.pelaaja'),
 
+    (r'^$', 'sportsteam.views.index'),
 )
 
 # This enables the static files when developing and debugging

@@ -1,7 +1,7 @@
 
 from django.db import models
 
-from tuhlaajapojat import settings
+from sportsteam import settings
 #import os
 
 # Create your models here.
