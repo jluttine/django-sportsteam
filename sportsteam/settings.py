@@ -2,7 +2,7 @@
 
 # DO NOT PUT ANY PRIVATE OR SYSTEM SPECIFIC SETTINGS HERE. USE ANOTHER
 # SETTINGS FILE FOR THAT (E.G., SETTINGS_LOCAL.PY). THIS FILE CONTAINS
-# THE DEFAULTS.
+# THE DEFAULTS. 
 
 # A helpful function to avoid writing absolute paths
 import os
@@ -32,11 +32,11 @@ DATABASES = {
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'Europe/Helsinki'
+TIME_ZONE = 'GMT'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'fi'
+LANGUAGE_CODE = 'en'
 
 SITE_ID = 1
 
@@ -105,7 +105,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'sportsteam.stats',
+    'sportsteam.teamstats',
     'django.contrib.admin',
     'django.contrib.staticfiles',
 )

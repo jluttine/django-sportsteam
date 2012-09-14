@@ -2,10 +2,6 @@
 from django.db import models
 
 from sportsteam import settings
-#import os
-
-# Create your models here.
-
 
 class Player(models.Model):
     id = models.CharField(max_length=60, primary_key=True)
@@ -110,8 +106,6 @@ class EnrolledPlayer(models.Model):
 class Video(models.Model):
     match = models.ForeignKey(Match)
     filename = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),recursive=True,blank=False,null=False)
-    #filename = models.FilePathField(path='/home/jluttine/tuhlaajapojat/media/videos',recursive=True,blank=False,null=False)
-    #filename = models.FilePathField(path=os.path.join(settings.MEDIA_ROOT,'videos'),blank=False,null=False)
     title = models.CharField(max_length=30)
     part = models.IntegerField()
 
