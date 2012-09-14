@@ -2,3 +2,4 @@
 *~
 *.gz
 *.json
+settings_local.py
