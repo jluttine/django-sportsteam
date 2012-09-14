@@ -3,9 +3,10 @@
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse
 from django.db.models import Sum
-from tuhlaajapojat.stats.models import *
 from django.core.urlresolvers import reverse
 from itertools import chain
+
+from teamstats.models import *
 
 def index(request):
     season_list = Season.objects.all()
@@ -59,7 +60,7 @@ def kausitilasto(request, season_id):
                 assists = 0
 
             row = ( {'align': 'right', 'field': player.number, },
-                    {'align': 'left', 'field': player.player, 'link': reverse('tuhlaajapojat.views.pelaaja', args=[player.player.id]),},
+                    {'align': 'left', 'field': player.player, 'link': reverse('teamstats.views.pelaaja', args=[player.player.id]),},
                     {'align': 'center', 'field': matches.count(), },
                     {'align': 'center', 'field': goals, },
                     {'align': 'center', 'field': assists, },
@@ -117,7 +118,7 @@ def pelaajat(request):
             goals = 0
         if assists is None:
             assists = 0
-        row = ( {'align': 'left', 'field': player, 'link': reverse('tuhlaajapojat.views.pelaaja', args=[player.id]),},
+        row = ( {'align': 'left', 'field': player, 'link': reverse('teamstats.views.pelaaja', args=[player.id]),},
                 {'align': 'center', 'field': matches.count(), },
                 {'align': 'center', 'field': goals, },
                 {'align': 'center', 'field': assists, },
@@ -164,7 +165,7 @@ def ottelu(request, match_id):
             table_rows = []
             for player in players:
                 row = ( {'align': 'right', 'field': player.player.number,},
-                        {'align': 'left', 'field': player.player.player, 'link': reverse('tuhlaajapojat.views.pelaaja', args=[player.player.player.id]),},
+                        {'align': 'left', 'field': player.player.player, 'link': reverse('teamstats.views.pelaaja', args=[player.player.player.id]),},
                         {'align': 'center', 'field': player.goals, },
                         {'align': 'center', 'field': '+', },
                         {'align': 'center', 'field': player.assists, },
@@ -347,7 +348,7 @@ def pelaaja(request, player_id):
                 total_goals = total_goals + goals
                 total_assists = total_assists + assists
                 
-                row = ( {'align': 'center', 'field': unicode(season), 'link': reverse('tuhlaajapojat.views.kausitilasto', args=[season.id]),},
+                row = ( {'align': 'center', 'field': unicode(season), 'link': reverse('teamstats.views.kausitilasto', args=[season.id]),},
                         {'align': 'center', 'field': games, },
                         {'align': 'center', 'field': goals, },
                         {'align': 'center', 'field': assists, },

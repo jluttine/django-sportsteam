@@ -1,5 +1,5 @@
-from sportsteam.teamstats.models import *
-from sportsteam.teamstats.forms import *
+from teamstats.models import *
+from teamstats.forms import *
 from django.contrib import admin
 
 class SeekPointInline(admin.TabularInline):

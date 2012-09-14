@@ -1,5 +1,5 @@
 from django import forms
-from tuhlaajapojat.stats.models import *
+from teamstats.models import *
 
 class MatchAddForm(forms.ModelForm):
     class Meta:

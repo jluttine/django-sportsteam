@@ -105,7 +105,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'sportsteam.teamstats',
+    'teamstats',
     'django.contrib.admin',
     'django.contrib.staticfiles',
 )

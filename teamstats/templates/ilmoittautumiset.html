@@ -1,5 +1,5 @@
 
-<script type="text/javascript" src="http://nipsu.dyndns.org/tuhlaajapojat-media/tablesort.js"></script>
+<script type="text/javascript" src="tablesort.js"></script>
 
 <script language="javascript">
   choice = new Array();
@@ -39,7 +39,7 @@
         {{ player.number }}
       </td>
       <td class="choice{{ player.choice }}">
-        <a href="{% url tuhlaajapojat.views.pelaaja player.player.id %}">{{ player.player }}</a>
+        <a href="{% url teamstats.views.pelaaja player.player.id %}">{{ player.player }}</a>
       </td>
       {% with player.id as id %}
       {% with player.choice as choice %}

@@ -8,7 +8,7 @@
 	<td>{{ match.date|date:"G:i" }}</td>
 
 	  <td align="center">
-            <a href="{% url tuhlaajapojat.views.ottelu match.id %}">
+            <a href="{% url teamstats.views.ottelu match.id %}">
               {{ match.opponent }}
             </a>
           </td>
@@ -20,14 +20,14 @@
 	    <td/><td/><td/>
 	  {% endif %}
 
-	{# <td><a href="{% url tuhlaajapojat.views.ottelu match.id %}">[Ottelukortti]</a></td> #}
+	{# <td><a href="{% url teamstats.views.ottelu match.id %}">[Ottelukortti]</a></td> #}
 
         {% if not match.result %}
         <td  style="font-size:70%">
           <span class="choice1">
             IN:
             {% for player in match.in_players %}
-            <a href="{% url tuhlaajapojat.views.pelaaja player.player.player.id %}">
+            <a href="{% url teamstats.views.pelaaja player.player.player.id %}">
               {{ player.player.player.shortname }}
             </a>
             {% endfor %}
@@ -35,7 +35,7 @@
           <span class="choice2">
             OUT:
             {% for player in match.out_players %}
-            <a href="{% url tuhlaajapojat.views.pelaaja player.player.player.id %}">
+            <a href="{% url teamstats.views.pelaaja player.player.player.id %}">
               {{ player.player.player.shortname }}
             </a>
             {% endfor %}
@@ -43,7 +43,7 @@
           <span class="choice3">
             ?:
             {% for player in match.unknown_players %}
-            <a href="{% url tuhlaajapojat.views.pelaaja player.player.id %}">
+            <a href="{% url teamstats.views.pelaaja player.player.id %}">
               {{ player.player.shortname }}
             </a>
             {% endfor %}

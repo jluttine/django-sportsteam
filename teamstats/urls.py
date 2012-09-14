@@ -1,11 +1,7 @@
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.defaults import *
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-
-
-
 admin.autodiscover()
 
 
@@ -21,6 +17,3 @@ urlpatterns = patterns('',
 
     (r'^$', 'sportsteam.views.index'),
 )
-
-# This enables the static files when developing and debugging
-#urlpatterns += staticfiles_urlpatterns()
