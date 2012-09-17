@@ -24,7 +24,7 @@
   {% endfor %}
   {% endfor %}
 </script>
-{% include "ilmoittautuminen_funktiot.html" %}
+{% include "registration_functions.html" %}
 
     {% for seasonplayer in seasonplayer_list %}
       <h2><a href="{% url teamstats.views.show_season seasonplayer.season.id %}">{{ seasonplayer.season }}</a></h2>
@@ -64,7 +64,7 @@
               </td>
               {% with matchplayer.match.id as id %}
               {% with matchplayer.choice as choice %}
-              {% include "ilmoittautuminen_napit.html" %}
+              {% include "registration_buttons.html" %}
               {% endwith %}
               {% endwith %}
             {% endif %}
