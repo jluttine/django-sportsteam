@@ -3,14 +3,14 @@
 {% block content %}
 
 {% if match %}
-    {% include "ottelu_tiedot.html" %}
+    {% include "header_match.html" %}
 
     {% if video_list %}
       {% include "videoplayer.html" %}
     {% endif %}
 
     {% if result %}
-      {% include "taulukko.html" %}
+      {% include "table.html" %}
     {% endif %}
 
 

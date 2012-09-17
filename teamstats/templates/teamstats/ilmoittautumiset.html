@@ -8,7 +8,7 @@
   {% endfor %}
 </script>
 
-{% include "ilmoittautuminen_funktiot.html" %}
+{% include "registration_functions.html" %}
 
 <table>
   <thead>
@@ -39,11 +39,11 @@
         {{ player.number }}
       </td>
       <td class="choice{{ player.choice }}">
-        <a href="{% url teamstats.views.pelaaja player.player.id %}">{{ player.player }}</a>
+        <a href="{% url teamstats.views.show_player player.player.id %}">{{ player.player }}</a>
       </td>
       {% with player.id as id %}
       {% with player.choice as choice %}
-      {% include "ilmoittautuminen_napit.html" %}
+      {% include "registration_buttons.html" %}
       {% endwith %}
       {% endwith %}
     </tr>

@@ -6,7 +6,7 @@
   <h1>{{ player.firstname }} {{ player.lastname }}</h1>
 
   <h2>Pistetilasto</h2>
-  {% include "taulukko.html" %}
+  {% include "table.html" %}
 
 
 
@@ -27,7 +27,7 @@
 {% include "ilmoittautuminen_funktiot.html" %}
 
     {% for seasonplayer in seasonplayer_list %}
-      <h2><a href="{% url teamstats.views.kausitilasto seasonplayer.season.id %}">{{ seasonplayer.season }}</a></h2>
+      <h2><a href="{% url teamstats.views.show_season seasonplayer.season.id %}">{{ seasonplayer.season }}</a></h2>
       <table>
         {% for matchplayer in seasonplayer.matchplayer_list %}
           <tr>
@@ -36,7 +36,7 @@
 	    <td>{{ matchplayer.match.date|date:"G:i" }}</td>
 
 	    <td align="center">
-              <a href="{% url teamstats.views.ottelu matchplayer.match.id %}">
+              <a href="{% url teamstats.views.show_match matchplayer.match.id %}">
                 {{ matchplayer.match.opponent }}
               </a>
             </td>
@@ -52,7 +52,7 @@
 	    {% endif %}
 
 
-	    {# <td><a href="{% url teamstats.views.ottelu matchplayer.match.id %}">[Ottelukortti]</a></td> #}
+	    {# <td><a href="{% url teamstats.views.show_match matchplayer.match.id %}">[Ottelukortti]</a></td> #}
 
             {% if matchplayer.match.result %}
               <td/><td/><td/>

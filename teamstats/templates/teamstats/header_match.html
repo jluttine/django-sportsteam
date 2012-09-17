@@ -1,5 +1,5 @@
     <br />
-    <a href="{% url views.kausitilasto match.season.id %}">{{ match.season }}</a>
+    <a href="{% url views.show_season match.season.id %}">{{ match.season }}</a>
     <h1>
         {% if match.home %}
             FC Tuhlaajapojat - {{ match.opponent }}
