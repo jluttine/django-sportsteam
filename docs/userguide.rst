@@ -8,6 +8,7 @@ Some installation:
    git clone https://github.com/jluttine/django-sportsteam.git
    cd django-sportsteam
    python manage.py syncdb
+   mkdir sportsteam/static
    python manage.py collectstatic
 
 Pre-populate the database with some toy data:
