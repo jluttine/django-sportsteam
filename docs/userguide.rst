@@ -11,13 +11,8 @@ Some installation:
    mkdir sportsteam/static
    python manage.py collectstatic
 
-Pre-populate the database with some toy data:
-
-.. code-block:: console
-
-   ./load_data.sh
-
-Run the development server:
+The database is pre-populated from ``initial_data.json``.  Run the
+development server:
 
 .. code-block:: console
 
