@@ -1,10 +1,10 @@
 Django site - Sports team
 =========================
 
+Web site for sports teams with Django.
+
 License and copyright
 ---------------------
-
-djangosite-sportsteam - Web site for sports teams with Django
 
 Copyright (C) 2011,2012 Jaakko Luttinen
 
