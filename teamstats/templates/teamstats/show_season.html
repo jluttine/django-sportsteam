@@ -1,4 +1,4 @@
-{% extends "base_season.html" %}
+{% extends "teamstats/base_season.html" %}
 
 {% block content %}
 
@@ -19,9 +19,9 @@
   {% endif %}
 
   <h2>Pelaajat</h2>
-    {% include "table.html" %}
+    {% include "teamstats/table.html" %}
 
   <h2>Ottelut</h2>
-  {% include "list_matches.html" %}
+  {% include "teamstats/list_matches.html" %}
 
 {% endblock %}

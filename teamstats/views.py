@@ -50,6 +50,7 @@ def show_season(request,
                 season_id,
                 season_class=Season,
                 seasonplayer_class=SeasonPlayer,
+                match_class=Match,
                 template_name='teamstats/show_season.html'):
 
     try:
@@ -212,7 +213,7 @@ def show_all_players(request,
         row = ( {
                     'field': player,
                     'align': 'left',
-                    'link': reverse('teamstats.views.pelaaja', args=[player.id]),
+                    'link': reverse('teamstats.views.show_player', args=[player.id]),
                 },
                 {
                     'field': matches.count(), 
@@ -253,6 +254,7 @@ def show_match(request,
                video_class=Video,
                seekpoint_class=SeekPoint,
                enrolledplayer_class=EnrolledPlayer,
+               matchplayer_class=MatchPlayer,
                seasonplayer_class=SeasonPlayer,
                result_template_name='teamstats/show_match_result.html',
                registration_template_name='teamstats/show_match_registration.html'):
@@ -314,7 +316,7 @@ def show_match(request,
                         {
                             'field': player.player.player, 
                             'align': 'left', 
-                            'link': reverse('teamstats.views.pelaaja',
+                            'link': reverse('teamstats.views.show_player',
                                             args=[player.player.player.id]),
                         },
                         {
@@ -440,6 +442,7 @@ def show_player(request,
                 player_id,
                 player_class=Player,
                 match_class=Match,
+                matchplayer_class=MatchPlayer,
                 enrolledplayer_class=EnrolledPlayer,
                 seasonplayer_class=SeasonPlayer,
                 season_class=Season,
@@ -565,7 +568,7 @@ def show_player(request,
                 row = ( {
                             'field': unicode(season), 
                             'align': 'center', 
-                            'link': reverse('teamstats.views.kausitilasto',
+                            'link': reverse('teamstats.views.show_season',
                                             args=[season.id]),
                         },
                         {

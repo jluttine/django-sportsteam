@@ -5,7 +5,7 @@
 <head>
   {% block header %}
   {% endblock %} 
-    <link rel="stylesheet" type="text/css" href="{% get_static_prefix %}style.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}style.css" />
     <title>Team Name</title>
 </head>
 
@@ -13,9 +13,9 @@
   <div id="sidebar">
     {% block sidebar %}
       <a href="{% url teamstats.views.index %}">[Etusivu]</a>
-      <a href="{% url teamstats.views.pelaajat %}">[Pelaajat]</a> 
+      <a href="{% url teamstats.views.show_all_players %}">[Pelaajat]</a> 
       {% for season in season_list %}
-	<a href="{% url teamstats.views.kausitilasto season.id %}">[{{ season }}]</a>
+	<a href="{% url teamstats.views.show_season season.id %}">[{{ season }}]</a>
       {% endfor %}
     {% endblock %}
   </div>

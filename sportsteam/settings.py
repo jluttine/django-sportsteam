@@ -46,7 +46,8 @@ USE_I18N = True
 
 WSGI_APPLICATION = 'sportsteam.wsgi.application'
 
-STATIC_URL = '/media/' + SLUG + '/static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = ( path('static/'), )
 STATIC_ROOT = path('sitestatic/')
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a

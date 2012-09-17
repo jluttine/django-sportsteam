@@ -1,16 +1,16 @@
-{% extends "base_season.html" %}
+{% extends "teamstats/base_season.html" %}
 
 {% block content %}
 
 {% if match %}
-    {% include "header_match.html" %}
+    {% include "teamstats/header_match.html" %}
 
     {% if video_list %}
-      {% include "videoplayer.html" %}
+      {% include "teamstats/videoplayer.html" %}
     {% endif %}
 
     {% if result %}
-      {% include "table.html" %}
+      {% include "teamstats/table.html" %}
     {% endif %}
 
 

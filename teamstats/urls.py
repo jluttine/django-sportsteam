@@ -23,13 +23,13 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 
-    (r'^ottelut/(?P<match_id>\d+)/$', 'teamstats.views.ottelu'),
+    (r'^match/(?P<match_id>\d+)/$', 'teamstats.views.show_match'),
 
-    (r'^kaudet/(?P<season_id>.+)/$', 'teamstats.views.kausitilasto'),
+    (r'^season/(?P<season_id>.+)/$', 'teamstats.views.show_season'),
 
-    (r'^pelaajat/$', 'teamstats.views.pelaajat'),
+    (r'^player/$', 'teamstats.views.show_all_players'),
 
-    (r'^pelaajat/(?P<player_id>.+)/$', 'teamstats.views.pelaaja'),
+    (r'^player/(?P<player_id>.+)/$', 'teamstats.views.show_player'),
 
     (r'^$', 'teamstats.views.index'),
 )

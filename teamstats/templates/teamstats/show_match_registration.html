@@ -1,11 +1,11 @@
-{% extends "base_season.html" %}
+{% extends "teamstats/base_season.html" %}
 
 {% block content %}
 
 {% if match %}
-    {% include "header_match.html" %}
+    {% include "teamstats/header_match.html" %}
 
-    {% include "registration_list.html" %}
+    {% include "teamstats/registration_list.html" %}
 
 {% else %}
     <p>Ottelua ei löytynyt.</p>

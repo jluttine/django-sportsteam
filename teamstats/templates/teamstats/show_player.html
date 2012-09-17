@@ -1,4 +1,4 @@
-{% extends "base_season.html" %}
+{% extends "teamstats/base_season.html" %}
 
 {% block content %}
 
@@ -6,7 +6,7 @@
   <h1>{{ player.firstname }} {{ player.lastname }}</h1>
 
   <h2>Pistetilasto</h2>
-  {% include "table.html" %}
+  {% include "teamstats/table.html" %}
 
 
 
@@ -24,7 +24,7 @@
   {% endfor %}
   {% endfor %}
 </script>
-{% include "registration_functions.html" %}
+{% include "teamstats/registration_functions.html" %}
 
     {% for seasonplayer in seasonplayer_list %}
       <h2><a href="{% url teamstats.views.show_season seasonplayer.season.id %}">{{ seasonplayer.season }}</a></h2>
@@ -64,7 +64,7 @@
               </td>
               {% with matchplayer.match.id as id %}
               {% with matchplayer.choice as choice %}
-              {% include "registration_buttons.html" %}
+              {% include "teamstats/registration_buttons.html" %}
               {% endwith %}
               {% endwith %}
             {% endif %}
