@@ -1,7 +1,7 @@
 # Django settings for sportsteam project.
 
 # DO NOT PUT ANY PRIVATE OR SYSTEM SPECIFIC SETTINGS HERE. USE ANOTHER
-# SETTINGS FILE FOR THAT (E.G., SETTINGS_LOCAL.PY). THIS FILE CONTAINS
+# SETTINGS FILE FOR THAT (E.G., LOCAL_SETTINGS.PY). THIS FILE CONTAINS
 # THE DEFAULTS. 
 
 # A helpful function to avoid writing absolute paths
@@ -111,9 +111,9 @@ INSTALLED_APPS = (
 )
 
 # Load local settings. You can overwrite these default settings in
-# settings_local.py.
+# local_settings.py.
 try:
-    execfile(path('settings_local.py'))
+    execfile(path('local_settings.py'))
 except IOError:
     pass
 

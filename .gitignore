@@ -2,4 +2,5 @@
 *~
 *.gz
 *.json
-settings_local.py
+local_settings.py
+*.sqlite
