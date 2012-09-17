@@ -3,7 +3,8 @@ Django site - Sports team
 
 Web site for sports teams with Django.
 
-See the documentation in ``docs/`` folder or at 
+See the documentation in ``docs/`` folder or at
+http://django-sportsteam.readthedocs.org/.
 
 License and copyright
 ---------------------

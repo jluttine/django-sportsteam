@@ -5,6 +5,8 @@ Some installation:
 
 .. code-block:: console
 
+   git clone https://github.com/jluttine/django-sportsteam.git
+   cd django-sportsteam
    python manage.py syncdb
    python manage.py collectstatic
 
