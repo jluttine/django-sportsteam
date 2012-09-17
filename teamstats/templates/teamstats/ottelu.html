@@ -1,0 +1,22 @@
+{% extends "base_season.html" %}
+
+{% block content %}
+
+{% if match %}
+    {% include "ottelu_tiedot.html" %}
+
+    {% if video_list %}
+      {% include "videoplayer.html" %}
+    {% endif %}
+
+    {% if result %}
+      {% include "taulukko.html" %}
+    {% endif %}
+
+
+{% else %}
+    <p>Ottelua ei löytynyt.</p>
+{% endif %}
+
+
+{% endblock %}

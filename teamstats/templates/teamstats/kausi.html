@@ -1,0 +1,27 @@
+{% extends "base_season.html" %}
+
+{% block content %}
+
+  <h1>{{ season }}</h1>
+
+  {% if season.description %}
+    <p>
+    {{ season.description }}
+    </p>
+  {% endif %}
+  {% if season.url %}
+    <p>
+    <a href="{{ season.url }}">Sarjan kotisivut</a>
+    </p>
+  {% endif %}
+  {% if season.comment %}
+    <p>Kommentti: {{ season.comment }}</p>
+  {% endif %}
+
+  <h2>Pelaajat</h2>
+    {% include "taulukko.html" %}
+
+  <h2>Ottelut</h2>
+  {% include "ottelulista.html" %}
+
+{% endblock %}

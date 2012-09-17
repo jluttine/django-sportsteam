@@ -1,0 +1,21 @@
+    <br />
+    <a href="{% url views.kausitilasto match.season.id %}">{{ match.season }}</a>
+    <h1>
+        {% if match.home %}
+            FC Tuhlaajapojat - {{ match.opponent }}
+            {% if result %}
+	        {{ match.goals }} - {{ match.opponent_goals }}
+	    {% endif %}
+	{% else %}
+	    {{ match.opponent }} - FC Tuhlaajapojat
+            {% if result %}
+	        {{ match.opponent_goals }} - {{ match.goals }}
+	    {% endif %}
+	{% endif %}
+    </h1>
+    <p>{{ match.date|date:"l j.n.Y G:i"|capfirst }}</p>
+    <p>{{ match.field }}</p>
+    {% if match.comment %}
+        <p>Kommentti: {{ match.comment }}</p>
+    {% endif %}
+

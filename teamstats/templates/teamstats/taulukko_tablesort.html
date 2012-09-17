@@ -1,0 +1,49 @@
+<script type="text/javascript" src="tablesort.js"></script> 
+
+<table>
+  <thead>
+    <tr>
+      {% for header in table_headers %}
+        {% if header.align %}
+          <th class="{{ header.sorting }}" align="{{ header.align }}">
+	{% else %}
+	  <th class="{{ header.sorting }}">
+	{% endif %}
+	{{ header.field }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in table_rows %}
+      <tr class="{% cycle odd even %}">
+	{% for element in row %}
+	  {% if element.align %}
+	    <td align="{{ element.align }}">
+	  {% else %}
+	    <td>
+	  {% endif %}
+	  {% if element.link %}
+	    <a href="{{ element.link }}">{{ element.field }}</a></td>
+	  {% else %}
+	    {{ element.field }}</td>
+	  {% endif %}
+	{% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+  {% if table_footers %}
+    <tfoot>
+      <tr>
+        {% for footer in table_footers %}
+	  {% if footer.align %}
+	    <td align="{{ footer.align }}">
+	  {% else %}
+	    <td>
+	  {% endif %}
+	  {{ footer.field }}</td>
+        {% endfor %}
+      </tr>
+    </tfoot>
+  {% endif %}
+</table>
+

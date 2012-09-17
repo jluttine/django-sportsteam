@@ -1,0 +1,16 @@
+{% extends "base_season.html" %}
+
+{% block content %}
+
+{% if match_list %}
+    <ul>
+    {% for match in match_list %}
+        <li><a href="{{ match.id }}">{{ match }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Ei otteluita.</p>
+{% endif %}
+
+
+{% endblock %}
