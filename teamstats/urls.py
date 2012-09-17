@@ -7,13 +7,13 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
 
-    (r'^ottelut/(?P<match_id>\d+)/$', 'sportsteam.views.ottelu'),
+    (r'^ottelut/(?P<match_id>\d+)/$', 'teamstats.views.ottelu'),
 
-    (r'^kaudet/(?P<season_id>.+)/$', 'sportsteam.views.kausitilasto'),
+    (r'^kaudet/(?P<season_id>.+)/$', 'teamstats.views.kausitilasto'),
 
-    (r'^pelaajat/$', 'sportsteam.views.pelaajat'),
+    (r'^pelaajat/$', 'teamstats.views.pelaajat'),
 
-    (r'^pelaajat/(?P<player_id>.+)/$', 'sportsteam.views.pelaaja'),
+    (r'^pelaajat/(?P<player_id>.+)/$', 'teamstats.views.pelaaja'),
 
-    (r'^$', 'sportsteam.views.index'),
+    (r'^$', 'teamstats.views.index'),
 )
