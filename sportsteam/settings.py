@@ -66,7 +66,7 @@ MEDIA_ROOT = path('media/')
 MEDIA_URL = '/media/' + SLUG + '/'
 
 # Make this unique, and don't share it with anybody.
-# REDEFINE THIS IN SETTINGS_LOCAL.PY !
+# REDEFINE THIS IN LOCAL_SETTINGS.PY !
 SECRET_KEY = 'jlfksd)(flT#tsdj9fasdft43_:sdg9034%Qdf!#vfsd'
 
 # List of callables that know how to import templates from various sources.

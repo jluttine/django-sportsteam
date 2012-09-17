@@ -21,4 +21,4 @@ urlpatterns = patterns('',
 )
 
 # This enables the static files when developing and debugging
-#urlpatterns += staticfiles_urlpatterns()
+urlpatterns += staticfiles_urlpatterns()
