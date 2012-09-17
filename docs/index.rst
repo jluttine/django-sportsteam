@@ -6,11 +6,10 @@
 Welcome to djangosite-sportsteam's documentation!
 =================================================
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
+   userguide
 
 
 Indices and tables
