@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SUFFIX=`date +%Y%m%d_%H%M%S`
-FILENAME=fixtures/tuhlaajapojat_$SUFFIX.json
 # Dump data to fixture
-python manage.py dumpdata --format=json > $FILENAME
-gzip $FILENAME
+python manage.py dumpdata --format=json > $1
+gzip $1

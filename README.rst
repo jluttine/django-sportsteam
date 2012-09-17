@@ -6,7 +6,7 @@ Web site for sports teams with Django.
 License and copyright
 ---------------------
 
-Copyright (C) 2011,2012 Jaakko Luttinen
+Copyright (C) 2011,2012 Jaakko Luttinen jaakko.luttinen@iki.fi
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
