@@ -11,8 +11,10 @@ path = lambda x: os.path.join(os.path.abspath(os.path.dirname(__file__)), x)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+TEAM_NAME = 'FC Team Name'
 # This is the slug of the team name. It is used in URLs and email
-# addresses etc.
+# addresses etc. It should be in lower case, no whitespace, no special
+# characters.
 SLUG = 'teamname'
 
 ADMINS = (

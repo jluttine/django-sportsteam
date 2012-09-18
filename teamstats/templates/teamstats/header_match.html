@@ -2,12 +2,12 @@
     <a href="{% url teamstats.views.show_season match.season.id %}">{{ match.season }}</a>
     <h1>
         {% if match.home %}
-            FC Tuhlaajapojat - {{ match.opponent }}
+            {{ team_name }} - {{ match.opponent }}
             {% if result %}
 	        {{ match.goals }} - {{ match.opponent_goals }}
 	    {% endif %}
 	{% else %}
-	    {{ match.opponent }} - FC Tuhlaajapojat
+	    {{ match.opponent }} - {{ team_name }}
             {% if result %}
 	        {{ match.opponent_goals }} - {{ match.goals }}
 	    {% endif %}

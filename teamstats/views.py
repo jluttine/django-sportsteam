@@ -22,16 +22,21 @@ from django.http import HttpResponse
 from django.db.models import Sum
 from django.core.urlresolvers import reverse
 from itertools import chain
+from django.conf import settings
 
 from teamstats.models import *
 
 def index(request,
           season_class=Season,
           template_name='teamstats/index.html'):
+    '''
+    View for the main page.
+    '''
     season_list = season_class.objects.all()
     return render_to_response(template_name,
                               {
-                                  'season_list': season_list
+                                  'season_list': season_list,
+                                  'team_name': settings.TEAM_NAME,
                               })
 
 def get_match_goals(match):
@@ -52,6 +57,10 @@ def show_season(request,
                 seasonplayer_class=SeasonPlayer,
                 match_class=Match,
                 template_name='teamstats/show_season.html'):
+    '''
+    View for showing information about a season: the players with
+    statistics and all the matches.
+    '''
 
     try:
         season = season_class.objects.get(id__exact=season_id)
@@ -158,6 +167,7 @@ def show_season(request,
                                       'match_list': match_list,
                                       'table_headers': table_headers,
                                       'table_rows': table_rows,
+                                      'team_name': settings.TEAM_NAME,
                                   })
 
     except Season.DoesNotExist:
@@ -169,6 +179,10 @@ def show_all_players(request,
                      season_class=Season,
                      matchplayer_class=MatchPlayer,
                      template_name='teamstats/show_all_players.html'):
+
+    '''
+    View for showing statistics for all the players.
+    '''
 
     # Get all players
     player_list = player_class.objects.all()
@@ -245,6 +259,7 @@ def show_all_players(request,
                                   'table_rows': table_rows,
                                   'table_default_sort': table_default_sort,
                                   'season_list': season_list,
+                                  'team_name': settings.TEAM_NAME,
                               })
 
 def show_match(request,
@@ -258,6 +273,13 @@ def show_match(request,
                seasonplayer_class=SeasonPlayer,
                result_template_name='teamstats/show_match_result.html',
                registration_template_name='teamstats/show_match_registration.html'):
+
+    '''
+    View for showing information about a match. If the match has not
+    yet been played, shows registrations of the players.  If the match
+    has been played already, shows statistics of the players.
+    '''
+
     try:
         match = match_class.objects.get(pk=match_id)
 
@@ -384,6 +406,7 @@ def show_match(request,
                               'table_footers': table_footers,
                               'result': result,
                               'video_list': video_list,
+                              'team_name': settings.TEAM_NAME,
                           })
         else:
             # Match not played yet, show match enrollments
@@ -433,6 +456,7 @@ def show_match(request,
                               'players': players,
                               'match': match,
                               'season_list': season_list,
+                              'team_name': settings.TEAM_NAME,
                           })
 
     except match_class.DoesNotExist:
@@ -447,6 +471,13 @@ def show_player(request,
                 seasonplayer_class=SeasonPlayer,
                 season_class=Season,
                 template_name='teamstats/show_player.html'):
+
+    '''
+    View for showing information about a player.  Shows all the
+    statistics for all the seasons the player has attended and lists
+    all games the player has played in or can register in.
+    '''
+    
     try:
         player = player_class.objects.get(pk=player_id)
 
@@ -622,8 +653,9 @@ def show_player(request,
                           'table_footers': table_footers,
                           'seasonplayer_list': seasonplayer_list,
                           'season_list': season_list,
+                          'team_name': settings.TEAM_NAME,
                       })
-    except Player.DoesNotExist:
+    except player_class.DoesNotExist:
         return HttpResponse("Pelaajaa ei olemassa.")
 
 
