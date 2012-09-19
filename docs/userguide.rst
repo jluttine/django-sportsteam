@@ -17,3 +17,7 @@ development server:
 .. code-block:: console
 
    ./runserver.sh
+
+.. automodule:: teamstats.views
+   :members:
+

@@ -16,6 +16,10 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Views for showing different statistics of the team.
+"""
+
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse

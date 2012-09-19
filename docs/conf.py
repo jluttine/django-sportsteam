@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# djangosite-sportsteam documentation build configuration file, created by
+# django-sportsteam documentation build configuration file, created by
 # sphinx-quickstart on Mon Sep 17 22:10:20 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -16,7 +16,12 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
+
+# Set up the Django settings/environment
+from django.core.management import setup_environ
+from sportsteam import settings
+setup_environ(settings)
 
 # -- General configuration -----------------------------------------------------
 
@@ -40,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'djangosite-sportsteam'
+project = u'django-sportsteam'
 copyright = u'2012, Jaakko Luttinen'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -164,7 +169,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'djangosite-sportsteamdoc'
+htmlhelp_basename = 'django-sportsteamdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,7 +188,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'djangosite-sportsteam.tex', u'djangosite-sportsteam Documentation',
+  ('index', 'django-sportsteam.tex', u'django-sportsteam Documentation',
    u'Jaakko Luttinen', 'manual'),
 ]
 
@@ -213,7 +218,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'djangosite-sportsteam', u'djangosite-sportsteam Documentation',
+    ('index', 'django-sportsteam', u'django-sportsteam Documentation',
      [u'Jaakko Luttinen'], 1)
 ]
 
@@ -227,8 +232,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'djangosite-sportsteam', u'djangosite-sportsteam Documentation',
-   u'Jaakko Luttinen', 'djangosite-sportsteam', 'One line description of project.',
+  ('index', 'django-sportsteam', u'django-sportsteam Documentation',
+   u'Jaakko Luttinen', 'django-sportsteam', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -245,7 +250,7 @@ texinfo_documents = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'djangosite-sportsteam'
+epub_title = u'django-sportsteam'
 epub_author = u'Jaakko Luttinen'
 epub_publisher = u'Jaakko Luttinen'
 epub_copyright = u'2012, Jaakko Luttinen'
