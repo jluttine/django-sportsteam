@@ -1,26 +1,40 @@
+<form action="" name="form-{{ id }}" method="post">
+  {% csrf_token %}
+  <td id="edit-{{ id }}">
+    <input type="button" id="edit_button-{{ id }}"
+           onclick="javascript:editChoice({{ id }})"
+           value="Ilmoittaudu" />
+  </td>
+  <td id="fields-{{ id }}" visibility="false">
+    <span class="choice1">
+      <input type="radio" id="in_radio-{{ id }}"
+             name="choice" value="{{ id }}-1"
+             disabled="true" checked />
+      <label for="in_radio-{{ id }}">
+        IN
+      </label>
+    </span>
+    <span class="choice2">
+      <input type="radio" id="out_radio-{{ id }}"
+             name="choice" value="{{ id }}-2"
+             disabled="true" />
+      <label for="out_radio-{{ id }}">
+        OUT
+      </label>
+    </span>
+    <span class="choice3">
+      <input type="radio" id="na_radio-{{ id }}"
+             name="choice" value="{{ id }}-3"
+             disabled="true" />
+      <label for="na_radio-{{ id }}">
+        ?
+      </label>
+    </span>
+    <input type="submit" id="save_button-{{ id }}"
+           value="Tallenna" />
 
-<script type="text/javascript">
-  document.write("<form action=\"\" name=\"form-" + index + "\" method=\"post\">");
-</script>
-{# csrf_token TODO: ENABLE THIS FOR FUTURE DJANGOS!! #}
-{% csrf_token %}
-<script type="text/javascript">
-document.write("  <td id=\"edit-" + index + "\">");
-document.write("    <input type=\"button\" id=\"edit_button-" + index + "\" onclick=\"javascript:editChoice(" + index + ")\" value=\"Ilmoittaudu\" />");
-document.write("  </td>");
-document.write("  <td id=\"fields-" + index + "\" visibility=\"false\">");
-document.write("    <span class=\"choice1\">");
-document.write("     <input type=\"radio\" id=\"in_radio-" + index + "\" name=\"choice\" value=\"{{ id }}-1\" disabled=\"true\" {% ifequal choice 1 %}checked{% endifequal %} /><label for=\"in_radio-" + index + "\">IN</label>");
-document.write("    </span>");
-document.write("    <span class=\"choice2\">");
-document.write("     <input type=\"radio\" id=\"out_radio-" + index + "\" name=\"choice\" value=\"{{ id }}-2\" disabled=\"true\" {% ifequal choice 2 %}checked{% endifequal %} /><label for=\"out_radio-" + index + "\">OUT</label>");
-document.write("    </span>");
-document.write("    <span class=\"choice3\">");
-document.write("     <input type=\"radio\" id=\"na_radio-" + index + "\" name=\"choice\" value=\"{{ id }}-3\" disabled=\"true\" {% ifequal choice 3 %}checked{% endifequal %} /><label for=\"na_radio-" + index + "\">?</label>");
-document.write("    </span>");
-document.write("    <input type=\"submit\" id=\"save_button-" + index + "\" value=\"Tallenna\" />");
-document.write("    <input type=\"button\" id=\"cancel_button-" + index + "\" onclick=\"javascript:cancelChoice(" + index + ")\" value=\"Peruuta\" />");
-document.write("  </td>");
-document.write("</form>");
-index = index + 1;
-</script>
+    <input type="button" id="cancel_button-{{ id }}"
+           onclick="javascript:cancelChoice({{ id }})"
+           value="Peruuta" />
+  </td>
+</form>

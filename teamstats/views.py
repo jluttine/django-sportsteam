@@ -59,6 +59,7 @@ def show_season(request,
                 season_id,
                 season_class=Season,
                 seasonplayer_class=SeasonPlayer,
+                enrolledplayer_class=EnrolledPlayer,
                 match_class=Match,
                 template_name='teamstats/show_season.html'):
     '''
@@ -299,105 +300,8 @@ def show_match(request,
         if result:
             # Print the result
             players = matchplayer_class.objects.filter(match=match)
-            table_headers = ( {
-                                  'field': '#', 
-                                  'align': 'right', 
-                                  'sorting':'numericasc', 
-                              },
-                              {
-                                  'field': 'Nimi', 
-                                  'align': 'left', 
-                                  'sorting':'stringasc',
-                              },
-                              {
-                                  'field': 'Maalit', 
-                                  'align': 'center', 
-                                  'sorting':'numericdesc',
-                              },
-                              {
-                                  'field': '',
-                                  'align': 'center',
-                              },
-                              {
-                                  'field': 'Syötöt', 
-                                  'align': 'center', 
-                                  'sorting':'numericdesc',
-                              },
-                              {
-                                  'field': '',
-                                  'align': 'center', 
-                              },
-                              {
-                                  'field': 'Pisteet', 
-                                  'align': 'center', 
-                                  'sorting':'numericdesc',
-                              }, )
-
-            table_rows = []
             for player in players:
-                row = ( {
-                            'field': player.player.number,
-                            'align': 'right', 
-                        },
-                        {
-                            'field': player.player.player, 
-                            'align': 'left', 
-                            'link': reverse('teamstats.views.show_player',
-                                            args=[player.player.player.id]),
-                        },
-                        {
-                            'field': player.goals, 
-                            'align': 'center', 
-                        },
-                        {
-                            'field': '+', 
-                            'align': 'center', 
-                        },
-                        {
-                            'field': player.assists, 
-                            'align': 'center', 
-                        },
-                        {
-                            'field': '=', 
-                            'align': 'center',
-                        },
-                        {
-                            'field': player.goals+player.assists, 
-                            'align': 'center', 
-                        }, )
-                table_rows.append(row)
-
-            table_footers = []
-            if match.opponent_owngoals:
-                table_footers = ( 
-                    {
-                        'field': '',
-                        'align': 'right', 
-                    },
-                    {
-                        'field': 'Omat maalit',
-                        'align': 'left', 
-                    },
-                    {
-                        'field': match.opponent_owngoals, 
-                        'align': 'center',
-                    },
-                    {
-                        'field': '', 
-                        'align': 'center',
-                    },
-                    {
-                        'field': '', 
-                        'align': 'center',
-                    },
-                    {
-                        'field': '', 
-                        'align': 'center',
-                    },
-                    {
-                        'field': '', 
-                        'align': 'center', 
-                    }, )
+                player.points = player.goals + player.assists
 
             return render(request,
                           result_template_name,
@@ -405,9 +309,6 @@ def show_match(request,
                               'match': match,
                               'season_list': season_list,
                               'players': players,
-                              'table_headers': table_headers,
-                              'table_rows': table_rows,
-                              'table_footers': table_footers,
                               'result': result,
                               'video_list': video_list,
                               'team_name': settings.TEAM_NAME,
@@ -483,10 +384,11 @@ def show_player(request,
     '''
     
     try:
+        # Get the player
         player = player_class.objects.get(pk=player_id)
 
-        # Register enrollment (in/out/?) if one posted
         try:
+            # Register enrollment (in/out/?) if one posted
             post_input = request.POST['choice'].split('-')
             selected_match = int(post_input[0])
             selected_choice = int(post_input[1])
@@ -510,34 +412,7 @@ def show_player(request,
         except (KeyError, match_class.DoesNotExist):
             pass
 
-        table_headers = ( {
-                              'align': 'center', 
-                              'field': 'Kausi', 
-                              'sorting':'stringasc', 
-                          },
-                          {
-                              'align': 'center',
-                              'field': 'Ottelut', 
-                              'sorting':'numericdesc',
-                          },
-                          {
-                              'align': 'center', 
-                              'field': 'Maalit', 
-                              'sorting':'numericdesc',
-                          },
-                          {
-                              'align': 'center', 
-                              'field': 'Syötöt', 
-                              'sorting':'numericdesc',
-                          },
-                          {
-                              'align': 'center', 
-                              'field': 'Pisteet', 
-                              'sorting':'numericdesc',
-                          }, )
         season_list = season_class.objects.all()
-
-        table_rows = []
 
         total_games = 0
         total_goals = 0
@@ -585,8 +460,7 @@ def show_player(request,
                 seasonplayer.matchplayer_list = list(chain(matchplayers, 
                                                            enrolledplayers))
 
-                seasonplayer_list.append(seasonplayer)
-
+                # Compute season statistics
                 games = matchplayers.count()
                 goals = matchplayers.aggregate(Sum('goals')).values()[0]
                 assists = matchplayers.aggregate(Sum('assists')).values()[0]
@@ -596,65 +470,32 @@ def show_player(request,
                     assists = 0
                 points = goals + assists
 
+                # Add season stats to total stats
                 total_games = total_games + games
                 total_goals = total_goals + goals
                 total_assists = total_assists + assists
+
+                # Add season stats
+                seasonplayer.games = games
+                seasonplayer.goals = goals
+                seasonplayer.assists = assists
+                seasonplayer.points = goals + assists
                 
-                row = ( {
-                            'field': unicode(season), 
-                            'align': 'center', 
-                            'link': reverse('teamstats.views.show_season',
-                                            args=[season.id]),
-                        },
-                        {
-                            'field': games, 
-                            'align': 'center', 
-                        },
-                        {
-                            'field': goals, 
-                            'align': 'center',
-                        },
-                        {
-                            'field': assists, 
-                            'align': 'center', 
-                        },
-                        {
-                            'field': goals+assists, 
-                            'align': 'center', 
-                        }, )
-                table_rows.append(row)
-                
+                seasonplayer_list.append(seasonplayer)
+
             except seasonplayer_class.DoesNotExist:
                 pass
 
-        table_footers = ( {
-                              'field': 'Yhteensä', 
-                              'align': 'center',
-                          },
-                          {
-                              'field': total_games, 
-                              'align': 'center', 
-                          },
-                          {
-                              'field': total_goals, 
-                              'align': 'center', 
-                          },
-                          {
-                              'field': total_assists, 
-                              'align': 'center', 
-                          },
-                          {
-                              'field': total_goals+total_assists, 
-                              'align': 'center', 
-                          }, )
-        
+        # Add total stats
+        player.games = total_games
+        player.goals = total_goals
+        player.assists = total_assists
+        player.points = total_goals + total_assists
+
         return render(request,
                       template_name,
                       {
                           'player': player,
-                          'table_headers': table_headers,
-                          'table_rows': table_rows,
-                          'table_footers': table_footers,
                           'seasonplayer_list': seasonplayer_list,
                           'season_list': season_list,
                           'team_name': settings.TEAM_NAME,

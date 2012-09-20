@@ -190,26 +190,12 @@
     "fields": {
       "comment": "",
       "season": "fl2012",
-      "opponent_goals": 6,
+      "opponent_goals": null,
       "field": 1,
       "date": "2012-07-12 13:37:00",
       "home": false,
       "opponent_owngoals": 0,
       "opponent": "FC Lahti"
-    }
-  },
-  {
-    "pk": 1,
-    "model": "teamstats.match",
-    "fields": {
-      "comment": "",
-      "season": "sl2012",
-      "opponent_goals": 5,
-      "field": 1,
-      "date": "2012-09-18 21:00:00",
-      "home": false,
-      "opponent_owngoals": 0,
-      "opponent": "Real Madrid"
     }
   },
   {
@@ -224,6 +210,20 @@
       "home": true,
       "opponent_owngoals": 0,
       "opponent": "FC Barcelona"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.match",
+    "fields": {
+      "comment": "",
+      "season": "sl2012",
+      "opponent_goals": null,
+      "field": 1,
+      "date": "2012-11-18 21:00:00",
+      "home": false,
+      "opponent_owngoals": 0,
+      "opponent": "Real Madrid"
     }
   },
   {
@@ -244,56 +244,6 @@
       "assists": 3,
       "goals": 0,
       "match": 4
-    }
-  },
-  {
-    "pk": 3,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 5,
-      "assists": 2,
-      "goals": 1,
-      "match": 3
-    }
-  },
-  {
-    "pk": 4,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 4,
-      "assists": 1,
-      "goals": 2,
-      "match": 3
-    }
-  },
-  {
-    "pk": 5,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 2,
-      "assists": 2,
-      "goals": 0,
-      "match": 1
-    }
-  },
-  {
-    "pk": 6,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 3,
-      "assists": 0,
-      "goals": 2,
-      "match": 1
-    }
-  },
-  {
-    "pk": 7,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 1,
-      "assists": 0,
-      "goals": 0,
-      "match": 1
     }
   },
   {
@@ -324,6 +274,33 @@
       "assists": 0,
       "goals": 0,
       "match": 2
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 2,
+      "enroll": true,
+      "match": 1
+    }
+  },
+  {
+    "pk": 2,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 1,
+      "enroll": false,
+      "match": 1
+    }
+  },
+  {
+    "pk": 3,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 5,
+      "enroll": true,
+      "match": 3
     }
   }
 ]

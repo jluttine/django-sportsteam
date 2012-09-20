@@ -2,21 +2,89 @@
 
 {% block content %}
 
-{% if match %}
-    {% include "teamstats/header_match.html" %}
 
-    {% if video_list %}
-      {% include "teamstats/videoplayer.html" %}
+  {% include "teamstats/header_match.html" %}
+
+  {% if video_list %}
+    {% include "teamstats/videoplayer.html" %}
+  {% endif %}
+
+  {% load static %}
+  <script type="text/javascript" src="{% get_static_prefix %}tablesort.js"></script>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th class="numericasc" align="right">
+          #
+        </th>
+        <th class="stringasc" align="left">
+          Nimi
+        </th>
+        <th class="numericdesc" align="center">
+          Maalit
+        </th>
+        <th class="numericdesc" align="center" />
+        <th class="numericdesc" align="center">
+          Syötöt
+        </th>
+        <th align="center" />
+        <th class="numericdesc" align="center">
+          Pisteet
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for player in players %}
+        <tr class="{% cycle odd even %}">
+	  <td align="right">
+            {{ player.player.number }}
+          </td>
+	  <td align="left">
+            <a href="{% url teamstats.views.show_player player.player.player.id %}">
+              {{ player.player.player }}
+            </a>
+          </td>
+	  <td align="center">
+            {{ player.goals }}
+          </td>
+	  <td align="center">
+            +
+          </td>
+	  <td align="center">
+            {{ player.assists }}
+          </td>
+	  <td align="center">
+            =
+          </td>
+	  <td align="center">
+            {{ player.points }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+    {% if match.opponent_owngoals %}
+      <tfoot>
+        <tr class="{% cycle odd even %}">
+	  <td align="right" />
+	  <td align="left">
+            Omat maalit
+          </td>
+	  <td align="center">
+            {{ match.opponent_owngoals }}
+          </td>
+	  <td align="center" />
+	  <td align="center" />
+	  <td align="center" />
+	  <td align="center" />
+        </tr>
+      </tfoot>
     {% endif %}
 
-    {% if result %}
-      {% include "teamstats/table.html" %}
-    {% endif %}
-
-
-{% else %}
-    <p>Ottelua ei löytynyt.</p>
-{% endif %}
+  </table>
 
 
 {% endblock %}

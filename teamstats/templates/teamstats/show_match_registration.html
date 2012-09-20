@@ -2,14 +2,62 @@
 
 {% block content %}
 
-{% if match %}
-    {% include "teamstats/header_match.html" %}
+  {% include "teamstats/header_match.html" %}
 
-    {% include "teamstats/registration_list.html" %}
+  <script type="text/javascript" src="tablesort.js"></script>
 
-{% else %}
-    <p>Ottelua ei löytynyt.</p>
-{% endif %}
+  <script language="javascript">
+    choice = {}
+    {% for player in players %}
+      choice["{{ player.id }}"] = {{ player.choice }};
+    {% endfor %}
+  </script>
+
+  {% include "teamstats/registration_functions.html" %}
+
+  <table>
+    <thead>
+      <tr>
+        <th class="stringdesc" align="center">
+          in/out
+        </th>
+        <th class="numericasc" align="center">
+          #
+        </th>
+        <th class="stringasc" align="left">
+          Nimi
+        </th>
+        <th />
+        <th />
+      </tr>
+    </thead>
+    <tbody>
+
+      {% for player in players %}
+        <tr>
+          <td class="choice{{ player.choice }}" align="center">
+            {% ifequal player.choice 1 %}IN{% endifequal %}
+            {% ifequal player.choice 2 %}OUT{% endifequal %}
+            {% ifequal player.choice 3 %}?{% endifequal %}
+          </td>
+          <td class="choice{{ player.choice }}" align="center">
+            {{ player.number }}
+          </td>
+          <td class="choice{{ player.choice }}">
+            <a href="{% url teamstats.views.show_player player.player.id %}">
+              {{ player.player }}
+            </a>
+          </td>
+          <td>
+            {% with player.id as id %}
+              {% include "teamstats/registration_buttons.html" %}
+            {% endwith %}
+          </td>
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
 
 {% endblock %}
