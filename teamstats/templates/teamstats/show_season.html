@@ -2,13 +2,13 @@
 
 {% block content %}
 
-  <h1>{{ season }}</h1>
-
-  {% if season.description %}
-    <p>
-    {{ season.description }}
-    </p>
-  {% endif %}
+  <h1>
+    {% if season.league.description %}
+      {{ season.league.description }} ({{ season.league }}) {{ season.year }}
+    {% else %}
+      {{ season.league }} {{ season.year }}
+    {% endif %}
+  </h1>
   {% if season.url %}
     <p>
     <a href="{{ season.url }}">Sarjan kotisivut</a>
@@ -18,10 +18,138 @@
     <p>Kommentti: {{ season.comment }}</p>
   {% endif %}
 
-  <h2>Pelaajat</h2>
-    {% include "teamstats/table.html" %}
+  {# SHOW PLAYER STATS #}
 
-  <h2>Ottelut</h2>
-  {% include "teamstats/list_matches.html" %}
+  <h2>
+    Pelaajat
+  </h2>
+
+  {% load static %}
+  <script type="text/javascript" src="{% get_static_prefix %}tablesort.js"></script> 
+
+  <table>
+
+    <thead>
+      <tr>
+        <th class="numericasc" align="right">
+          #
+        </th>
+        <th class="stringasc" align="left">
+          Nimi
+        </th>
+        <th class="numericdesc" align="center">
+          Ottelut
+        </th>
+        <th class="numericdesc" align="center">
+          Maalit
+        </th>
+        <th class="numericdesc" align="center">
+          Syötöt
+        </th>
+        <th class="numericdesc" align="center">
+          Pisteet
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for player in player_list %}
+        <tr class="{% cycle odd even %}">
+	  <td align="right">
+            {{ player.number }}
+          </td>
+	  <td align="left">
+            <a href="{% url teamstats.views.show_player player.player.id %}">
+              {{ player.player }}
+            </a>
+          </td>
+	  <td align="center">
+            {{ player.games }}
+          </td>
+	  <td align="center">
+            {{ player.goals }}
+          </td>
+	  <td align="center">
+            {{ player.assists }}
+          </td>
+	  <td align="center">
+            {{ player.points }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+  {# SHOW MATCHES #}
+
+  <h2>
+    Ottelut
+  </h2>
+
+  {% if match_list %}
+    <table>
+      {% for match in match_list %}
+        <tr>
+	  <td align="center">
+            {{ match.date|date:"D"|lower }}
+          </td>
+	  <td align="right">
+            {{ match.date|date:"j.n." }}
+          </td>
+	  <td>
+            {{ match.date|date:"G:i" }}
+          </td>
+	  <td align="center">
+            <a href="{% url teamstats.views.show_match match.id %}">
+              {{ match.opponent }}
+            </a>
+          </td>
+	  {% if match.result %}
+	    <td align="right">
+              {{ match.goals }}
+            </td>
+	    <td align="center">
+              -
+            </td>
+	    <td align="left">
+              {{ match.opponent_goals }}
+            </td>
+	  {% else %}
+	    <td/><td/><td/>
+	  {% endif %}
+
+          {% if not match.result %}
+          <td  style="font-size:70%">
+            <span class="choice1">
+              IN:
+              {% for player in match.in_players %}
+                <a href="{% url teamstats.views.show_player player.player.player.id %}">
+                  {{ player.player.player.shortname }}
+                </a>
+              {% endfor %}
+            </span>
+            <span class="choice2">
+              OUT:
+              {% for player in match.out_players %}
+                <a href="{% url teamstats.views.show_player player.player.player.id %}">
+                  {{ player.player.player.shortname }}
+                </a>
+                {% endfor %}
+            </span>
+            <span class="choice3">
+              ?:
+              {% for player in match.unknown_players %}
+                <a href="{% url teamstats.views.show_player player.player.id %}">
+                  {{ player.player.shortname }}
+                </a>
+              {% endfor %}
+            </span>
+          </td>
+        {% endif %}        
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
 
 {% endblock %}

@@ -3,7 +3,59 @@
 
 {% block content %}
 
-<h1>Pelaajat</h1>
-{% include "teamstats/table.html" %}
+<h1>
+  Pelaajat
+</h1>
+
+  {% load static %}
+  <script type="text/javascript" src="{% get_static_prefix %}tablesort.js"></script> 
+
+  <table>
+
+    <thead>
+      <tr>
+        <th class="stringasc" align="left">
+          Nimi
+        </th>
+        <th class="numericdesc" align="center">
+          Ottelut
+        </th>
+        <th class="numericdesc" align="center">
+          Maalit
+        </th>
+        <th class="numericdesc" align="center">
+          Syötöt
+        </th>
+        <th class="numericdesc" align="center">
+          Pisteet
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for player in player_list %}
+        <tr class="{% cycle odd even %}">
+	  <td align="left">
+            <a href="{% url teamstats.views.show_player player.id %}">
+              {{ player }}
+            </a>
+          </td>
+	  <td align="center">
+            {{ player.games }}
+          </td>
+	  <td align="center">
+            {{ player.goals }}
+          </td>
+	  <td align="center">
+            {{ player.assists }}
+          </td>
+	  <td align="center">
+            {{ player.points }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
 
 {% endblock %}

@@ -72,75 +72,23 @@ def show_season(request,
 
         # Player stats
         player_list = seasonplayer_class.objects.filter(season=season)
-        table_headers = ({
-                             'field': '#', 
-                             'align': 'right', 
-                             'sorting':'numericasc'
-                          },
-                          {
-                              'field': 'Nimi', 
-                              'align': 'left', 
-                              'sorting':'stringasc'
-                          },
-                          {
-                              'field': 'Ottelut', 
-                              'align': 'center', 
-                              'sorting':'numericdesc',
-                          },
-                          {
-                              'field': 'Maalit', 
-                              'align': 'center', 
-                              'sorting':'numericdesc',
-                          },
-                          {
-                              'field': 'Syötöt',
-                              'align': 'center', 
-                              'sorting':'numericdesc',
-                          },
-                          {
-                              'field': 'Pisteet', 
-                              'align': 'center', 
-                              'sorting':'numericdesc',
-                          }, )
-        table_rows = []
         for player in player_list:
             matches = MatchPlayer.objects.filter(player=player)
-            goals = matches.aggregate(goals=Sum('goals')).values()[0]
-            assists = matches.aggregate(assists=Sum('assists')).values()[0]
-            if goals is None:
-                goals = 0
-            if assists is None:
-                assists = 0
 
-            row = ( {
-                        'align': 'right', 
-                        'field': player.number, 
-                    },
-                    {
-                        'align': 'left', 
-                        'field': player.player, 
-                        'link': reverse('teamstats.views.show_player',
-                                        args=[player.player.id]),
-                    },
-                    {
-                        'align': 'center', 
-                        'field': matches.count(), 
-                    },
-                    {
-                        'align': 'center', 
-                        'field': goals, 
-                    },
-                    {
-                        'align': 'center', 
-                        'field': assists, 
-                    },
-                    {
-                        'align': 'center', 
-                        'field': goals+assists, 
-                    }, )
-            table_rows.append(row)
+            player.games = matches.count()
+            player.goals = matches.aggregate(goals=Sum('goals')).values()[0]
+            player.assists = matches.aggregate(assists=Sum('assists')).values()[0]
+            
+            if player.goals is None:
+                player.goals = 0
+            if player.assists is None:
+                player.assists = 0
+
+            player.points = player.goals + player.assists
 
         season_list = season_class.objects.all()
+
+        # TODO: Show opponent own goals!
 
         # Match list
         match_list = match_class.objects.filter(season=season)
@@ -170,8 +118,7 @@ def show_season(request,
                                       'season': season,
                                       'season_list': season_list,
                                       'match_list': match_list,
-                                      'table_headers': table_headers,
-                                      'table_rows': table_rows,
+                                      'player_list': player_list,
                                       'team_name': settings.TEAM_NAME,
                                   })
 
@@ -192,77 +139,24 @@ def show_all_players(request,
     # Get all players
     player_list = player_class.objects.all()
 
-    # Initialize the table
-    table_headers = ( {
-                          'field': 'Nimi',
-                          'align': 'left',
-                          'sorting':'stringasc'
-                      },
-                      {
-                          'field': 'Ottelut',
-                          'align': 'center',
-                          'sorting':'numericdesc',
-                      },
-                      {
-                          'field': 'Maalit', 
-                          'align': 'center',
-                          'sorting':'numericdesc',
-                      },
-                      {
-                          'field': 'Syötöt',
-                          'align': 'center',
-                          'sorting':'numericdesc',
-                      },
-                      {
-                          'field': 'Pisteet', 
-                          'align': 'center', 
-                          'sorting':'numericdesc',
-                      }, )
-    table_rows = []
-
     # Add player stats to the table one by one
     for player in player_list:
         matches = matchplayer_class.objects.filter(player__player=player)
-        goals = matches.aggregate(goals=Sum('goals')).values()[0]
-        assists = matches.aggregate(assists=Sum('assists')).values()[0]
-        if goals is None:
-            goals = 0
-        if assists is None:
-            assists = 0
-        row = ( {
-                    'field': player,
-                    'align': 'left',
-                    'link': reverse('teamstats.views.show_player', args=[player.id]),
-                },
-                {
-                    'field': matches.count(), 
-                    'align': 'center', 
-                },
-                {
-                    'field': goals,
-                    'align': 'center', 
-                },
-                {
-                    'field': assists,
-                    'align': 'center',
-                },
-                {
-                    'field': goals+assists, 
-                    'align': 'center',
-                }, )
-        table_rows.append(row)
+        player.games = matches.count()
+        player.goals = matches.aggregate(goals=Sum('goals')).values()[0]
+        player.assists = matches.aggregate(assists=Sum('assists')).values()[0]
+        if player.goals is None:
+            player.goals = 0
+        if player.assists is None:
+            player.assists = 0
+        player.points = player.goals + player.assists
 
     # Get all seasons
     season_list = season_class.objects.all()
 
-    # By default, sort by player name in ascending order
-    table_default_sort = ( {'column': 0, 'descending': 0} )
-    
     return render_to_response(template_name,
                               {
-                                  'table_headers': table_headers,
-                                  'table_rows': table_rows,
-                                  'table_default_sort': table_default_sort,
+                                  'player_list': player_list,
                                   'season_list': season_list,
                                   'team_name': settings.TEAM_NAME,
                               })
@@ -299,18 +193,17 @@ def show_match(request,
 
         if result:
             # Print the result
-            players = matchplayer_class.objects.filter(match=match)
-            for player in players:
+            player_list = matchplayer_class.objects.filter(match=match)
+            for player in player_list:
                 player.points = player.goals + player.assists
 
             return render(request,
                           result_template_name,
                           {
                               'match': match,
-                              'season_list': season_list,
-                              'players': players,
-                              'result': result,
+                              'player_list': player_list,
                               'video_list': video_list,
+                              'season_list': season_list,
                               'team_name': settings.TEAM_NAME,
                           })
         else:
@@ -417,6 +310,7 @@ def show_player(request,
         total_games = 0
         total_goals = 0
         total_assists = 0
+        total_points = 0
 
         seasonplayer_list = []
         for season in season_list:
@@ -471,9 +365,10 @@ def show_player(request,
                 points = goals + assists
 
                 # Add season stats to total stats
-                total_games = total_games + games
-                total_goals = total_goals + goals
-                total_assists = total_assists + assists
+                total_games += games
+                total_goals += goals
+                total_assists += assists
+                total_points += points
 
                 # Add season stats
                 seasonplayer.games = games
@@ -490,7 +385,7 @@ def show_player(request,
         player.games = total_games
         player.goals = total_goals
         player.assists = total_assists
-        player.points = total_goals + total_assists
+        player.points = total_points
 
         return render(request,
                       template_name,
