@@ -1,6 +1,9 @@
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.defaults import *
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 import teamstats.urls
 
 # Uncomment the next two lines to enable the admin:
@@ -18,7 +21,7 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # This enables the static files when developing and debugging
 urlpatterns += staticfiles_urlpatterns()
