@@ -49,6 +49,9 @@
         <th class="numericdesc center">
           Pisteet
         </th>
+        <th class="numericdesc center">
+          PPG
+        </th>
       </tr>
     </thead>
 
@@ -74,6 +77,9 @@
           </td>
 	  <td class="center">
             {{ player.points }}
+          </td>
+	  <td class="center">
+            {{ player.ppg|floatformat:2 }}
           </td>
         </tr>
       {% endfor %}

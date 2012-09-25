@@ -20,6 +20,8 @@
 Views for showing different statistics of the team.
 """
 
+from __future__ import division
+
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse
@@ -85,6 +87,10 @@ def show_season(request,
                 player.assists = 0
 
             player.points = player.goals + player.assists
+            if player.games:
+                player.ppg = player.points / player.games
+            else:
+                player.ppg = 0.0
 
         season_list = season_class.objects.all()
 
@@ -150,6 +156,10 @@ def show_all_players(request,
         if player.assists is None:
             player.assists = 0
         player.points = player.goals + player.assists
+        if player.games:
+            player.ppg = player.points / player.games
+        else:
+            player.ppg = 0.0
 
     # Get all seasons
     season_list = season_class.objects.all()
@@ -381,6 +391,10 @@ def show_player(request,
                 seasonplayer.goals = goals
                 seasonplayer.assists = assists
                 seasonplayer.points = goals + assists
+                if games:
+                    seasonplayer.ppg = seasonplayer.points / games
+                else:
+                    seasonplayer.ppg = 0.0
                 
                 seasonplayer_list.append(seasonplayer)
 
@@ -392,6 +406,10 @@ def show_player(request,
         player.goals = total_goals
         player.assists = total_assists
         player.points = total_points
+        if total_games:
+            player.ppg = total_points / total_games
+        else:
+            player.ppg = 0.0
 
         return render(request,
                       template_name,

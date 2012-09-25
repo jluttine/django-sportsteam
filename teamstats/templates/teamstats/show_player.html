@@ -31,6 +31,9 @@
       <th class="numericdesc center">
         Pisteet
       </th>
+      <th class="numericdesc center">
+        PPG
+      </th>
     </tr>
   </thead>
 
@@ -54,6 +57,9 @@
         <td class="center">
           {{ seasonplayer.points }}
         </td>
+        <td class="center">
+          {{ seasonplayer.ppg|floatformat:2 }}
+        </td>
       </tr>
     {% endfor %}
   </tbody>
@@ -74,6 +80,9 @@
       </td>
       <td class="center">
         {{ player.points }}
+      </td>
+      <td class="center">
+        {{ player.ppg }}
       </td>
     </tr>
   </tfoot>
