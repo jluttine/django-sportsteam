@@ -176,7 +176,7 @@
     "fields": {
       "comment": "",
       "season": "fl2011",
-      "opponent_goals": 1,
+      "opponent_goals": 0,
       "field": 1,
       "date": "2011-05-15 15:00:00",
       "home": true,
@@ -227,27 +227,7 @@
     }
   },
   {
-    "pk": 1,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 6,
-      "assists": 0,
-      "goals": 3,
-      "match": 4
-    }
-  },
-  {
-    "pk": 2,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 7,
-      "assists": 3,
-      "goals": 0,
-      "match": 4
-    }
-  },
-  {
-    "pk": 11,
+    "pk": 13,
     "model": "teamstats.matchplayer",
     "fields": {
       "player": 6,
@@ -257,7 +237,7 @@
     }
   },
   {
-    "pk": 12,
+    "pk": 14,
     "model": "teamstats.matchplayer",
     "fields": {
       "player": 7,
@@ -345,11 +325,11 @@
     "pk": 1,
     "model": "teamstats.video",
     "fields": {
-      "part": 1,
-      "title": "Highlights",
-      "match": 4,
       "mp4": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.mp4",
-      "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.ogg"
+      "part": 1,
+      "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.ogg",
+      "match": 4,
+      "title": "Highlights"
     }
   },
   {
