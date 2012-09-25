@@ -304,30 +304,12 @@
     }
   },
   {
-    "pk": 5,
-    "model": "teamstats.enrolledplayer",
-    "fields": {
-      "player": 2,
-      "enroll": true,
-      "match": 1
-    }
-  },
-  {
-    "pk": 6,
-    "model": "teamstats.enrolledplayer",
-    "fields": {
-      "player": 5,
-      "enroll": true,
-      "match": 3
-    }
-  },
-  {
     "pk": 1,
     "model": "teamstats.video",
     "fields": {
       "mp4": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.mp4",
       "part": 1,
-      "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.ogg",
+      "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.ogv",
       "match": 4,
       "title": "Highlights"
     }

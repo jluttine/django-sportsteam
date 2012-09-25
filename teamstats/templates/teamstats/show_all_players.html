@@ -14,19 +14,19 @@
 
     <thead>
       <tr>
-        <th class="stringasc" align="left">
+        <th class="stringasc left">
           Nimi
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Ottelut
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Maalit
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Syötöt
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Pisteet
         </th>
       </tr>
@@ -34,22 +34,22 @@
 
     <tbody>
       {% for player in player_list %}
-        <tr class="{% cycle odd even %}">
-	  <td align="left">
+        <tr>
+	  <td class="left">
             <a href="{% url teamstats.views.show_player player.id %}">
               {{ player }}
             </a>
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.games }}
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.goals }}
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.assists }}
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.points }}
           </td>
         </tr>

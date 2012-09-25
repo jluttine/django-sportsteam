@@ -8,14 +8,17 @@ body {
 
 .choice1 {
     background-color: #90FF90;
+    text-align: center;
 }
 
 .choice2 {
     background-color: #FF9090;
+    text-align: center;
 }
 
 .choice3 {
     background-color: #B0B0B0;
+    text-align: center;
 }
 
 div#video-div {
@@ -38,26 +41,26 @@ div#content {
 }
 
 h1 {
-	font-size: 16pt;
-	font-weight: bold;
+    font-size: 16pt;
+    font-weight: bold;
 }
 
 h2 {
-	font-size: 14pt;
-	font-weight: bold;
+    font-size: 14pt;
+    font-weight: bold;
 }
 
 h3 {
-	font-size: 12pt;
-	font-weight: bold;
+    font-size: 12pt;
+    font-weight: bold;
 }
 
 p {
 }
 
 a {
-	text-decoration: none;
-	color: #600060;
+    text-decoration: none;
+    color: #600060;
 }
 
 a:visited {
@@ -65,4 +68,27 @@ a:visited {
 
 a:hover {
 	color: #606000;
+}
+
+th.left {
+    text-align: left;
+}
+th.center {
+    text-align: center;
+}
+th.right {
+    text-align: right;
+}
+
+td.left {
+    text-align: left;
+}
+td.center {
+    text-align: center;
+}
+td.right {
+    text-align: right;
+}
+td.registrations {
+    font-size: 70%;
 }

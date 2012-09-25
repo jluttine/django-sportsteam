@@ -31,22 +31,22 @@
 
     <thead>
       <tr>
-        <th class="numericasc" align="right">
+        <th class="numericasc right">
           #
         </th>
-        <th class="stringasc" align="left">
+        <th class="stringasc left">
           Nimi
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Ottelut
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Maalit
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Syötöt
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Pisteet
         </th>
       </tr>
@@ -54,25 +54,25 @@
 
     <tbody>
       {% for player in player_list %}
-        <tr class="{% cycle odd even %}">
-	  <td align="right">
+        <tr>
+	  <td class="right">
             {{ player.number }}
           </td>
-	  <td align="left">
+	  <td class="left">
             <a href="{% url teamstats.views.show_player player.player.id %}">
               {{ player.player }}
             </a>
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.games }}
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.goals }}
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.assists }}
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.points }}
           </td>
         </tr>
@@ -91,36 +91,38 @@
     <table>
       {% for match in match_list %}
         <tr>
-	  <td align="center">
+	  <td class="center">
             {{ match.date|date:"D"|lower }}
           </td>
-	  <td align="right">
+	  <td class="right">
             {{ match.date|date:"j.n." }}
           </td>
-	  <td>
+	  <td class="left">
             {{ match.date|date:"G:i" }}
           </td>
-	  <td align="center">
+	  <td class="center">
             <a href="{% url teamstats.views.show_match match.id %}">
               {{ match.opponent }}
             </a>
           </td>
 	  {% if match.result %}
-	    <td align="right">
+	    <td class="right">
               {{ match.goals }}
             </td>
-	    <td align="center">
+	    <td>
               -
             </td>
-	    <td align="left">
+	    <td class="left">
               {{ match.opponent_goals }}
             </td>
 	  {% else %}
-	    <td/><td/><td/>
+	    <td></td>
+            <td></td>
+            <td></td>
 	  {% endif %}
 
           {% if not match.result %}
-          <td  style="font-size:70%">
+          <td class="registrations">
             <span class="choice1">
               IN:
               {% for player in match.in_players %}

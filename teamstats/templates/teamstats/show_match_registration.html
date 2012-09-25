@@ -18,32 +18,32 @@
   <table>
     <thead>
       <tr>
-        <th class="stringdesc" align="center">
+        <th class="stringdesc center">
           in/out
         </th>
-        <th class="numericasc" align="center">
+        <th class="numericasc center">
           #
         </th>
-        <th class="stringasc" align="left">
+        <th class="stringasc left">
           Nimi
         </th>
-        <th />
-        <th />
+        <th></th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
 
       {% for player in players %}
         <tr>
-          <td class="choice{{ player.choice }}" align="center">
+          <td class="choice{{ player.choice }} center">
             {% ifequal player.choice 1 %}IN{% endifequal %}
             {% ifequal player.choice 2 %}OUT{% endifequal %}
             {% ifequal player.choice 3 %}?{% endifequal %}
           </td>
-          <td class="choice{{ player.choice }}" align="center">
+          <td class="choice{{ player.choice }} center">
             {{ player.number }}
           </td>
-          <td class="choice{{ player.choice }}">
+          <td class="choice{{ player.choice }} left">
             <a href="{% url teamstats.views.show_player player.player.id %}">
               {{ player.player }}
             </a>

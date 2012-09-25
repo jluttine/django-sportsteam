@@ -1,26 +1,39 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 {% load static %}
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html>
 <head>
-  {% block header %}
+  <meta charset="UTF-8">
+  {% block head %}
   {% endblock %} 
     <link rel="stylesheet" type="text/css" href="{% get_static_prefix %}style.css" />
     <title>{{ team_name }}</title>
 </head>
 
 <body>
-  <div id="sidebar">
-    {% block sidebar %}
+  <header>
+    {% block header %}
+    {% endblock %}
+  </header>
+  <nav>
+    {% block nav %}
       <a href="{% url teamstats.views.index %}">[Etusivu]</a>
       <a href="{% url teamstats.views.show_all_players %}">[Pelaajat]</a> 
       {% for season in season_list %}
 	<a href="{% url teamstats.views.show_season season.id %}">[{{ season }}]</a>
       {% endfor %}
     {% endblock %}
-  </div>
-  <div id="content">
-    {% block content %}{% endblock %}
-  </div>
+  </nav>
+  <section>
+    {% block content %}
+    {% endblock %}
+  </section>
+  <aside>
+    {% block aside %}
+    {% endblock %}
+  </aside>
+  <footer>
+    {% block footer %}
+    {% endblock %}
+  </footer>
 </body>
 </html>

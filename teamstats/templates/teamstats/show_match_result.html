@@ -16,21 +16,21 @@
 
     <thead>
       <tr>
-        <th class="numericasc" align="right">
+        <th class="numericasc right">
           #
         </th>
-        <th class="stringasc" align="left">
+        <th class="stringasc left">
           Nimi
         </th>
-        <th class="numericdesc" align="center">
+        <th class="numericdesc center">
           Maalit
         </th>
-        <th class="numericdesc" align="center" />
-        <th class="numericdesc" align="center">
+        <th></th>
+        <th class="numericdesc center">
           Syötöt
         </th>
-        <th align="center" />
-        <th class="numericdesc" align="center">
+        <th></th>
+        <th class="numericdesc center">
           Pisteet
         </th>
       </tr>
@@ -38,28 +38,28 @@
 
     <tbody>
       {% for player in player_list %}
-        <tr class="{% cycle odd even %}">
-	  <td align="right">
+        <tr>
+	  <td class="right">
             {{ player.player.number }}
           </td>
-	  <td align="left">
+	  <td class="left">
             <a href="{% url teamstats.views.show_player player.player.player.id %}">
               {{ player.player.player }}
             </a>
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.goals }}
           </td>
-	  <td align="center">
+	  <td>
             +
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.assists }}
           </td>
-	  <td align="center">
+	  <td>
             =
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ player.points }}
           </td>
         </tr>
@@ -68,18 +68,18 @@
 
     {% if match.opponent_owngoals %}
       <tfoot>
-        <tr class="{% cycle odd even %}">
-	  <td align="right" />
-	  <td align="left">
+        <tr>
+	  <td></td>
+	  <td class="left">
             Omat maalit
           </td>
-	  <td align="center">
+	  <td class="center">
             {{ match.opponent_owngoals }}
           </td>
-	  <td align="center" />
-	  <td align="center" />
-	  <td align="center" />
-	  <td align="center" />
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
         </tr>
       </tfoot>
     {% endif %}

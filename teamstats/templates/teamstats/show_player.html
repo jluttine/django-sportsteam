@@ -16,19 +16,19 @@
 <table>
   <thead>
     <tr>
-      <th class="stringasc" align="center">
+      <th class="stringasc left">
         Kausi
       </th>
-      <th class="numericdesc" align="center">
+      <th class="numericdesc center">
         Ottelut
       </th>
-      <th class="numericdesc" align="center">
+      <th class="numericdesc center">
         Maalit
       </th>
-      <th class="numericdesc" align="center">
+      <th class="numericdesc center">
         Syötöt
       </th>
-      <th class="numericdesc" align="center">
+      <th class="numericdesc center">
         Pisteet
       </th>
     </tr>
@@ -36,22 +36,22 @@
 
   <tbody>
     {% for seasonplayer in seasonplayer_list %}
-      <tr class="{% cycle odd even %}">
-        <td align="center">
+      <tr>
+        <td class="left">
           <a href="{% url teamstats.views.show_season seasonplayer.season.id %}">
             {{ seasonplayer.season }}
           </a>
         </td>
-        <td align="center">
+        <td class="center">
           {{ seasonplayer.games }}
         </td>
-        <td align="center">
+        <td class="center">
           {{ seasonplayer.goals }}
         </td>
-        <td align="center">
+        <td class="center">
           {{ seasonplayer.assists }}
         </td>
-        <td align="center">
+        <td class="center">
           {{ seasonplayer.points }}
         </td>
       </tr>
@@ -60,19 +60,19 @@
 
   <tfoot>
     <tr>
-      <td align="center">
+      <td class="left">
         Yhteensä
       </td>
-      <td align="center">
+      <td class="center">
         {{ player.games }}
       </td>
-      <td align="center">
+      <td class="center">
         {{ player.goals }}
       </td>
-      <td align="center">
+      <td class="center">
         {{ player.assists }}
       </td>
-      <td align="center">
+      <td class="center">
         {{ player.points }}
       </td>
     </tr>
@@ -106,54 +106,54 @@
     <table>
       {% for matchplayer in seasonplayer.matchplayer_list %}
         <tr>
-  	  <td align="center">
+  	  <td class="center">
             {{ matchplayer.match.date|date:"D"|lower }}
           </td>
-	  <td align="right">
+	  <td class="right">
             {{ matchplayer.match.date|date:"j.n." }}
           </td>
-	  <td>
+	  <td class="left">
             {{ matchplayer.match.date|date:"G:i" }}
           </td>
-	  <td align="center">
+	  <td class="center">
             <a href="{% url teamstats.views.show_match matchplayer.match.id %}">
               {{ matchplayer.match.opponent }}
             </a>
           </td>
 	  {% if matchplayer.match.result %}
-	    <td align="right">
+	    <td class="right">
               {{ matchplayer.match.goals }}
             </td>
-	    <td align="center">
+	    <td>
               -
             </td>
-	    <td align="left">
+	    <td class="left">
               {{ matchplayer.match.opponent_goals }}
             </td>
-	    <td align="right">
+	    <td class="right">
               ({{ matchplayer.goals }}
             </td>
-	    <td align="center">
+	    <td>
               +
             </td>
-	    <td align="left">
+	    <td class="left">
               {{ matchplayer.assists }})
             </td>
 	  {% else %}
-  	    <td/>
-            <td/>
-            <td/>
-            <td/>
-            <td/>
-            <td/>
+  	    <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
 	  {% endif %}
 
           {% if matchplayer.match.result %}
-            <td/>
-            <td/>
-            <td/>
+            <td></td>
+            <td></td>
+            <td></td>
           {% else %}
-            <td class="choice{{ matchplayer.choice }}" align="center">
+            <td class="choice{{ matchplayer.choice }}">
               {% ifequal matchplayer.choice 1 %}IN{% endifequal %}
               {% ifequal matchplayer.choice 2 %}OUT{% endifequal %}
               {% ifequal matchplayer.choice 3 %}?{% endifequal %}
