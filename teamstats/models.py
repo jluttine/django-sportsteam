@@ -127,7 +127,7 @@ class Video(models.Model):
                                blank=False,
                                null=False)
     ogg = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
-                               match=".*\.ogg$",
+                               match=".*\.ogv$",
                                recursive=True,
                                blank=False,
                                null=False)
