@@ -247,6 +247,26 @@
     }
   },
   {
+    "pk": 11,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 6,
+      "assists": 0,
+      "goals": 2,
+      "match": 4
+    }
+  },
+  {
+    "pk": 12,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 7,
+      "assists": 2,
+      "goals": 1,
+      "match": 4
+    }
+  },
+  {
     "pk": 8,
     "model": "teamstats.matchplayer",
     "fields": {
@@ -301,6 +321,62 @@
       "player": 5,
       "enroll": true,
       "match": 3
+    }
+  },
+  {
+    "pk": 5,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 2,
+      "enroll": true,
+      "match": 1
+    }
+  },
+  {
+    "pk": 6,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 5,
+      "enroll": true,
+      "match": 3
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.video",
+    "fields": {
+      "part": 1,
+      "title": "Highlights",
+      "match": 4,
+      "mp4": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.mp4",
+      "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.ogg"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.seekpoint",
+    "fields": {
+      "video": 1,
+      "description": "1-0 Chuck Norris (Jari Litmanen)",
+      "time": "00:00:30"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "teamstats.seekpoint",
+    "fields": {
+      "video": 1,
+      "description": "2-0 Jari Litmanen",
+      "time": "00:01:23"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "teamstats.seekpoint",
+    "fields": {
+      "video": 1,
+      "description": "3-0 Chuck Norris (Jari Litmanen)",
+      "time": "00:01:55"
     }
   }
 ]

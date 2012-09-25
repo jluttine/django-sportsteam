@@ -16,7 +16,8 @@
 
 from django.db import models
 
-from sportsteam import settings
+from django.conf import settings
+#from sportsteam import settings
 
 class Player(models.Model):
     id = models.CharField(max_length=60, primary_key=True)
@@ -120,16 +121,33 @@ class EnrolledPlayer(models.Model):
 
 class Video(models.Model):
     match = models.ForeignKey(Match)
-    filename = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),recursive=True,blank=False,null=False)
+    mp4 = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
+                               match=".*\.mp4$",
+                               recursive=True,
+                               blank=False,
+                               null=False)
+    ogg = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
+                               match=".*\.ogg$",
+                               recursive=True,
+                               blank=False,
+                               null=False)
+    ## filename = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
+    ##                            recursive=True,
+    ##                            blank=False,
+    ##                            null=False)
     title = models.CharField(max_length=30)
     part = models.IntegerField()
 
     class Meta:
         ordering = ('match__date', 'part',)
 
-    def url(self):
-        path = self._meta.get_field('filename').path
-        return settings.MEDIA_URL + 'videos' + self.filename.replace(path, '', 1)
+    def url_mp4(self):
+        path = self._meta.get_field('mp4').path
+        return settings.MEDIA_URL + 'videos' + self.mp4.replace(path, '', 1)
+
+    def url_ogg(self):
+        path = self._meta.get_field('ogg').path
+        return settings.MEDIA_URL + 'videos' + self.ogg.replace(path, '', 1)
 
     def __unicode__(self):
         return unicode(self.match) + " - " + self.title

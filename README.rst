@@ -45,7 +45,13 @@ In ``/etc/apache2/httpd.conf``, add, for instance::
 
 
 Check that your ``django-sportsteam`` folder, sub-folders and all
-parent folders have read-access for apache.
+parent folders have read-access for apache.  Also, apache must have
+write-access to the database.  If using Sqlite3, also the parent
+directory of the database must be writeable, therefore::
+
+   chgrp www-data sportsteam/sportsteam.sqlite
+   chmod g+w sportsteam/sportsteam.sqlite
+   chgrp www-data sportsteam
 
 
 License and copyright
@@ -55,8 +61,8 @@ An example video ``sportsteam/media/videos/example.mp4`` is licensed
 under CC-BY.  The video by JKJFHD44 was downloaded from
 http://www.youtube.com/watch?v=kM6eFMkzQIw.
 
-For everything else applies the copyright and license conditions as
-described below.
+For everything else applies the copyright and AGPLv3 license
+conditions as described below.
 
 Copyright (C) 2011,2012 Jaakko Luttinen jaakko.luttinen@iki.fi
 

@@ -186,6 +186,12 @@ def show_match(request,
 
         video_list = video_class.objects.filter(match=match)
         for video in video_list:
+            #video.mp4 = unicode(video.url)[:-4] + '.mp4'
+            #video.ogg = unicode(video.url)[:-4] + '.ogg'
+            #video.mp4 = video.url
+            #video.ogg = video.url
+            #video.mp4 = video.url[:-4] + '.mp4'
+            #video.ogg = video.url[:-4] + '.ogg'
             video.seekpoint_list = seekpoint_class.objects.filter(video=video)
 
         match.goals = get_match_goals(match)
