@@ -33,17 +33,17 @@ from django.conf import settings
 from teamstats.models import *
 
 def index(request,
-          season_class=Season,
+          league_class=League,
           template_name='teamstats/index.html'):
     '''
     View for the main page.
     '''
-    season_list = season_class.objects.all()
+    context = {
+        'league_list': league_class.objects.all(),
+        'team_name':   settings.TEAM_NAME,
+        }
     return render_to_response(template_name,
-                              {
-                                  'season_list': season_list,
-                                  'team_name': settings.TEAM_NAME,
-                              })
+                              context)
 
 def get_match_goals(match):
     if match.opponent_goals is not None:
@@ -60,6 +60,7 @@ def get_match_goals(match):
 def show_season(request, 
                 season_id,
                 season_class=Season,
+                league_class=League,
                 seasonplayer_class=SeasonPlayer,
                 enrolledplayer_class=EnrolledPlayer,
                 match_class=Match,
@@ -92,7 +93,7 @@ def show_season(request,
             else:
                 player.ppg = 0.0
 
-        season_list = season_class.objects.all()
+                #season_list = season_class.objects.all()
 
         # TODO: Show opponent own goals!
 
@@ -119,14 +120,15 @@ def show_season(request,
                 match.unknown_players = sorted(unknown, 
                                                key=lambda player: player.player.shortname())
 
+        context = {
+            'season':      season,
+            'league_list': league_class.objects.all(),
+            'match_list':  match_list,
+            'player_list': player_list,
+            'team_name':   settings.TEAM_NAME,
+            }
         return render_to_response(template_name,
-                                  {
-                                      'season': season,
-                                      'season_list': season_list,
-                                      'match_list': match_list,
-                                      'player_list': player_list,
-                                      'team_name': settings.TEAM_NAME,
-                                  })
+                                  context)
 
     except Season.DoesNotExist:
         return HttpResponse("Kautta ei olemassa.")
@@ -134,7 +136,7 @@ def show_season(request,
 
 def show_all_players(request,
                      player_class=Player,
-                     season_class=Season,
+                     league_class=League,
                      matchplayer_class=MatchPlayer,
                      template_name='teamstats/show_all_players.html'):
 
@@ -161,20 +163,19 @@ def show_all_players(request,
         else:
             player.ppg = 0.0
 
-    # Get all seasons
-    season_list = season_class.objects.all()
+    context = {
+        'player_list': player_list,
+        'league_list': league_class.objects.all(),
+        'team_name': settings.TEAM_NAME,
+        }
 
     return render_to_response(template_name,
-                              {
-                                  'player_list': player_list,
-                                  'season_list': season_list,
-                                  'team_name': settings.TEAM_NAME,
-                              })
+                              context)
 
 def show_match(request,
                match_id,
                match_class=Match,
-               season_class=Season,
+               league_class=League,
                video_class=Video,
                seekpoint_class=SeekPoint,
                enrolledplayer_class=EnrolledPlayer,
@@ -192,8 +193,6 @@ def show_match(request,
     try:
         match = match_class.objects.get(pk=match_id)
 
-        season_list = season_class.objects.all()
-
         video_list = video_class.objects.filter(match=match)
         for video in video_list:
             #video.mp4 = unicode(video.url)[:-4] + '.mp4'
@@ -206,6 +205,7 @@ def show_match(request,
 
         match.goals = get_match_goals(match)
         result = (match.goals != None)
+        match.played = result
 
         if result:
             # Print the result
@@ -213,15 +213,16 @@ def show_match(request,
             for player in player_list:
                 player.points = player.goals + player.assists
 
+            context = {
+                'match':       match,
+                'player_list': player_list,
+                'video_list':  video_list,
+                'league_list': league_class.objects.all(),
+                'team_name':   settings.TEAM_NAME,
+                }
             return render(request,
                           result_template_name,
-                          {
-                              'match': match,
-                              'player_list': player_list,
-                              'video_list': video_list,
-                              'season_list': season_list,
-                              'team_name': settings.TEAM_NAME,
-                          })
+                          context)
         else:
             # Match not played yet, show match enrollments
             
@@ -251,6 +252,7 @@ def show_match(request,
             # Show in/out stats
             players = seasonplayer_class.objects.filter(season=match.season,
                                                         passive=False).order_by('player')
+            # TODO: Use related_names and then just match.enrolledplayers
             enrollments = enrolledplayer_class.objects.filter(match=match).order_by('player__player')
             ind = 0
             for player in players:
@@ -264,14 +266,15 @@ def show_match(request,
                     player.choice = 3
             players = sorted(players, key=lambda player: player.choice)
 
+            context = {
+                'players':     players,
+                'match':       match,
+                'league_list': league_class.objects.all(),
+                'team_name':   settings.TEAM_NAME,
+                }
             return render(request,
                           registration_template_name,
-                          {
-                              'players': players,
-                              'match': match,
-                              'season_list': season_list,
-                              'team_name': settings.TEAM_NAME,
-                          })
+                          context)
 
     except match_class.DoesNotExist:
         return HttpResponse("Ottelua ei olemassa.")
@@ -282,8 +285,9 @@ def show_player(request,
                 match_class=Match,
                 matchplayer_class=MatchPlayer,
                 enrolledplayer_class=EnrolledPlayer,
-                seasonplayer_class=SeasonPlayer,
                 season_class=Season,
+                seasonplayer_class=SeasonPlayer,
+                league_class=League,
                 template_name='teamstats/show_player.html'):
 
     '''
@@ -321,6 +325,7 @@ def show_player(request,
         except (KeyError, match_class.DoesNotExist):
             pass
 
+        # TODO: Use related_names and remove this!
         season_list = season_class.objects.all()
 
         total_games = 0
@@ -328,6 +333,7 @@ def show_player(request,
         total_assists = 0
         total_points = 0
 
+        # TODO: Use related_names to get the code cleaner!
         seasonplayer_list = []
         for season in season_list:
             try:
@@ -411,14 +417,15 @@ def show_player(request,
         else:
             player.ppg = 0.0
 
+        context = {
+            'player':            player,
+            'seasonplayer_list': seasonplayer_list,
+            'league_list':       league_class.objects.all(),
+            'team_name':         settings.TEAM_NAME,
+            }
         return render(request,
                       template_name,
-                      {
-                          'player': player,
-                          'seasonplayer_list': seasonplayer_list,
-                          'season_list': season_list,
-                          'team_name': settings.TEAM_NAME,
-                      })
+                      context)
     except player_class.DoesNotExist:
         return HttpResponse("Pelaajaa ei olemassa.")
 

@@ -10,30 +10,57 @@
 </head>
 
 <body>
+
   <header>
     {% block header %}
     {% endblock %}
   </header>
+
   <nav>
     {% block nav %}
-      <a href="{% url teamstats.views.index %}">[Etusivu]</a>
-      <a href="{% url teamstats.views.show_all_players %}">[Pelaajat]</a> 
-      {% for season in season_list %}
-	<a href="{% url teamstats.views.show_season season.id %}">[{{ season }}]</a>
-      {% endfor %}
+      <ul>
+        <li>
+          <a href="{% url teamstats.views.index %}">
+            Etusivu
+          </a>
+        </li>
+        <li>
+          <a href="{% url teamstats.views.show_all_players %}">
+            Pelaajat
+          </a> 
+        </li>
+        {% for league in league_list %}
+          <li>
+            {{ league }}
+            <ul>
+              {% for season in league.seasons.all %}
+                <li>
+                  <a href="{% url teamstats.views.show_season season.id %}">
+                    {{ season.year }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% endfor %}
+      </ul>
     {% endblock %}
   </nav>
+
   <section>
     {% block content %}
     {% endblock %}
   </section>
+
   <aside>
     {% block aside %}
     {% endblock %}
   </aside>
+
   <footer>
     {% block footer %}
     {% endblock %}
   </footer>
+
 </body>
 </html>

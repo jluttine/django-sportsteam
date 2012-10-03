@@ -3,12 +3,12 @@
     <h1>
         {% if match.home %}
             {{ team_name }} - {{ match.opponent }}
-            {% if result %}
+            {% if match.played %}
 	        {{ match.goals }} - {{ match.opponent_goals }}
 	    {% endif %}
 	{% else %}
 	    {{ match.opponent }} - {{ team_name }}
-            {% if result %}
+            {% if match.played %}
 	        {{ match.opponent_goals }} - {{ match.goals }}
 	    {% endif %}
 	{% endif %}

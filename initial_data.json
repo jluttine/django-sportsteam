@@ -213,6 +213,20 @@
     }
   },
   {
+    "pk": 5,
+    "model": "teamstats.match",
+    "fields": {
+      "comment": "",
+      "season": "sl2012",
+      "opponent_goals": 0,
+      "field": 1,
+      "date": "2012-10-04 01:25:05",
+      "home": false,
+      "opponent_owngoals": 0,
+      "opponent": "Debug"
+    }
+  },
+  {
     "pk": 1,
     "model": "teamstats.match",
     "fields": {
@@ -274,6 +288,26 @@
       "assists": 0,
       "goals": 0,
       "match": 2
+    }
+  },
+  {
+    "pk": 15,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 3,
+      "assists": 0,
+      "goals": 0,
+      "match": 5
+    }
+  },
+  {
+    "pk": 16,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 1,
+      "assists": 0,
+      "goals": 0,
+      "match": 5
     }
   },
   {

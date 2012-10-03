@@ -50,7 +50,8 @@ class League(models.Model):
 
 class Season(models.Model):
     id = models.CharField(max_length=60, primary_key=True)
-    league = models.ForeignKey(League)
+    league = models.ForeignKey(League,
+                               related_name='seasons')
     year = models.CharField(max_length=60)
     url = models.URLField(blank=True,null=True)
     comment = models.TextField(blank=True,null=True)
