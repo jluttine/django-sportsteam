@@ -1,0 +1,81 @@
+<script type="text/javascript">
+
+  function disableFields(player, disable)
+  { 
+    document.getElementById('edit_button-'+player).disabled = !disable;
+    document.getElementById('save_button-'+player).disabled = disable;
+    document.getElementById('cancel_button-'+player).disabled = disable;
+    document.getElementById('in_radio-'+player).disabled = disable;
+    document.getElementById('out_radio-'+player).disabled = disable;
+    document.getElementById('na_radio-'+player).disabled = disable;
+    if (disable) {
+      document.getElementById('fields-'+player).style.visibility = 'hidden';
+      document.getElementById('edit-'+player).style.visibility = 'visible';
+    }
+    else {
+      document.getElementById('edit-'+player).style.visibility = 'hidden';
+      document.getElementById('fields-'+player).style.visibility = 'visible';
+    }
+  }
+
+  function disableAllFields(disable)
+  {
+    for (var id in choice) {
+      // use hasOwnProperty to filter out keys from the Object.prototype
+      if (choice.hasOwnProperty(id)) {
+        disableFields(id, disable);
+      }
+    }    
+  }
+
+  function editChoice(player)
+  { 
+    cancelAllChoice();
+    //disableAllFields(true);
+    disableFields(player, false);
+  }
+  
+  function saveChoice(player)
+  {
+    disableFields(player, true);
+    if (document.getElementById('in_radio-'+player).checked) {
+      document.getElementById('name-'+player).class = 'choice1';
+      choice[player] = 1;
+    }
+    if (document.getElementById('out_radio-'+player).checked) {
+      document.getElementById('name-'+player).class = 'choice2';
+      choice[player] = 2;
+    }
+    if (document.getElementById('na_radio-'+player).checked) {
+      document.getElementById('name-'+player).class = 'choice3';
+      choice[player] = 3;
+    }
+  }
+
+  function cancelChoice(player)
+  { 
+    if (choice[player] == 1) {
+      document.getElementById('in_radio-'+player).checked = true;
+    }
+    if (choice[player] == 2) {
+      document.getElementById('out_radio-'+player).checked = true;
+    }
+    if (choice[player] == 3) {
+      document.getElementById('na_radio-'+player).checked = true;
+    }
+    disableFields(player, true);
+  }
+
+  function cancelAllChoice()
+  {
+    for (var id in choice) {
+      // use hasOwnProperty to filter out keys from the Object.prototype
+      if (choice.hasOwnProperty(id)) {
+        cancelChoice(id);
+      }
+    }    
+  }
+
+  window.onload = function(){disableAllFields(true)};
+
+</script>

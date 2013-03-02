@@ -1,0 +1,86 @@
+{% extends "teamstats/base_season.html" %}
+
+{% block content %}
+
+  {% include "teamstats/header_match.html" %}
+
+  <script type="text/javascript" src="tablesort.js"></script>
+
+  <script language="javascript">
+    choice = {}
+    {% for player in players %}
+      choice["{{ player.id }}"] = {{ player.choice }};
+    {% endfor %}
+  </script>
+
+  {% include "teamstats/registration_functions.html" %}
+
+  {# Show total number of enrolled players #}
+  Enrollment: 
+  {% regroup players by choice as choice_list %}
+  {% for choice in choice_list %}
+    <span class="choice{{ choice.grouper }}">
+      {% if choice.grouper == 1 %}
+        IN:
+      {% endif %}
+      {% if choice.grouper == 2 %}
+        OUT:
+      {% endif %}
+      {% if choice.grouper == 3 %}
+        ?:
+      {% endif %}
+      {{ choice.list|length }}
+    </span>
+  {% endfor %}
+
+  {% for player in player_list %}
+    {{ player.player }} {{ player.enroll }} {{ player.enroll.enroll }} <br />
+
+  {% endfor %}
+
+  <table>
+    <thead>
+      <tr>
+        <th class="stringdesc center">
+          in/out
+        </th>
+        <th class="numericasc center">
+          #
+        </th>
+        <th class="stringasc left">
+          Nimi
+        </th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+
+      {% for player in players %}
+        <tr>
+          <td class="choice{{ player.choice }} center">
+            {% ifequal player.choice 1 %}IN{% endifequal %}
+            {% ifequal player.choice 2 %}OUT{% endifequal %}
+            {% ifequal player.choice 3 %}?{% endifequal %}
+          </td>
+          <td class="choice{{ player.choice }} center">
+            {{ player.number }}
+          </td>
+          <td class="choice{{ player.choice }} left">
+            <a href="{% url teamstats.views.show_player player.player.id %}">
+              {{ player.player }}
+            </a>
+          </td>
+          <td>
+            {% with player.id as id %}
+              {% include "teamstats/registration_buttons.html" %}
+            {% endwith %}
+          </td>
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+{% endblock %}

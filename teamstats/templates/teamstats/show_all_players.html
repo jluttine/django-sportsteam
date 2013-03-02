@@ -1,0 +1,67 @@
+{% extends "teamstats/base_season.html" %}
+
+
+{% block content %}
+
+<h1>
+  Pelaajat
+</h1>
+
+  {% load static %}
+  <script type="text/javascript" src="{% get_static_prefix %}tablesort.js"></script> 
+
+  <table>
+
+    <thead>
+      <tr>
+        <th class="stringasc left">
+          Nimi
+        </th>
+        <th class="numericdesc center">
+          Ottelut
+        </th>
+        <th class="numericdesc center">
+          Maalit
+        </th>
+        <th class="numericdesc center">
+          Syötöt
+        </th>
+        <th class="numericdesc center">
+          Pisteet
+        </th>
+        <th class="numericdesc center">
+          PPG
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for player in player_list %}
+        <tr>
+	  <td class="left">
+            <a href="{% url teamstats.views.show_player player.id %}">
+              {{ player }}
+            </a>
+          </td>
+	  <td class="center">
+            {{ player.games }}
+          </td>
+	  <td class="center">
+            {{ player.goals }}
+          </td>
+	  <td class="center">
+            {{ player.assists }}
+          </td>
+	  <td class="center">
+            {{ player.points }}
+          </td>
+	  <td class="center">
+            {{ player.ppg|floatformat:2 }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+{% endblock %}

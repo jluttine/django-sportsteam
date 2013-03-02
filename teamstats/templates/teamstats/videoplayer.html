@@ -1,0 +1,74 @@
+	
+<div id="video-div">
+
+<!-- The block for the video player -->
+<div id="videoplayer-div">
+<video id="video" width="640" controls preload="none">
+    <source id="webmSource" src="{{ video_list.0.url_webm }}" type="video/webm">
+    <source id="oggSource" src="{{ video_list.0.url_ogg }}" type="video/ogg">
+    <source id="mp4Source" src="{{ video_list.0.url_mp4 }}" type="video/mp4">
+    Your browser does not support the video tag.
+</video> 
+</div>
+
+<div id="videoseek-div">
+{% for video in video_list %}
+  <a href="javascript:run({{ forloop.counter0 }},0);">{{ video.title }}</a>
+  <table>
+    {% for seekpoint in video.seekpoint_list %}
+      <tr>
+        <td align="right">
+          <a href="javascript:run({{ forloop.parentloop.counter0 }}, {{ seekpoint.seconds }})">
+            {{ seekpoint.minuteseconds }}
+          </a>
+        </td> 
+        <td>{{ seekpoint.description }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endfor %}
+</div>
+
+</div>
+
+<script type="text/javascript">
+  var video = document.getElementById("video");
+  var currentTime = 0;
+  var current = -1;
+
+  var tracks = [
+    {% for video in video_list %}
+    ["{{ video.url_webm }}",
+     "{{ video.url_ogg }}",
+     "{{ video.url_mp4 }}"],
+    {% endfor %}
+  ];
+
+  webmVideo = document.getElementById("webmSource");
+  oggVideo = document.getElementById("oggSource");
+  mp4Video = document.getElementById("mp4Source");
+
+  video.addEventListener("loadeddata", 
+    function() {
+      video.currentTime = currentTime;
+    });
+
+  function run(index, seektime) {
+    if (index != current) {
+      // Change video track (seeking will be done in loadeddata-event).
+      //webmVideo.src = "http://nipsu.dyndns.org/sintel.webm";
+      webmVideo.src = tracks[index][0];
+      oggVideo.src = tracks[index][1];
+      mp4Video.src = tracks[index][2];
+      video.load();
+      current = index;
+    }
+    else {
+      // Just seek the current video track
+      video.currentTime = seektime;
+    }
+    video.play();
+    currentTime = seektime;
+  };
+</script>
+

@@ -1,0 +1,398 @@
+[
+  {
+    "pk": "george.bush",
+    "model": "teamstats.player",
+    "fields": {
+      "lastname": "Bush",
+      "nickname": "",
+      "email": "",
+      "firstname": "George"
+    }
+  },
+  {
+    "pk": "muhammed.li",
+    "model": "teamstats.player",
+    "fields": {
+      "lastname": "Li",
+      "nickname": "",
+      "email": "",
+      "firstname": "Muhammed"
+    }
+  },
+  {
+    "pk": "jari.litmanen",
+    "model": "teamstats.player",
+    "fields": {
+      "lastname": "Litmanen",
+      "nickname": "",
+      "email": "",
+      "firstname": "Jari"
+    }
+  },
+  {
+    "pk": "chuck.norris",
+    "model": "teamstats.player",
+    "fields": {
+      "lastname": "Norris",
+      "nickname": "",
+      "email": "",
+      "firstname": "Chuck"
+    }
+  },
+  {
+    "pk": "john.smith",
+    "model": "teamstats.player",
+    "fields": {
+      "lastname": "Smith",
+      "nickname": "",
+      "email": "",
+      "firstname": "John"
+    }
+  },
+  {
+    "pk": "FL",
+    "model": "teamstats.league",
+    "fields": {
+      "description": "Fantasy League"
+    }
+  },
+  {
+    "pk": "SL",
+    "model": "teamstats.league",
+    "fields": {
+      "description": "Soccer League"
+    }
+  },
+  {
+    "pk": "sl2012",
+    "model": "teamstats.season",
+    "fields": {
+      "url": "",
+      "league": "SL",
+      "comment": "",
+      "year": "2012-2013"
+    }
+  },
+  {
+    "pk": "fl2012",
+    "model": "teamstats.season",
+    "fields": {
+      "url": "",
+      "league": "FL",
+      "comment": "",
+      "year": "2012"
+    }
+  },
+  {
+    "pk": "fl2011",
+    "model": "teamstats.season",
+    "fields": {
+      "url": "",
+      "league": "FL",
+      "comment": "",
+      "year": "2011"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "teamstats.seasonplayer",
+    "fields": {
+      "passive": false,
+      "season": "fl2011",
+      "number": 1,
+      "player": "chuck.norris"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "teamstats.seasonplayer",
+    "fields": {
+      "passive": false,
+      "season": "sl2012",
+      "number": 10,
+      "player": "jari.litmanen"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "teamstats.seasonplayer",
+    "fields": {
+      "passive": false,
+      "season": "fl2012",
+      "number": 10,
+      "player": "jari.litmanen"
+    }
+  },
+  {
+    "pk": 7,
+    "model": "teamstats.seasonplayer",
+    "fields": {
+      "passive": false,
+      "season": "fl2011",
+      "number": 10,
+      "player": "jari.litmanen"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "teamstats.seasonplayer",
+    "fields": {
+      "passive": false,
+      "season": "sl2012",
+      "number": 42,
+      "player": "john.smith"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "teamstats.seasonplayer",
+    "fields": {
+      "passive": false,
+      "season": "fl2012",
+      "number": 99,
+      "player": "muhammed.li"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.seasonplayer",
+    "fields": {
+      "passive": false,
+      "season": "sl2012",
+      "number": 666,
+      "player": "george.bush"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.field",
+    "fields": {
+      "name": "Paradise Field"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "teamstats.match",
+    "fields": {
+      "comment": "",
+      "season": "fl2011",
+      "opponent_goals": 0,
+      "field": 1,
+      "date": "2011-05-15 15:00:00",
+      "home": true,
+      "opponent_owngoals": 0,
+      "opponent": "Liverpool"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "teamstats.match",
+    "fields": {
+      "comment": "",
+      "season": "fl2012",
+      "opponent_goals": null,
+      "field": 1,
+      "date": "2012-07-12 13:37:00",
+      "home": false,
+      "opponent_owngoals": 0,
+      "opponent": "FC Lahti"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "teamstats.match",
+    "fields": {
+      "comment": "",
+      "season": "sl2012",
+      "opponent_goals": 1,
+      "field": 1,
+      "date": "2012-09-25 20:00:00",
+      "home": true,
+      "opponent_owngoals": 0,
+      "opponent": "FC Barcelona"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "teamstats.match",
+    "fields": {
+      "comment": "",
+      "season": "sl2012",
+      "opponent_goals": null,
+      "field": 1,
+      "date": "2012-11-13 03:20:14",
+      "home": false,
+      "opponent_owngoals": 0,
+      "opponent": "testi"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.match",
+    "fields": {
+      "comment": "",
+      "season": "sl2012",
+      "opponent_goals": null,
+      "field": 1,
+      "date": "2012-11-18 21:00:00",
+      "home": false,
+      "opponent_owngoals": 0,
+      "opponent": "Real Madrid"
+    }
+  },
+  {
+    "pk": 13,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 6,
+      "assists": 0,
+      "goals": 2,
+      "match": 4
+    }
+  },
+  {
+    "pk": 14,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 7,
+      "assists": 2,
+      "goals": 1,
+      "match": 4
+    }
+  },
+  {
+    "pk": 8,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 2,
+      "assists": 1,
+      "goals": 0,
+      "match": 2
+    }
+  },
+  {
+    "pk": 9,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 3,
+      "assists": 0,
+      "goals": 1,
+      "match": 2
+    }
+  },
+  {
+    "pk": 10,
+    "model": "teamstats.matchplayer",
+    "fields": {
+      "player": 1,
+      "assists": 0,
+      "goals": 0,
+      "match": 2
+    }
+  },
+  {
+    "pk": 2,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 1,
+      "enroll": false,
+      "match": 1
+    }
+  },
+  {
+    "pk": 3,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 5,
+      "enroll": true,
+      "match": 3
+    }
+  },
+  {
+    "pk": 4,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 2,
+      "enroll": true,
+      "match": 1
+    }
+  },
+  {
+    "pk": 7,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 1,
+      "enroll": false,
+      "match": 5
+    }
+  },
+  {
+    "pk": 8,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 2,
+      "enroll": false,
+      "match": 5
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.video",
+    "fields": {
+      "mp4": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.mp4",
+      "part": 1,
+      "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.ogv",
+      "webm": "",
+      "match": 4,
+      "title": "Highlights"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "teamstats.video",
+    "fields": {
+      "mp4": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example2.mp4",
+      "part": 2,
+      "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/bunny.ogv",
+      "webm": "",
+      "match": 4,
+      "title": "Highlight part 2"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "teamstats.seekpoint",
+    "fields": {
+      "video": 2,
+      "description": "First seek point",
+      "time": "00:00:05"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "teamstats.seekpoint",
+    "fields": {
+      "video": 1,
+      "description": "1-0 Chuck Norris (Jari Litmanen)",
+      "time": "00:00:30"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "teamstats.seekpoint",
+    "fields": {
+      "video": 1,
+      "description": "2-0 Jari Litmanen",
+      "time": "00:01:23"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "teamstats.seekpoint",
+    "fields": {
+      "video": 1,
+      "description": "3-0 Chuck Norris (Jari Litmanen)",
+      "time": "00:01:55"
+    }
+  }
+]

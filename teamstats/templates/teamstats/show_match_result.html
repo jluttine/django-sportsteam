@@ -1,0 +1,90 @@
+{% extends "teamstats/base_season.html" %}
+
+{% block content %}
+
+
+  {% include "teamstats/header_match.html" %}
+
+  {% if video_list %}
+    {% include "teamstats/videoplayer.html" %}
+  {% endif %}
+
+  {% load static %}
+  <script type="text/javascript" src="{% get_static_prefix %}tablesort.js"></script>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th class="numericasc right">
+          #
+        </th>
+        <th class="stringasc left">
+          Nimi
+        </th>
+        <th class="numericdesc center">
+          Maalit
+        </th>
+        <th></th>
+        <th class="numericdesc center">
+          Syötöt
+        </th>
+        <th></th>
+        <th class="numericdesc center">
+          Pisteet
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for player in player_list %}
+        <tr>
+	  <td class="right">
+            {{ player.player.number }}
+          </td>
+	  <td class="left">
+            <a href="{% url teamstats.views.show_player player.player.player.id %}">
+              {{ player.player.player }}
+            </a>
+          </td>
+	  <td class="center">
+            {{ player.goals }}
+          </td>
+	  <td>
+            +
+          </td>
+	  <td class="center">
+            {{ player.assists }}
+          </td>
+	  <td>
+            =
+          </td>
+	  <td class="center">
+            {{ player.points }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+    {% if match.opponent_owngoals %}
+      <tfoot>
+        <tr>
+	  <td></td>
+	  <td class="left">
+            Omat maalit
+          </td>
+	  <td class="center">
+            {{ match.opponent_owngoals }}
+          </td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+	  <td></td>
+        </tr>
+      </tfoot>
+    {% endif %}
+
+  </table>
+
+
+{% endblock %}
