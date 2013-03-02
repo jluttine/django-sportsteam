@@ -130,7 +130,7 @@
           {% if not match.result %}
           <td class="registrations">
             <span class="choice1">
-              IN:
+              IN ({{ match.in_players|length }}):
               {% for player in match.in_players %}
                 <a href="{% url teamstats.views.show_player player.player.player.id %}">
                   {{ player.player.player.shortname }}
@@ -138,7 +138,7 @@
               {% endfor %}
             </span>
             <span class="choice2">
-              OUT:
+              OUT ({{ match.out_players|length }}):
               {% for player in match.out_players %}
                 <a href="{% url teamstats.views.show_player player.player.player.id %}">
                   {{ player.player.player.shortname }}
@@ -146,7 +146,7 @@
                 {% endfor %}
             </span>
             <span class="choice3">
-              ?:
+              ? ({{ match.unknown_players|length }}):
               {% for player in match.unknown_players %}
                 <a href="{% url teamstats.views.show_player player.player.id %}">
                   {{ player.player.shortname }}

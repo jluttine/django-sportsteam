@@ -218,12 +218,12 @@
     "fields": {
       "comment": "",
       "season": "sl2012",
-      "opponent_goals": 0,
+      "opponent_goals": null,
       "field": 1,
-      "date": "2012-10-04 01:25:05",
+      "date": "2012-11-13 03:20:14",
       "home": false,
       "opponent_owngoals": 0,
-      "opponent": "Debug"
+      "opponent": "testi"
     }
   },
   {
@@ -291,35 +291,6 @@
     }
   },
   {
-    "pk": 15,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 3,
-      "assists": 0,
-      "goals": 0,
-      "match": 5
-    }
-  },
-  {
-    "pk": 16,
-    "model": "teamstats.matchplayer",
-    "fields": {
-      "player": 1,
-      "assists": 0,
-      "goals": 0,
-      "match": 5
-    }
-  },
-  {
-    "pk": 1,
-    "model": "teamstats.enrolledplayer",
-    "fields": {
-      "player": 2,
-      "enroll": true,
-      "match": 1
-    }
-  },
-  {
     "pk": 2,
     "model": "teamstats.enrolledplayer",
     "fields": {
@@ -338,14 +309,63 @@
     }
   },
   {
+    "pk": 4,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 2,
+      "enroll": true,
+      "match": 1
+    }
+  },
+  {
+    "pk": 7,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 1,
+      "enroll": false,
+      "match": 5
+    }
+  },
+  {
+    "pk": 8,
+    "model": "teamstats.enrolledplayer",
+    "fields": {
+      "player": 2,
+      "enroll": false,
+      "match": 5
+    }
+  },
+  {
     "pk": 1,
     "model": "teamstats.video",
     "fields": {
       "mp4": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.mp4",
       "part": 1,
       "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example.ogv",
+      "webm": "",
       "match": 4,
       "title": "Highlights"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "teamstats.video",
+    "fields": {
+      "mp4": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/example2.mp4",
+      "part": 2,
+      "ogg": "/home/jluttine/workspace/django-sportsteam/sportsteam/media/videos/bunny.ogv",
+      "webm": "",
+      "match": 4,
+      "title": "Highlight part 2"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "teamstats.seekpoint",
+    "fields": {
+      "video": 2,
+      "description": "First seek point",
+      "time": "00:00:05"
     }
   },
   {

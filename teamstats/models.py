@@ -125,17 +125,18 @@ class Video(models.Model):
     mp4 = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
                                match=".*\.mp4$",
                                recursive=True,
-                               blank=False,
-                               null=False)
+                               blank=True,
+                               null=True)
     ogg = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
                                match=".*\.ogv$",
                                recursive=True,
-                               blank=False,
-                               null=False)
-    ## filename = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
-    ##                            recursive=True,
-    ##                            blank=False,
-    ##                            null=False)
+                               blank=True,
+                               null=True) 
+    webm = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
+                                match=".*\.webm$",
+                                recursive=True,
+                                blank=True,
+                                null=True) 
     title = models.CharField(max_length=30)
     part = models.IntegerField()
 
@@ -149,6 +150,10 @@ class Video(models.Model):
     def url_ogg(self):
         path = self._meta.get_field('ogg').path
         return settings.MEDIA_URL + 'videos' + self.ogg.replace(path, '', 1)
+
+    def url_webm(self):
+        path = self._meta.get_field('webm').path
+        return settings.MEDIA_URL + 'videos' + self.webm.replace(path, '', 1)
 
     def __unicode__(self):
         return unicode(self.match) + " - " + self.title

@@ -25,7 +25,7 @@ from __future__ import division
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.core.urlresolvers import reverse
 from itertools import chain
 from django.conf import settings
@@ -264,10 +264,27 @@ def show_match(request,
                     ind = ind + 1
                 else:
                     player.choice = 3
+
             players = sorted(players, key=lambda player: player.choice)
+
+            # Get season players
+            player_list = seasonplayer_class.objects.filter(season=match.season).order_by('player')
+            # Get the enroll status of each player
+            for player in player_list:
+                try:
+                    player.enroll = player.enrolledplayer_set.get(match=match)
+                except enrolledplayer_class.DoesNotExist:
+                    player.enroll = None
+            # Sort by enroll status
+            player_list = sorted(player_list,
+                                 key=lambda player: -1 if player.enroll is None else player.enroll.enroll)
+            # Remove not-enrolled players that are passive
+
+            # Compute counts (in/?/out/-)
 
             context = {
                 'players':     players,
+                'player_list': player_list,
                 'match':       match,
                 'league_list': league_class.objects.all(),
                 'team_name':   settings.TEAM_NAME,
