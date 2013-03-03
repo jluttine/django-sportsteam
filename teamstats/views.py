@@ -133,23 +133,8 @@ def show_season(request,
                                                           enrolledplayer_class=enrolledplayer_class)
                 match.player_list = sorted(match.player_list, 
                                            key=lambda player: player.player.shortname())
-
-                ## # Get enrollments: 1) IN, 2) OUT, 3) Unknown
-                ## enrolledplayers = enrolledplayer_class.objects.filter(match=match)
-                ## match.in_players = enrolledplayers.filter(enroll=True)
-                ## match.in_players = sorted(match.in_players, 
-                ##                           key=lambda player: player.player.player.shortname())
-                ## match.out_players = enrolledplayers.filter(enroll=False)
-                ## match.out_players = sorted(match.out_players, 
-                ##                            key=lambda player: player.player.player.shortname())
-                ## unknown = list()
-                ## for seasonplayer in SeasonPlayer.objects.filter(season=season,
-                ##                                                 passive=False):
-                ##     # TODO: In future Djangos, use .exists() !!
-                ##     if not enrolledplayers.filter(player=seasonplayer):
-                ##         unknown.append(seasonplayer)
-                ## match.unknown_players = sorted(unknown, 
-                ##                                key=lambda player: player.player.shortname())
+                match.player_list = sorted(match.player_list, 
+                                           key=lambda player: player.choice)
 
         context = {
             'season':      season,
