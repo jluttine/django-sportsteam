@@ -4,7 +4,8 @@
 
   {% include "teamstats/header_match.html" %}
 
-  <script type="text/javascript" src="js/tablesort.js"></script>
+  {% load static %}
+  <script type="text/javascript" src="{% get_static_prefix %}js/tablesort.js"></script> 
 
   <script language="javascript">
     choice = {}
@@ -32,7 +33,7 @@
     </span>
   {% endfor %}
 
-  <table class="table table-condensed">
+  <table class="table-condensed">
     <thead>
       <tr>
         <th class="stringdesc center">
