@@ -120,4 +120,8 @@ try:
     execfile(path('local_settings.py'))
 except IOError:
     pass
+#try:
+#    from local_settings import *
+#except IOError:
+#    pass
 

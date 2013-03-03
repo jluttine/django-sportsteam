@@ -16,7 +16,6 @@
   {% include "teamstats/registration_functions.html" %}
 
   {# Show total number of enrolled players #}
-  Enrollment: 
   {% regroup players by choice as choice_list %}
   {% for choice in choice_list %}
     <span class="choice{{ choice.grouper }}">
@@ -31,11 +30,6 @@
       {% endif %}
       {{ choice.list|length }}
     </span>
-  {% endfor %}
-
-  {% for player in player_list %}
-    {{ player.player }} {{ player.enroll }} {{ player.enroll.enroll }} <br />
-
   {% endfor %}
 
   <table>

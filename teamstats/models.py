@@ -145,15 +145,27 @@ class Video(models.Model):
 
     def url_mp4(self):
         path = self._meta.get_field('mp4').path
-        return settings.MEDIA_URL + 'videos' + self.mp4.replace(path, '', 1)
+        if self.mp4:
+            filename = self.mp4.replace(path, '', 1)
+        else:
+            filename = ''
+        return settings.MEDIA_URL + 'videos' + filename
 
     def url_ogg(self):
         path = self._meta.get_field('ogg').path
-        return settings.MEDIA_URL + 'videos' + self.ogg.replace(path, '', 1)
+        if self.ogg:
+            filename = self.ogg.replace(path, '', 1)
+        else:
+            filename = ''
+        return settings.MEDIA_URL + 'videos' + filename
 
     def url_webm(self):
         path = self._meta.get_field('webm').path
-        return settings.MEDIA_URL + 'videos' + self.webm.replace(path, '', 1)
+        if self.webm:
+            filename = self.webm.replace(path, '', 1)
+        else:
+            filename = ''
+        return settings.MEDIA_URL + 'videos' + filename
 
     def __unicode__(self):
         return unicode(self.match) + " - " + self.title
