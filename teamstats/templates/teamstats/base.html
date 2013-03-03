@@ -5,8 +5,9 @@
   <meta charset="UTF-8">
   {% block head %}
   {% endblock %} 
-    <link rel="stylesheet" type="text/css" href="{% get_static_prefix %}css/style.css" />
     <title>{{ team_name }}</title>
+    <link href="{% get_static_prefix %}css/bootstrap.min.css" rel="stylesheet" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{% get_static_prefix %}css/style.css" />
 </head>
 
 <body>
@@ -16,36 +17,32 @@
     {% endblock %}
   </header>
 
-  <nav>
-    {% block nav %}
-      <ul>
+  <ul class="nav nav-pills">
+    <li>
+      <a href="{% url teamstats.views.index %}">
+        Etusivu
+      </a>
+    </li>
+    <li>
+      <a href="{% url teamstats.views.show_all_players %}">
+        Pelaajat
+      </a> 
+    </li>
+    {% for league in league_list %} 
+    <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+        {{ league }}<b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu">
+        {% for season in league.seasons.all %}
         <li>
-          <a href="{% url teamstats.views.index %}">
-            Etusivu
-          </a>
+          <a href="{% url teamstats.views.show_season season.id %}">{{ season.year }}</a>
         </li>
-        <li>
-          <a href="{% url teamstats.views.show_all_players %}">
-            Pelaajat
-          </a> 
-        </li>
-        {% for league in league_list %}
-          <li>
-            {{ league }}
-            <ul>
-              {% for season in league.seasons.all %}
-                <li>
-                  <a href="{% url teamstats.views.show_season season.id %}">
-                    {{ season.year }}
-                  </a>
-                </li>
-              {% endfor %}
-            </ul>
-          </li>
         {% endfor %}
       </ul>
-    {% endblock %}
-  </nav>
+    </li>
+    {% endfor %}
+  </ul>
 
   <section>
     {% block content %}
@@ -61,6 +58,9 @@
     {% block footer %}
     {% endblock %}
   </footer>
+
+  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
 
 </body>
 </html>
