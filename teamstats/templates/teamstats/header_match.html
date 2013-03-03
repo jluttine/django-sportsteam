@@ -1,5 +1,4 @@
-    <br />
-    <a href="{% url teamstats.views.show_season match.season.id %}">{{ match.season }}</a>
+
     <h1>
         {% if match.home %}
             {{ team_name }} - {{ match.opponent }}
@@ -13,9 +12,14 @@
 	    {% endif %}
 	{% endif %}
     </h1>
-    <p>{{ match.date|date:"l j.n.Y G:i"|capfirst }}</p>
-    <p>{{ match.field }}</p>
-    {% if match.comment %}
-        <p>Kommentti: {{ match.comment }}</p>
-    {% endif %}
+    <p>
+      <a href="{% url teamstats.views.show_season match.season.id %}">
+        {{ match.season }}
+      </a><br />
+      {{ match.date|date:"l j.n.Y G:i"|capfirst }}<br />
+      {{ match.field }}<br />
+      {% if match.comment %}
+      Kommentti: {{ match.comment }}<br />
+      {% endif %}
+    </p>
 

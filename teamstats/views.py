@@ -45,6 +45,31 @@ def index(request,
     return render_to_response(template_name,
                               context)
 
+def get_match_enrollments(match, 
+                          seasonplayer_class=SeasonPlayer,
+                          enrolledplayer_class=EnrolledPlayer):
+    """
+    Returns the enrollment statuses of the players.
+    """
+    # Show in/out stats
+    seasonplayers = seasonplayer_class.objects.filter(season=match.season,
+                                                      passive=False).order_by('player')
+    # TODO: Use related_names and then just match.enrolledplayers
+    enrollments = enrolledplayer_class.objects.filter(match=match).order_by('player__player')
+
+    ind = 0
+    for player in seasonplayers:
+        if ind < len(enrollments) and player.id == enrollments[ind].player.id:
+            if enrollments[ind].enroll:
+                player.choice = 1
+            else:
+                player.choice = 2
+            ind = ind + 1
+        else:
+            player.choice = 3
+
+    return seasonplayers
+    
 def get_match_goals(match):
     if match.opponent_goals is not None:
         matchplayers = MatchPlayer.objects.filter(match=match)
@@ -103,22 +128,28 @@ def show_season(request,
             match.goals = get_match_goals(match)
             match.result = (match.goals != None)
             if not match.result:
-                # Get enrollments: 1) IN, 2) OUT, 3) Unknown
-                enrolledplayers = enrolledplayer_class.objects.filter(match=match)
-                match.in_players = enrolledplayers.filter(enroll=True)
-                match.in_players = sorted(match.in_players, 
-                                          key=lambda player: player.player.player.shortname())
-                match.out_players = enrolledplayers.filter(enroll=False)
-                match.out_players = sorted(match.out_players, 
-                                           key=lambda player: player.player.player.shortname())
-                unknown = list()
-                for seasonplayer in SeasonPlayer.objects.filter(season=season,
-                                                                passive=False):
-                    # TODO: In future Djangos, use .exists() !!
-                    if not enrolledplayers.filter(player=seasonplayer):
-                        unknown.append(seasonplayer)
-                match.unknown_players = sorted(unknown, 
-                                               key=lambda player: player.player.shortname())
+                match.player_list = get_match_enrollments(match,
+                                                          seasonplayer_class=seasonplayer_class, 
+                                                          enrolledplayer_class=enrolledplayer_class)
+                match.player_list = sorted(match.player_list, 
+                                           key=lambda player: player.player.shortname())
+
+                ## # Get enrollments: 1) IN, 2) OUT, 3) Unknown
+                ## enrolledplayers = enrolledplayer_class.objects.filter(match=match)
+                ## match.in_players = enrolledplayers.filter(enroll=True)
+                ## match.in_players = sorted(match.in_players, 
+                ##                           key=lambda player: player.player.player.shortname())
+                ## match.out_players = enrolledplayers.filter(enroll=False)
+                ## match.out_players = sorted(match.out_players, 
+                ##                            key=lambda player: player.player.player.shortname())
+                ## unknown = list()
+                ## for seasonplayer in SeasonPlayer.objects.filter(season=season,
+                ##                                                 passive=False):
+                ##     # TODO: In future Djangos, use .exists() !!
+                ##     if not enrolledplayers.filter(player=seasonplayer):
+                ##         unknown.append(seasonplayer)
+                ## match.unknown_players = sorted(unknown, 
+                ##                                key=lambda player: player.player.shortname())
 
         context = {
             'season':      season,
@@ -249,42 +280,14 @@ def show_match(request,
             except (KeyError):
                 pass
 
-            # Show in/out stats
-            players = seasonplayer_class.objects.filter(season=match.season,
-                                                        passive=False).order_by('player')
-            # TODO: Use related_names and then just match.enrolledplayers
-            enrollments = enrolledplayer_class.objects.filter(match=match).order_by('player__player')
-            ind = 0
-            for player in players:
-                if ind < len(enrollments) and player.id == enrollments[ind].player.id:
-                    if enrollments[ind].enroll:
-                        player.choice = 1
-                    else:
-                        player.choice = 2
-                    ind = ind + 1
-                else:
-                    player.choice = 3
-
-            players = sorted(players, key=lambda player: player.choice)
-
-            # Get season players
-            player_list = seasonplayer_class.objects.filter(season=match.season).order_by('player')
-            # Get the enroll status of each player
-            for player in player_list:
-                try:
-                    player.enroll = player.enrolledplayer_set.get(match=match)
-                except enrolledplayer_class.DoesNotExist:
-                    player.enroll = None
-            # Sort by enroll status
-            player_list = sorted(player_list,
-                                 key=lambda player: -1 if player.enroll is None else player.enroll.enroll)
-            # Remove not-enrolled players that are passive
-
-            # Compute counts (in/?/out/-)
+            # Get a list of players with enrollment statuses
+            players = sorted(get_match_enrollments(match,
+                                                   seasonplayer_class=seasonplayer_class, 
+                                                   enrolledplayer_class=enrolledplayer_class), 
+                             key=lambda player: player.choice)
 
             context = {
-                'players':     players,
-                'player_list': player_list,
+                'player_list': players,
                 'match':       match,
                 'league_list': league_class.objects.all(),
                 'team_name':   settings.TEAM_NAME,

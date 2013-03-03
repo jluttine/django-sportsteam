@@ -45,6 +45,9 @@ class League(models.Model):
     id = models.CharField(max_length=20, primary_key=True)
     description = models.CharField(max_length=300,blank=True,null=True)
 
+    class Meta:
+        ordering = ('id',)
+
     def __unicode__(self):
         return self.id
 

@@ -8,7 +8,7 @@
 
   <script language="javascript">
     choice = {}
-    {% for player in players %}
+    {% for player in player_list %}
       choice["{{ player.id }}"] = {{ player.choice }};
     {% endfor %}
   </script>
@@ -16,7 +16,7 @@
   {% include "teamstats/registration_functions.html" %}
 
   {# Show total number of enrolled players #}
-  {% regroup players by choice as choice_list %}
+  {% regroup player_list by choice as choice_list %}
   {% for choice in choice_list %}
     <span class="choice{{ choice.grouper }}">
       {% if choice.grouper == 1 %}
@@ -50,7 +50,7 @@
     </thead>
     <tbody>
 
-      {% for player in players %}
+      {% for player in player_list %}
         <tr>
           <td class="choice{{ player.choice }} center">
             {% ifequal player.choice 1 %}IN{% endifequal %}

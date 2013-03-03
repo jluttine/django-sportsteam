@@ -128,33 +128,30 @@
 	  {% endif %}
 
           {% if not match.result %}
-          <td class="registrations">
-            <span class="choice1">
-              IN ({{ match.in_players|length }}):
-              {% for player in match.in_players %}
-                <a href="{% url teamstats.views.show_player player.player.player.id %}">
-                  {{ player.player.player.shortname }}
-                </a>
-              {% endfor %}
-            </span>
-            <span class="choice2">
-              OUT ({{ match.out_players|length }}):
-              {% for player in match.out_players %}
-                <a href="{% url teamstats.views.show_player player.player.player.id %}">
-                  {{ player.player.player.shortname }}
-                </a>
+            <td class="registrations">
+            {% regroup match.player_list by choice as choice_list %}
+            {% for choice in choice_list %}
+              <span class="choice{{ choice.grouper }}">
+                {% if choice.grouper == 1 %}
+                  IN
+                {% endif %}
+                {% if choice.grouper == 2 %}
+                  OUT
+                {% endif %}
+                {% if choice.grouper == 3 %}
+                  ?
+                {% endif %}
+                ({{ choice.list|length }}):
+                {% for player in choice.list %}
+                  <a href="{% url teamstats.views.show_player player.player.id %}">
+                    {{ player.player.shortname }}
+                  </a>
                 {% endfor %}
-            </span>
-            <span class="choice3">
-              ? ({{ match.unknown_players|length }}):
-              {% for player in match.unknown_players %}
-                <a href="{% url teamstats.views.show_player player.player.id %}">
-                  {{ player.player.shortname }}
-                </a>
-              {% endfor %}
-            </span>
-          </td>
-        {% endif %}        
+              </span>
+            {% endfor %}
+            </td>
+          {% endif %}        
+
       </tr>
     {% endfor %}
   </table>
