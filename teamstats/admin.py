@@ -43,10 +43,11 @@ class MatchAdmin(admin.ModelAdmin):
 
         self.form = MatchAddForm
         
-        return super(MatchAdmin, self).add_view(request, form_url,
-                                                extra_context)
+        return super(MatchAdmin, self).add_view(request, 
+                                                form_url=form_url,
+                                                extra_context=extra_context)
 
-    def change_view(self, request, object_id, extra_context=None):
+    def change_view(self, request, object_id, form_url='', extra_context=None):
 
         if not self.has_add_permission(request):
             raise PermissionDenied
@@ -111,7 +112,7 @@ class MatchAdmin(admin.ModelAdmin):
             'player_formset': player_formset,
         }
 
-        return super(MatchAdmin, self).change_view(request, object_id, my_context)
+        return super(MatchAdmin, self).change_view(request, object_id, form_url=form_url, extra_context=my_context)
 
     
 class SeasonAdmin(admin.ModelAdmin):
@@ -168,7 +169,7 @@ class SeasonAdmin(admin.ModelAdmin):
             #'players': players,
             'player_formset': player_formset,
         }
-        return super(SeasonAdmin, self).change_view(request, object_id, my_context)
+        return super(SeasonAdmin, self).change_view(request, object_id, extra_context=my_context)
     
 
 admin.site.register(Player)
