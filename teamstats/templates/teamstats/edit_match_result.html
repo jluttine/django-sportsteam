@@ -1,0 +1,57 @@
+{% extends "teamstats/base_season.html" %}
+
+{% block content %}
+
+<form method="post" action="">
+  {% csrf_token %}
+
+  {{ match_form }}
+
+  {{ player_formset.management_form }}
+
+   <table>
+     <thead>
+       <tr>
+         <th>#</th>
+         <th>Name</th>
+	 <th>Played?</th>
+         <th>Goals</th>
+	 <th>Assists</th>
+       </tr>
+     </thead>
+
+     <tbody>
+     {% for form in player_formset.forms %}
+        {% if form.non_field_errors %}
+          <tr>
+            <td colspan="{{ form.field_count }}">
+              {{ form.non_field_errors }}
+            </td>
+          </tr>
+        {% endif %}
+
+        <tr>
+
+        <td>{{ form.player.number }}</td>
+        <td>{{ form.player.player }}</td>
+        
+        {% for field in form %}
+          <td>
+            {{ field.errors.as_ul }}
+            {{ field }}
+          </td>
+        {% endfor %}
+
+        </tr>
+
+     {% endfor %}
+     </tbody>
+   </table>
+
+   <input type="submit" value="Save" />
+   <input name="cancel" type="submit" value="Cancel" />
+
+</form>
+
+{% endblock %}
+
