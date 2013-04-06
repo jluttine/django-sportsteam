@@ -26,12 +26,14 @@ def get_addresses(list):
         list = 'tuhlaajapojat-fmhd2012'
     if list.lower() == 'tuhlaajapojat-esport':
         list = 'tuhlaajapojat-esport2012'
+    if list.lower() == 'tuhlaajapojat-haku2':
+        list = 'tuhlaajapojat-haku22013'
     if list.lower() == 'tuhlaajapojat-hakud':
-        list = 'tuhlaajapojat-hakud2012'
+        list = 'tuhlaajapojat-hakud2013'
     if list.lower() == 'tuhlaajapojat-hakid':
         list = 'tuhlaajapojat-hakid2012'
     if list.lower() == 'tuhlaajapojat-hakim':
-        list = 'tuhlaajapojat-hakim2012'
+        list = 'tuhlaajapojat-hakim2013'
     if list.lower() == 'tuhlaajapojat-srksm':
         list = 'tuhlaajapojat-srksm2012'
 
