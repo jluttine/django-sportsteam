@@ -61,7 +61,7 @@ class Season(models.Model):
     players = models.ManyToManyField(Player, through='SeasonPlayer')
 
     class Meta:
-        ordering = ('-year', 'league__id')
+        ordering = ('-year', 'league')
 
     def __unicode__(self):
         return unicode(self.league) + " " + self.year

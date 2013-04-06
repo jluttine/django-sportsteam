@@ -112,6 +112,7 @@ INSTALLED_APPS = (
     'teamstats',
     'django.contrib.admin',
     'django.contrib.staticfiles',
+    'south',
 )
 
 # Load local settings. You can overwrite these default settings in
