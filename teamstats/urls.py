@@ -14,22 +14,36 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import *
+#from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
-
 urlpatterns = patterns('',
 
-    (r'^match/(?P<match_id>\d+)/$', 'teamstats.views.show_match'),
+    url(r'^match/(?P<match_id>\d+)/$', 
+        'teamstats.views.show_match', 
+        name="show_match"),
 
-    (r'^season/(?P<season_id>.+)/$', 'teamstats.views.show_season'),
+    url(r'^match/(?P<match_id>\d+)/edit/$',
+        'teamstats.views.edit_match_result',
+        name="edit_match_result"),
+    
+    url(r'^season/(?P<season_id>.+)/$', 
+        'teamstats.views.show_season',
+        name="show_season"),
 
-    (r'^player/$', 'teamstats.views.show_all_players'),
+    url(r'^player/$', 
+        'teamstats.views.show_all_players',
+        name="show_all_players"),
 
-    (r'^player/(?P<player_id>.+)/$', 'teamstats.views.show_player'),
+    url(r'^player/(?P<player_id>.+)/$', 
+        'teamstats.views.show_player',
+        name="show_player"),
 
-    (r'^$', 'teamstats.views.index'),
+    url(r'^$', 
+        'teamstats.views.index',
+        name="home"),
 )

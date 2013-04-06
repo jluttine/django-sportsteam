@@ -17,6 +17,7 @@
 from teamstats.models import *
 from teamstats.forms import *
 from django.contrib import admin
+from django.http import Http404
 
 class SeekPointInline(admin.TabularInline):
     model = SeekPoint
@@ -113,8 +114,129 @@ class MatchAdmin(admin.ModelAdmin):
 
         return super(MatchAdmin, self).change_view(request, object_id, my_context)
 
-    
+class SeasonPlayerInline(admin.TabularInline):
+    model = SeasonPlayer
+    #form = SeasonPlayerForm
+    #can_delete = False
+    extra = 10
+
 class SeasonAdmin(admin.ModelAdmin):
+    inlines = [SeasonPlayerInline]
+    
+
+admin.site.register(Player)
+admin.site.register(Field)
+admin.site.register(Match, MatchAdmin)
+#admin.site.register(Match, MatchResultAdmin)
+#admin.site.register(MatchPlayer)
+admin.site.register(Season, SeasonAdmin) # Custom season form
+#admin.site.register(Season)
+#admin.site.register(SeasonPlayer)
+admin.site.register(Video, VideoAdmin)
+admin.site.register(League)
+#admin.site.register(SeekPoint)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##
+## OLD EXPERIMENTAL STUFF
+##
+
+class OLD_SeasonAdmin(admin.ModelAdmin):
+    #change_form_template = "admin/stats/season_change_form.html"
+    
+    inlines = [SeasonPlayerInline]
+    
+    def change_view(self, request, object_id, extra_context=None):
+
+        if not self.has_add_permission(request):
+            raise PermissionDenied
+
+        try:
+            season = Season.objects.get(id=object_id)
+        except Season.DoesNotExist:
+            raise Http404
+        
+        #inline_instance = SeasonPlayerInline(self.model, self.admin_site)
+        #self.inline_instances.append(inline_instance)
+        
+        players = Player.objects.all()
+        PlayerFormSet = forms.formsets.formset_factory(SeasonPlayerForm, 
+                                                       extra=len(players),
+                                                       can_delete=False)
+
+        valid_save = False
+        
+        if request.method == 'POST':
+            player_formset = PlayerFormSet(request.POST)
+            if player_formset.is_valid():
+                # Save the valid player+number information
+                valid_save = True
+                for (player,form) in zip(players, player_formset):
+                    print(form.cleaned_data)
+                    try:
+                        number = form.cleaned_data['number']
+                        try:
+                            # If the season player already exists, modify
+                            seasonplayer = SeasonPlayer.objects.get(season=season,
+                                                                    player=player)
+                            seasonplayer.number = number
+                            seasonplayer.save()
+                        except SeasonPlayer.DoesNotExist:
+                            # If the season player does not exist, create it
+                            seasonplayer = SeasonPlayer(season=season,
+                                                        player=player,
+                                                        number=number)
+                            seasonplayer.save()
+                    except KeyError:
+                        # No number given, delete the season player if it exists
+                        try:
+                            seasonplayer = SeasonPlayer.objects.get(season=season,
+                                                                    player=player)
+                            seasonplayer.delete()
+                        except SeasonPlayer.DoesNotExist:
+                            pass
+
+        else:
+            # Initialize formset with players and existing numbers
+            player_formset = PlayerFormSet()
+            for (form, player) in zip(player_formset.forms, players):
+                try:
+                    seasonplayer = SeasonPlayer.objects.get(season=season,
+                                                            player=player)
+                    form.fields['number'].initial = seasonplayer.number
+                except SeasonPlayer.DoesNotExist:
+                    form.fields['number'].initial = None
+
+        # Add players to the form
+        for (form, player) in zip(player_formset.forms, players):
+            form.player = player
+
+        my_context = {
+            #'players': players,
+            'player_formset': player_formset,
+        }
+        return super(SeasonAdmin, self).change_view(request,
+                                                    object_id,
+                                                    extra_context=my_context)
+    
+class BACKUP_SeasonAdmin(admin.ModelAdmin):
     change_form_template = "admin/stats/season_change_form.html"
     
     def change_view(self, request, object_id, extra_context=None):
@@ -170,15 +292,3 @@ class SeasonAdmin(admin.ModelAdmin):
         }
         return super(SeasonAdmin, self).change_view(request, object_id, my_context)
     
-
-admin.site.register(Player)
-admin.site.register(Field)
-admin.site.register(Match, MatchAdmin)
-#admin.site.register(Match, MatchResultAdmin)
-#admin.site.register(MatchPlayer)
-#admin.site.register(Season, SeasonAdmin) # Custom season form
-admin.site.register(Season)
-admin.site.register(SeasonPlayer)
-admin.site.register(Video, VideoAdmin)
-admin.site.register(League)
-#admin.site.register(SeekPoint)

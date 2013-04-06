@@ -19,12 +19,12 @@
 
   <ul class="nav nav-pills">
     <li>
-      <a href="{% url teamstats.views.index %}">
+      <a href="{% url 'home' %}">
         Etusivu
       </a>
     </li>
     <li>
-      <a href="{% url teamstats.views.show_all_players %}">
+      <a href="{% url 'show_all_players' %}">
         Pelaajat
       </a> 
     </li>
@@ -36,7 +36,7 @@
       <ul class="dropdown-menu">
         {% for season in league.seasons.all %}
         <li>
-          <a href="{% url teamstats.views.show_season season.id %}">{{ season.year }}</a>
+          <a href="{% url 'show_season' season.id %}">{{ season.year }}</a>
         </li>
         {% endfor %}
       </ul>

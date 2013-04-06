@@ -39,7 +39,7 @@
       {% for player in player_list %}
         <tr>
 	  <td class="left">
-            <a href="{% url teamstats.views.show_player player.id %}">
+            <a href="{% url 'show_player' player.id %}">
               {{ player }}
             </a>
           </td>

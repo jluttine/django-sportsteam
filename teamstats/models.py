@@ -74,6 +74,7 @@ class SeasonPlayer(models.Model):
 
     class Meta:
         ordering = ('number',)
+        unique_together = (("season", "player",),)
 
     def __unicode__(self):
         return "#" + unicode(self.number) + " " + \
@@ -114,6 +115,7 @@ class MatchPlayer(models.Model):
 
     class Meta:
         ordering = ('match__date',)
+        unique_together = (("match", "player",),)
 
     def __unicode__(self):
         return unicode(self.player) + ": " + unicode(self.match)

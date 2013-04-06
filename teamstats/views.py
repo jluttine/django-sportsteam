@@ -24,13 +24,15 @@ from __future__ import division
 
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext, Context, loader
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Sum, Q
 from django.core.urlresolvers import reverse
 from itertools import chain
 from django.conf import settings
+from django.forms.formsets import formset_factory
 
 from teamstats.models import *
+from teamstats.forms import MatchPlayerForm, MatchChangeForm
 
 def index(request,
           league_class=League,
@@ -435,3 +437,103 @@ def show_player(request,
         return HttpResponse("Pelaajaa ei olemassa.")
 
 
+def edit_match_result(request, match_id,
+                      league_class=League,
+                      template_name="teamstats/edit_match_result.html"):
+
+    if not request.user.is_authenticated():
+        raise PermissionDenied
+
+    # You could check some permissions in more detail:
+    #add: user.has_perm('foo.add_bar')
+    #change: user.has_perm('foo.change_bar')
+    #delete: user.has_perm('foo.delete_bar')
+
+    #form = MatchChangeForm
+
+    try:
+        match = Match.objects.get(id=match_id)
+    except Match.DoesNotExist:
+        raise Http404
+    
+    players = SeasonPlayer.objects.filter(season=match.season)
+
+    PlayerFormSet = formset_factory(MatchPlayerForm, 
+                                    extra=len(players))
+
+    
+    valid_save = False
+
+    if request.method == 'POST':
+        cancel = request.POST.get('cancel', None)
+        if cancel:
+            return HttpResponseRedirect(reverse('show_match', 
+                                                args=(match_id,)))
+                                                
+        match_form = MatchChangeForm(request.POST, instance=match)
+        player_formset = PlayerFormSet(request.POST)
+        if player_formset.is_valid():
+            # Save the valid player+number information
+            valid_save = True
+            for (player,form) in zip(players, player_formset):
+                played = form.cleaned_data['played']
+                goals = form.cleaned_data['goals']
+                assists = form.cleaned_data['assists']
+                try:
+                    matchplayer = MatchPlayer.objects.get(match=match,
+                                                          player=player)
+                    if played:
+                        # Modify existing match player
+                        matchplayer.goals = goals
+                        matchplayer.assists = assists
+                        matchplayer.save()
+                    else:
+                        # Delete the match player because he did not play
+                        matchplayer.delete()
+                except MatchPlayer.DoesNotExist:
+                    if played:
+                        # Create a new match player
+                        matchplayer = MatchPlayer(match=match, 
+                                                  player=player,
+                                                  goals=goals,
+                                                  assists=assists)
+                        matchplayer.save()
+
+            match_form.save()
+            return HttpResponseRedirect(reverse('show_match', 
+                                                args=(match_id,)))
+                        
+    # Initialize formset with existing game stats
+    if not valid_save:
+        match_form = MatchChangeForm(instance=match)
+        player_formset = PlayerFormSet()
+        for (player, form) in zip(players, player_formset):
+            try:
+                matchplayer = MatchPlayer.objects.get(match=match,
+                                                      player=player)
+                played = True
+                goals = matchplayer.goals
+                assists = matchplayer.assists
+            except MatchPlayer.DoesNotExist:
+                played = False
+                goals = 0
+                assists = 0
+            form.fields['played'].initial = played
+            form.fields['goals'].initial = goals
+            form.fields['assists'].initial = assists
+            
+    # Add player information into the forms
+    for (form, player) in zip(player_formset.forms, players):
+        form.player = player
+
+    context = {
+        'match_form': match_form,
+        'player_formset': player_formset,
+        'league_list': league_class.objects.all(),
+        'team_name':   settings.TEAM_NAME,
+    }
+
+    return render(request,
+                  template_name,
+                  context)
+#return super(MatchAdmin, self).change_view(request, object_id, my_context)

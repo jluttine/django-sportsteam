@@ -62,7 +62,7 @@
             {{ player.number }}
           </td>
 	  <td class="left">
-            <a href="{% url teamstats.views.show_player player.player.id %}">
+            <a href="{% url 'show_player' player.player.id %}">
               {{ player.player }}
             </a>
           </td>
@@ -107,7 +107,7 @@
             {{ match.date|date:"G:i" }}
           </td>
 	  <td class="center">
-            <a href="{% url teamstats.views.show_match match.id %}">
+            <a href="{% url 'show_match' match.id %}">
               {{ match.opponent }}
             </a>
           </td>
@@ -143,7 +143,7 @@
                 {% endif %}
                 ({{ choice.list|length }}):
                 {% for player in choice.list %}
-                  <a href="{% url teamstats.views.show_player player.player.id %}">
+                  <a href="{% url 'show_player' player.player.id %}">
                     {{ player.player.shortname }}
                   </a>
                 {% endfor %}

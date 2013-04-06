@@ -43,7 +43,7 @@
             {{ player.player.number }}
           </td>
 	  <td class="left">
-            <a href="{% url teamstats.views.show_player player.player.player.id %}">
+            <a href="{% url 'show_player' player.player.player.id %}">
               {{ player.player.player }}
             </a>
           </td>

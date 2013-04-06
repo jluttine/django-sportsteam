@@ -41,7 +41,7 @@
     {% for seasonplayer in seasonplayer_list %}
       <tr>
         <td class="left">
-          <a href="{% url teamstats.views.show_season seasonplayer.season.id %}">
+          <a href="{% url 'show_season' seasonplayer.season.id %}">
             {{ seasonplayer.season }}
           </a>
         </td>
@@ -108,7 +108,7 @@
 
   {% for seasonplayer in seasonplayer_list %}
     <h2>
-      <a href="{% url teamstats.views.show_season seasonplayer.season.id %}">
+      <a href="{% url 'show_season' seasonplayer.season.id %}">
         {{ seasonplayer.season }}
       </a>
     </h2>
@@ -125,7 +125,7 @@
             {{ matchplayer.match.date|date:"G:i" }}
           </td>
 	  <td class="center">
-            <a href="{% url teamstats.views.show_match matchplayer.match.id %}">
+            <a href="{% url 'show_match' matchplayer.match.id %}">
               {{ matchplayer.match.opponent }}
             </a>
           </td>

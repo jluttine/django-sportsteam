@@ -13,7 +13,7 @@
 	{% endif %}
     </h1>
     <p>
-      <a href="{% url teamstats.views.show_season match.season.id %}">
+      <a href="{% url 'show_season' match.season.id %}">
         {{ match.season }}
       </a><br />
       {{ match.date|date:"l j.n.Y G:i"|capfirst }}<br />

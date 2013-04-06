@@ -17,6 +17,10 @@
 from django import forms
 from teamstats.models import *
 
+## class SeasonChangeForm(forms.ModelForm):
+##     class Meta:
+        
+
 class MatchAddForm(forms.ModelForm):
     class Meta:
         model = Match
@@ -25,16 +29,24 @@ class MatchAddForm(forms.ModelForm):
 class MatchChangeForm(forms.ModelForm):
     class Meta:
         model = Match
-        exclude = ('season',)
+        exclude = ('season','players','opponent','date','home','field',)
+        #include = ('opponent_goals', 'opponent_owngoals',)
 
 class MatchPlayerForm(forms.Form):
-    player = ""
+    #player = ""
     played = forms.BooleanField(required=False)
     goals = forms.IntegerField()
     assists = forms.IntegerField()
 
-class SeasonPlayerForm(forms.Form):
-    player = ""
-    number = forms.IntegerField(required=False)
+class SeasonPlayerForm(forms.ModelForm):
+    player = forms.CharField(max_length=100)
+    #number = forms.IntegerField(required=False)
+    class Meta:
+        model = SeasonPlayer
+        exclude = ('season',)
+
+## class SeasonPlayerForm(forms.Form):
+##     player = ""
+##     number = forms.IntegerField(required=False)
 
 
