@@ -1,0 +1,4 @@
+#!/bin/sh
+
+./manage.py schemamigration teamstats --auto
+./manage.py migrate teamstats

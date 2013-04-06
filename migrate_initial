@@ -1,0 +1,6 @@
+#!/bin/sh
+
+./manage.py syncdb --all
+./manage.py schemamigration teamstats --initial
+./manage.py migrate --fake
+
