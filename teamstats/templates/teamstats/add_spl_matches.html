@@ -1,0 +1,18 @@
+{% extends "teamstats/base_season.html" %}
+
+{% block content %}
+
+<form method="post" action="">
+  {% csrf_token %}
+
+  {{ matches_form }}
+
+  <br />
+
+   <input type="submit" value="Save" />
+   <input name="cancel" type="submit" value="Cancel" />
+
+</form>
+
+{% endblock %}
+
