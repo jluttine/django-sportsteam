@@ -30,9 +30,10 @@ from django.core.urlresolvers import reverse
 from itertools import chain
 from django.conf import settings
 from django.forms.formsets import formset_factory
+from django.core.exceptions import PermissionDenied
 
 from teamstats.models import *
-from teamstats.forms import MatchPlayerForm, MatchChangeForm
+from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm
 
 def index(request,
           league_class=League,
@@ -536,4 +537,45 @@ def edit_match_result(request, match_id,
     return render(request,
                   template_name,
                   context)
-#return super(MatchAdmin, self).change_view(request, object_id, my_context)
+
+def add_spl_matches(request, season_id,
+                    template_name="teamstats/add_spl_matches.html"):
+
+    if not request.user.is_authenticated():
+        raise PermissionDenied
+
+    # You could check some permissions in more detail:
+    #add: user.has_perm('foo.add_bar')
+    #change: user.has_perm('foo.change_bar')
+    #delete: user.has_perm('foo.delete_bar')
+
+    try:
+        season = Season.objects.get(id=season_id)
+    except Season.DoesNotExist:
+        raise Http404
+    
+    if request.method == 'POST':
+        cancel = request.POST.get('cancel', None)
+        if cancel:
+            return HttpResponseRedirect(reverse('show_season', 
+                                                args=(season_id,)))
+        
+        matches_form = SPLMatchAddForm(season, request.POST)
+        if matches_form.is_valid():
+            matches_form.save(season)
+            return HttpResponseRedirect(reverse('show_season', 
+                                                args=(season_id,)))
+    else:
+        matches_form = SPLMatchAddForm(season)
+                        
+    context = {
+        'matches_form': matches_form,
+        'league_list':  League.objects.all(),
+        'team_name':    settings.TEAM_NAME,
+    }
+
+    return render(request,
+                  template_name,
+                  context)
+    
+    

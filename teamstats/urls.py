@@ -31,6 +31,10 @@ urlpatterns = patterns('',
         'teamstats.views.edit_match_result',
         name="edit_match_result"),
     
+    url(r'^kaudet/(?P<season_id>.+)/spl/$', 
+        'teamstats.views.add_spl_matches',
+        name="add_spl_matches"),
+
     url(r'^kaudet/(?P<season_id>.+)/$', 
         'teamstats.views.show_season',
         name="show_season"),
