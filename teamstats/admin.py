@@ -29,11 +29,14 @@ class VideoAdmin(admin.ModelAdmin):
 class MatchPlayerInline(admin.TabularInline):
     model = MatchPlayer
     extra = 12
-    form = MatchPlayerForm
+    #form = MatchPlayerForm
 
 class MatchAdmin(admin.ModelAdmin):
+    inlines = [MatchPlayerInline]
 
-    change_form_template = "admin/stats/match_change_form.html"
+class OLD_MatchAdmin(admin.ModelAdmin):
+
+    #change_form_template = "admin/stats/match_change_form.html"
 
     form = MatchAddForm
 

@@ -2,13 +2,16 @@ import os
 import re
 
 import sys
-cmd_folder = '/home/jluttine'
-#cmd_folder = '/home/jluttine/tuhlaajapojat'
+#cmd_folder = '/home/jluttine'
+cmd_folder = '/home/jluttine/tuhlaajapojat'
 if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-from stats.models import *
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sportsteam.settings")
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'sportsteam.settings'
+
+from teamstats.models import *
 
 def get_addresses(list):
 
