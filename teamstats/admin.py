@@ -138,6 +138,7 @@ admin.site.register(Season, SeasonAdmin) # Custom season form
 #admin.site.register(SeasonPlayer)
 admin.site.register(Video, VideoAdmin)
 admin.site.register(League)
+admin.site.register(EnrolledPlayer)
 #admin.site.register(SeekPoint)
 
 

@@ -55,12 +55,12 @@ def get_match_enrollments(match,
     Returns the enrollment statuses of the players.
     """
     # Show in/out stats
-    seasonplayers = seasonplayer_class.objects.filter(season=match.season,
-                                                      passive=False).order_by('player')
+    seasonplayers = seasonplayer_class.objects.filter(season=match.season).order_by('player')
     # TODO: Use related_names and then just match.enrolledplayers
     enrollments = enrolledplayer_class.objects.filter(match=match).order_by('player__player')
 
     ind = 0
+    enrolledplayers = []
     for player in seasonplayers:
         if ind < len(enrollments) and player.id == enrollments[ind].player.id:
             if enrollments[ind].enroll:
@@ -70,8 +70,11 @@ def get_match_enrollments(match,
             ind = ind + 1
         else:
             player.choice = 3
+        
+        if player.choice == 1 or not player.passive:
+            enrolledplayers.append(player)
 
-    return seasonplayers
+    return enrolledplayers
     
 def get_match_goals(match):
     if match.opponent_goals is not None:
