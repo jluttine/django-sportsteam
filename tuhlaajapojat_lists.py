@@ -27,8 +27,10 @@ def get_addresses(list):
     # Check team aliases
     if list.lower() == 'tuhlaajapojat-fmhd':
         list = 'tuhlaajapojat-fmhd2012'
+    if list.lower() == 'tuhlaajapojat-fmhm':
+        list = 'tuhlaajapojat-fmhm2013'
     if list.lower() == 'tuhlaajapojat-esport':
-        list = 'tuhlaajapojat-esport2012'
+        list = 'tuhlaajapojat-esport2013'
     if list.lower() == 'tuhlaajapojat-haku2':
         list = 'tuhlaajapojat-haku22013'
     if list.lower() == 'tuhlaajapojat-hakud':
@@ -38,7 +40,7 @@ def get_addresses(list):
     if list.lower() == 'tuhlaajapojat-hakim':
         list = 'tuhlaajapojat-hakim2013'
     if list.lower() == 'tuhlaajapojat-srksm':
-        list = 'tuhlaajapojat-srksm2012'
+        list = 'tuhlaajapojat-srksm2013'
 
     # Try matching to season IDs
     id = re.search('tuhlaajapojat-(?P<id>.+)', list.lower())
