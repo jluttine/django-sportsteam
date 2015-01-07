@@ -16,7 +16,7 @@
     {% block header %}
     {% endblock %}
   </header>
-
+  
   <ul class="nav nav-pills">
     <li>
       <a href="{% url 'home' %}">
@@ -59,7 +59,7 @@
     {% endblock %}
   </footer>
 
-  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="{% get_static_prefix %}js/jquery.js"></script>
   <script src="{% get_static_prefix %}js/bootstrap.min.js"></script>
 
 </body>

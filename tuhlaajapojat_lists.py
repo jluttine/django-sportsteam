@@ -17,6 +17,10 @@ def get_addresses(list):
 
     print 'Trying to match a list: ' + list
 
+    # Some aliases :)
+    if list.lower() == 'vuokravaioma':
+        list = 'jaakko.luttinen'
+
     # Try if for everyone
     if list.lower() == 'tuhlaajapojat':
         players = Player.objects.all()
@@ -25,22 +29,24 @@ def get_addresses(list):
         return emails, '[Tuhlaajapojat] '
 
     # Check team aliases
+    if list.lower() == 'tuhlaajapojat-adidas':
+        list = 'tuhlaajapojat-adidas2014'
     if list.lower() == 'tuhlaajapojat-fmhd':
         list = 'tuhlaajapojat-fmhd2012'
     if list.lower() == 'tuhlaajapojat-fmhm':
-        list = 'tuhlaajapojat-fmhm2013'
+        list = 'tuhlaajapojat-fmhm2014'
     if list.lower() == 'tuhlaajapojat-esport':
-        list = 'tuhlaajapojat-esport2013'
+        list = 'tuhlaajapojat-esport2014'
     if list.lower() == 'tuhlaajapojat-haku2':
         list = 'tuhlaajapojat-haku22013'
     if list.lower() == 'tuhlaajapojat-hakud':
-        list = 'tuhlaajapojat-hakud2013'
+        list = 'tuhlaajapojat-hakud2014'
     if list.lower() == 'tuhlaajapojat-hakid':
-        list = 'tuhlaajapojat-hakid2012'
+        list = 'tuhlaajapojat-hakid2014'
     if list.lower() == 'tuhlaajapojat-hakim':
         list = 'tuhlaajapojat-hakim2013'
     if list.lower() == 'tuhlaajapojat-srksm':
-        list = 'tuhlaajapojat-srksm2013'
+        list = 'tuhlaajapojat-srksm2014'
 
     # Try matching to season IDs
     id = re.search('tuhlaajapojat-(?P<id>.+)', list.lower())
