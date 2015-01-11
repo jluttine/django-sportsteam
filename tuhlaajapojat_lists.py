@@ -29,44 +29,45 @@ def get_addresses(list):
         return emails, '[Tuhlaajapojat] '
 
     # Check team aliases
-    if list.lower() == 'tuhlaajapojat-adidas':
-        list = 'tuhlaajapojat-adidas2014'
-    if list.lower() == 'tuhlaajapojat-fmhd':
-        list = 'tuhlaajapojat-fmhd2012'
-    if list.lower() == 'tuhlaajapojat-fmhm':
-        list = 'tuhlaajapojat-fmhm2014'
-    if list.lower() == 'tuhlaajapojat-esport':
-        list = 'tuhlaajapojat-esport2014'
-    if list.lower() == 'tuhlaajapojat-haku2':
-        list = 'tuhlaajapojat-haku22013'
-    if list.lower() == 'tuhlaajapojat-hakud':
-        list = 'tuhlaajapojat-hakud2014'
-    if list.lower() == 'tuhlaajapojat-hakid':
-        list = 'tuhlaajapojat-hakid2014'
-    if list.lower() == 'tuhlaajapojat-hakim':
-        list = 'tuhlaajapojat-hakim2013'
-    if list.lower() == 'tuhlaajapojat-srksm':
-        list = 'tuhlaajapojat-srksm2014'
+    if list.lower() == 'adidas':
+        list = 'adidas2014'
+    if list.lower() == 'fmhd':
+        list = 'fmhd2012'
+    if list.lower() == 'fmhm':
+        list = 'fmhm2014'
+    if list.lower() == 'esport':
+        list = 'esport2014'
+    if list.lower() == 'haku2':
+        list = 'haku22013'
+    if list.lower() == 'hakud':
+        list = 'hakud2014'
+    if list.lower() == 'hakid':
+        list = 'hakid2014'
+    if list.lower() == 'hakim':
+        list = 'hakim2013'
+    if list.lower() == 'srksm':
+        list = 'srksm2014'
 
     # Try matching to season IDs
-    id = re.search('tuhlaajapojat-(?P<id>.+)', list.lower())
-    if id:
-        season = Season.objects.get(id__iexact=id.group('id'))
-        if season:
-            players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
-            emails = [player.player.email for player in players]
-            emails = filter(None, emails)
-            return emails, '[Tuhlaajapojat-' + unicode(season.league) + '] '
+    try:
+        season = Season.objects.get(id__iexact=list)
+    except Season.DoesNotExist:
+        pass
+    else:
+        players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
+        emails = [player.player.email for player in players]
+        emails = filter(None, emails)
+        return emails, '[Tuhlaajapojat-' + unicode(season.league) + '] '
 
-    # Try matching to players
+    # Try matching to player IDs
     try:
         player = Player.objects.get(id__iexact=list)
-        if player.email:
-            return [player.email], ''
-    except:
-        email = None
+    except Player.DoesNotExist:
+        pass
+    else:
+        return [player.email], ''
 
-    print 'Did not find a match'
+    print 'Did not find recipients for %s' % list 
 
     # No match
     return None, ''
