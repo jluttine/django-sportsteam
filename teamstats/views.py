@@ -35,6 +35,16 @@ from django.core.exceptions import PermissionDenied
 from teamstats.models import *
 from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm
 
+import caldav.views
+#from datetime import datetime
+
+
+def get_player_matches(player):
+    """ Return all matches of a player. """
+    return Match.objects.filter(season__players=player)
+
+
+
 def index(request,
           league_class=League,
           template_name='teamstats/index.html'):
@@ -436,6 +446,40 @@ def show_player(request,
                       context)
     except player_class.DoesNotExist:
         return HttpResponse("Pelaajaa ei olemassa.")
+
+
+    
+def show_player_calendar(request, 
+                         player_id,
+                         player_class=Player,
+                         match_class=Match,
+                         matchplayer_class=MatchPlayer,
+                         enrolledplayer_class=EnrolledPlayer,
+                         season_class=Season,
+                         seasonplayer_class=SeasonPlayer,
+                         league_class=League,
+                         template_name='teamstats/show_player.html'):
+
+    """
+    Show player's match calendar.
+    """
+    
+    # Get the player
+    try:
+        player = player_class.objects.get(pk=player_id)
+    except player_class.DoesNotExist:
+        return HttpResponse("Pelaajaa ei olemassa.")
+
+    
+    matches = get_player_matches(player)
+
+    events = (caldav.views.create_event(uid='1',
+                                        summary=match.opponent,
+                                        dtstart=match.date,
+                                        location=match.field)
+              for match in matches)
+
+    return HttpResponse(caldav.views.events(events))
 
 
 def edit_match_result(request, match_id,

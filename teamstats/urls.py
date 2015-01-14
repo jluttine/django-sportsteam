@@ -43,6 +43,10 @@ urlpatterns = patterns('',
         'teamstats.views.show_all_players',
         name="show_all_players"),
 
+    url(r'^pelaajat/(?P<player_id>.+)/calendar/$', 
+        'teamstats.views.show_player_calendar',
+        name="show_player_calendar"),
+
     url(r'^pelaajat/(?P<player_id>.+)/$', 
         'teamstats.views.show_player',
         name="show_player"),
