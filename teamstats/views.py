@@ -36,7 +36,7 @@ from teamstats.models import *
 from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm
 
 import caldav.views
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def get_player_matches(player):
@@ -475,9 +475,12 @@ def show_player_calendar(request,
     
     matches = get_player_matches(player)
 
-    events = (caldav.views.create_event(uid='1',
-                                        summary=match.opponent,
-                                        dtstart=caldav.views.date(match.date),
+    events = (caldav.views.create_event(uid=str(match.id),
+                                        summary='%s: %s' % (match.season.league, match.opponent),
+                                        description=request.build_absolute_uri(reverse('show_match', kwargs={'match_id': match.id})),
+                                        url=request.build_absolute_uri(reverse('show_match', kwargs={'match_id': match.id})),
+                                        dtstart=match.date,#caldav.views.date(match.date),
+                                        #dtend=match.date+timedelta(hours=1),#caldav.views.enddate(match.date),
                                         location=match.field)
               for match in matches)
 

@@ -12,7 +12,7 @@ def display(cal):
 def create_event(**kwargs):
     event = Event()
     for (key, value) in kwargs.items():
-        event[key] = value
+        event.add(key, value)
     return event
 
 
@@ -25,8 +25,20 @@ def date(dateobject):
                              dateobject.second).isoformat().replace(':','').replace('-','')
 
 
+def enddate(dateobject):
+    return datetime.datetime(dateobject.year,
+                             dateobject.month,
+                             dateobject.day,
+                             dateobject.hour,
+                             dateobject.minute,
+                             dateobject.second).isoformat().replace(':','').replace('-','')
+
+
 def events(events):
     cal = Calendar()
+    #cal.add('prodid', '-//FC Tuhlaajapojat//What is this field//')
+    cal.add('X-WR-CALNAME', 'FC Tuhlaajapojat')
+    cal.add('version', '2.0')
 
     ## event = Event()
     ## event['uid'] = '42'
