@@ -16,6 +16,15 @@ def create_event(**kwargs):
     return event
 
 
+def date(dateobject):
+    return datetime.datetime(dateobject.year,
+                             dateobject.month,
+                             dateobject.day,
+                             dateobject.hour,
+                             dateobject.minute,
+                             dateobject.second).isoformat().replace(':','').replace('-','')
+
+
 def events(events):
     cal = Calendar()
 

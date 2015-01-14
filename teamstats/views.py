@@ -36,7 +36,7 @@ from teamstats.models import *
 from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm
 
 import caldav.views
-#from datetime import datetime
+from datetime import datetime
 
 
 def get_player_matches(player):
@@ -451,7 +451,6 @@ def show_player(request,
         return HttpResponse("Pelaajaa ei olemassa.")
 
 
-    
 def show_player_calendar(request, 
                          player_id,
                          player_class=Player,
@@ -478,7 +477,7 @@ def show_player_calendar(request,
 
     events = (caldav.views.create_event(uid='1',
                                         summary=match.opponent,
-                                        dtstart=match.date,
+                                        dtstart=caldav.views.date(match.date),
                                         location=match.field)
               for match in matches)
 
