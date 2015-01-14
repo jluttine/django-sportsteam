@@ -6,7 +6,7 @@ import datetime
 
 
 def display(cal):
-    return cal.to_ical().replace('\r\n', '\n').strip()
+    return cal.to_ical()#.replace('\r\n', '\n').strip()
 
 
 def create_event(**kwargs):
