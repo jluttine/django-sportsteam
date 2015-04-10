@@ -42,7 +42,7 @@ def get_addresses(list):
     if list.lower() == 'hakud':
         list = 'hakud2014'
     if list.lower() == 'hakid':
-        list = 'hakid2014'
+        list = 'hakid2015'
     if list.lower() == 'hakim':
         list = 'hakim2013'
     if list.lower() == 'srksm':
