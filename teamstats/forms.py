@@ -66,7 +66,7 @@ class SPLMatchAddForm(forms.Form):
         """
         The format:
 
-        ### <TAB> wd day.month. <TAB> hour:minute <TAB> field <TAB> home <TAB> visitor <TAB> xxx
+        ### day.month. <TAB> hour:minute <TAB> field <TAB> home <TAB> visitor <TAB> xxx
         """
         cleaned_data = super(SPLMatchAddForm, self).clean()
         if any(self.errors):
@@ -78,17 +78,17 @@ class SPLMatchAddForm(forms.Form):
         for line in lines:
             if len(line) > 0:
                 cols = line.split("\t")
-                datestr = '%s%d %s' % (cols[1][3:-1], 
+                datestr = '%s%d %s' % (cols[0].strip(), 
                                        cleaned_data['year'],
-                                       cols[2][:-1])
+                                       cols[1].strip())
                 date = datetime.datetime.strptime(datestr, "%d.%m.%Y %H:%M")
                 try:
-                    field = Field.objects.get(name=cols[3][:-1])
+                    field = Field.objects.get(name=cols[2].strip())
                 except Field.DoesNotExist:
                     raise forms.ValidationError(u"Tuntematon kenttä '%s'" 
-                                                % cols[3][:-1])
-                home = cols[4][:-1]
-                visitor = cols[5][:-1]
+                                                % cols[2].strip())
+                home = cols[3].strip()
+                visitor = cols[4].strip()
                 if home == settings.TEAM_NAME:
                     opponent = visitor
                     is_home = True
