@@ -37,6 +37,10 @@ urlpatterns = patterns('',
         'teamstats.views.add_spl_matches',
         name="add_spl_matches"),
 
+    url(r'^kaudet/(?P<season_id>.+)/kalenteri/$', 
+        'teamstats.views.show_season_calendar',
+        name="show_season_calendar"),
+
     url(r'^kaudet/(?P<season_id>.+)/$', 
         'teamstats.views.show_season',
         name="show_season"),

@@ -22,7 +22,7 @@ Views for showing different statistics of the team.
 
 from __future__ import division
 
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render_to_response, render, get_object_or_404
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Sum, Q
@@ -497,6 +497,39 @@ def show_player_calendar(request,
     return HttpResponse(caldav.views.events(events))
 
 
+def show_season_calendar(request, 
+                         season_id,
+                         player_class=Player,
+                         match_class=Match,
+                         matchplayer_class=MatchPlayer,
+                         enrolledplayer_class=EnrolledPlayer,
+                         season_class=Season,
+                         seasonplayer_class=SeasonPlayer,
+                         league_class=League,
+                         template_name='teamstats/show_player.html'):
+
+    """
+    Show match calendar of a season.
+    """
+
+    # Get the season
+    season = get_object_or_404(season_class, pk=season_id)
+
+    # Get the matches in the season
+    matches = match_class.objects.filter(season=season)
+
+    events = (caldav.views.create_event(uid=str(match.id),
+                                        summary='%s: %s' % (match.season.league, match.opponent),
+                                        description=request.build_absolute_uri(reverse('show_match', kwargs={'match_id': match.id})),
+                                        url=request.build_absolute_uri(reverse('show_match', kwargs={'match_id': match.id})),
+                                        dtstart=match.date,#caldav.views.date(match.date),
+                                        #dtend=match.date+timedelta(hours=1),#caldav.views.enddate(match.date),
+                                        location=match.field)
+              for match in matches)
+
+    return HttpResponse(caldav.views.events(events))
+
+
 def edit_match_result(request, match_id,
                       league_class=League,
                       template_name="teamstats/edit_match_result.html"):
@@ -710,8 +743,8 @@ class CalendarView(CalDavView):
     def dispatch(self, request, path, *args, **kwargs):
         print("IN DISPATCH YEY!")
         retval = super(CalendarView, self).dispatch(request, path, *args, **kwargs)
-        print("REQUEST")
-        print(request)
+        #print("REQUEST")
+        #print(request)
         print("RESPONSE")
         print(retval)
         if not retval:
