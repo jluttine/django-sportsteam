@@ -673,82 +673,82 @@ def add_spl_matches(request, season_id,
     
 
 
-from datetime import datetime, timedelta
-from django.http import HttpResponse, HttpResponseBadRequest
-from django_caldav.views import CalDavView, CalDavFeedView
-from django.shortcuts import get_object_or_404
-#from example.our_calendar.models import OurCalendarEvent
+## from datetime import datetime, timedelta
+## from django.http import HttpResponse, HttpResponseBadRequest
+## from django_caldav.views import CalDavView, CalDavFeedView
+## from django.shortcuts import get_object_or_404
+## #from example.our_calendar.models import OurCalendarEvent
 
 
-class CalendarFeedView(CalDavFeedView):
-    product_id = '-//example.com//Example//EN'
-    timezone = 'UTC'
-    now = datetime.now()
-    #min_date = now + timedelta(days=-7)
-    #max_date = now + timedelta(days=14)
+## class CalendarFeedView(CalDavFeedView):
+##     product_id = '-//example.com//Example//EN'
+##     timezone = 'UTC'
+##     now = datetime.now()
+##     #min_date = now + timedelta(days=-7)
+##     #max_date = now + timedelta(days=14)
 
 
-    ## def get_object(self, request):
-    ## #def get_object(self, request, player_id):
-    ##     print("GETTING OBJECT")
-    ##     return None
-    ##     return get_object_or_404(Player, id=player_id)
+##     ## def get_object(self, request):
+##     ## #def get_object(self, request, player_id):
+##     ##     print("GETTING OBJECT")
+##     ##     return None
+##     ##     return get_object_or_404(Player, id=player_id)
 
 
-    def items(self):
-    #def items(self, player):
-        return Match.objects.all() #filter(season__players=player)
-        #return Match.objects.filter(season__players=player)
+##     def items(self):
+##     #def items(self, player):
+##         return Match.objects.all() #filter(season__players=player)
+##         #return Match.objects.filter(season__players=player)
 
 
-    def item_title(self, match):
-        return "%s: %s" % (match.season.league, match.opponent)
+##     def item_title(self, match):
+##         return "%s: %s" % (match.season.league, match.opponent)
 
 
-    def item_description(self, match):
-        return "TODO"
+##     def item_description(self, match):
+##         return "TODO"
 
 
-    def item_start_datetime(self, match):
-        return match.date
+##     def item_start_datetime(self, match):
+##         return match.date
 
 
-    def item_end_datetime(self, match):
-        return match.date + timedelta(hours=1)
+##     def item_end_datetime(self, match):
+##         return match.date + timedelta(hours=1)
 
 
-    def item_location(self, match):
-        return match.field
+##     def item_location(self, match):
+##         return match.field
 
 
-    def item_link(self, match):
-        return "TODO" #"/{pk}.ics".format(pk=item.pk)
+##     def item_link(self, match):
+##         return "TODO" #"/{pk}.ics".format(pk=item.pk)
 
 
-    ## def item_save(self, request, base_item, iCalendar_component, *args, **kwargs):
-    ##     return HttpResponseBadRequest()
+##     ## def item_save(self, request, base_item, iCalendar_component, *args, **kwargs):
+##     ##     return HttpResponseBadRequest()
 
 
 
 
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-class CalendarView(CalDavView):
-    """
-    A simple event calender
-    """
-    feed_view = CalendarFeedView
+## from django.utils.decorators import method_decorator
+## from django.views.decorators.csrf import csrf_exempt
+## class CalendarView(CalDavView):
+##     """
+##     A simple event calender
+##     """
+##     feed_view = CalendarFeedView
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, path, *args, **kwargs):
-        print("IN DISPATCH YEY!")
-        retval = super(CalendarView, self).dispatch(request, path, *args, **kwargs)
-        #print("REQUEST")
-        #print(request)
-        print("RESPONSE")
-        print(retval)
-        if not retval:
-            print("RESPONSE EMPTY")
-        return retval
+##     @method_decorator(csrf_exempt)
+##     def dispatch(self, request, path, *args, **kwargs):
+##         print("IN DISPATCH YEY!")
+##         retval = super(CalendarView, self).dispatch(request, path, *args, **kwargs)
+##         #print("REQUEST")
+##         #print(request)
+##         print("RESPONSE")
+##         print(retval)
+##         if not retval:
+##             print("RESPONSE EMPTY")
+##         return retval
 
 
