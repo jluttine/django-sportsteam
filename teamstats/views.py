@@ -527,7 +527,7 @@ def show_season_calendar(request,
                                         location=match.field)
               for match in matches)
 
-    return HttpResponse(caldav.views.events(events))
+    return HttpResponse(caldav.views.events(events), content_type="text/calendar")
 
 
 def edit_match_result(request, match_id,
