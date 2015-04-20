@@ -59,11 +59,6 @@ urlpatterns = patterns('',
     ##     #CalendarFeedView(),
     ##     name="show_player_caldav"),
 
-    url(r'^calendar(?P<path>.+)$', 
-        CalendarView.as_view(),
-        #CalendarFeedView(),
-        name="show_calendar"),
-
     url(r'^pelaajat/(?P<player_id>.+)/$', 
         'teamstats.views.show_player',
         name="show_player"),
