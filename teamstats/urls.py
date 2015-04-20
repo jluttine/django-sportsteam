@@ -21,7 +21,7 @@ from django.conf.urls import patterns, url
 from django.contrib import admin
 admin.autodiscover()
 
-from teamstats.views import CalendarView
+#from teamstats.views import CalendarView
 
 urlpatterns = patterns('',
 
@@ -53,11 +53,11 @@ urlpatterns = patterns('',
         'teamstats.views.show_player_calendar',
         name="show_player_calendar"),
 
-    #url(r'^pelaajat/(?P<player_id>.+)/calendar/$', 
-    url(r'^pelaajat/(?P<path>.+)/caldav/$', 
-        CalendarView.as_view(),
-        #CalendarFeedView(),
-        name="show_player_caldav"),
+    ## #url(r'^pelaajat/(?P<player_id>.+)/calendar/$', 
+    ## url(r'^pelaajat/(?P<path>.+)/caldav/$', 
+    ##     CalendarView.as_view(),
+    ##     #CalendarFeedView(),
+    ##     name="show_player_caldav"),
 
     url(r'^calendar(?P<path>.+)$', 
         CalendarView.as_view(),
