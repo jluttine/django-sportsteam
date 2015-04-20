@@ -14,6 +14,9 @@
     <a href="{{ season.url }}">Sarjan kotisivut</a>
     </p>
   {% endif %}
+<p>
+  <a href="{% url 'show_season_calendar' season.pk %}">Kalenteri (ICS/iCal)</a>
+</p>
   {% if season.comment %}
     <p>Kommentti: {{ season.comment }}</p>
   {% endif %}
