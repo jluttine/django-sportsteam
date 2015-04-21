@@ -31,6 +31,7 @@ from itertools import chain
 from django.conf import settings
 from django.forms.formsets import formset_factory
 from django.core.exceptions import PermissionDenied
+from django.utils import timezone
 
 from teamstats.models import *
 from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm
@@ -518,11 +519,13 @@ def show_season_calendar(request,
     # Get the matches in the season
     matches = match_class.objects.filter(season=season)
 
+    tz = timezone.get_default_timezone()
+
     events = (caldav.views.create_event(uid=str(match.id),
                                         summary='%s: %s' % (match.season.league, match.opponent),
                                         description=request.build_absolute_uri(reverse('show_match', kwargs={'match_id': match.id})),
                                         url=request.build_absolute_uri(reverse('show_match', kwargs={'match_id': match.id})),
-                                        dtstart=match.date,#caldav.views.date(match.date),
+                                        dtstart=match.date.astimezone(tz),#caldav.views.date(match.date),
                                         #dtend=match.date+timedelta(hours=1),#caldav.views.enddate(match.date),
                                         location=match.field)
               for match in matches)
