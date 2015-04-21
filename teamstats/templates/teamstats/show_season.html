@@ -109,6 +109,9 @@
 	  <td class="left">
             {{ match.date|date:"G:i" }}
           </td>
+          <td>
+            {{ match.field }}
+          </td>
 	  <td class="center">
             <a href="{% url 'show_match' match.id %}">
               {{ match.opponent }}
