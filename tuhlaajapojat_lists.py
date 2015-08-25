@@ -32,7 +32,7 @@ def get_addresses(list):
     # (e.g., 'hakid'->'HaKiD 2015' if 2015 is the latest season of HaKiD).
     try:
         season = Season.objects.filter(league__id__iexact=list).order_by('-year')[0]
-    except Season.DoesNotExist:
+    except IndexError:
         # Try matching to full season IDs
         try:
             season = Season.objects.get(id__iexact=list)
