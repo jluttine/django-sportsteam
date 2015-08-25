@@ -28,36 +28,24 @@ def get_addresses(list):
         emails = filter(None, emails)
         return emails, '[Tuhlaajapojat] '
 
-    # Check team aliases
-    if list.lower() == 'adidas':
-        list = 'adidas2014'
-    if list.lower() == 'fmhd':
-        list = 'fmhd2012'
-    if list.lower() == 'fmhm':
-        list = 'fmhm2014'
-    if list.lower() == 'esport':
-        list = 'esport2014'
-    if list.lower() == 'haku2':
-        list = 'haku22013'
-    if list.lower() == 'hakud':
-        list = 'hakud2014'
-    if list.lower() == 'hakid':
-        list = 'hakid2015'
-    if list.lower() == 'hakim':
-        list = 'hakim2013'
-    if list.lower() == 'srksm':
-        list = 'srksm2014'
-
-    # Try matching to season IDs
+    # Check short aliases for most recent seasons of leagues
+    # (e.g., 'hakid'->'HaKiD 2015' if 2015 is the latest season of HaKiD).
     try:
-        season = Season.objects.get(id__iexact=list)
+        season = Season.objects.filter(league__id__iexact=list).order_by('-year')[0]
     except Season.DoesNotExist:
-        pass
-    else:
+        # Try matching to full season IDs
+        try:
+            season = Season.objects.get(id__iexact=list)
+        except Season.DoesNotExist:
+            season = None
+    if season is not None:
+        print('Matched season:', season)
         players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
         emails = [player.player.email for player in players]
         emails = filter(None, emails)
         return emails, '[Tuhlaajapojat-' + unicode(season.league) + '] '
+    else:
+        print('Did not match any season')
 
     # Try matching to player IDs
     try:
