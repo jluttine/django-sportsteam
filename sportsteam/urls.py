@@ -4,6 +4,8 @@ from django.conf.urls import patterns, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.http import HttpResponse
+
 import teamstats.urls
 
 # Uncomment the next two lines to enable the admin:
@@ -11,6 +13,9 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+
+    # Robots.txt
+    (r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 
     (r'^', include(teamstats.urls)),
 
