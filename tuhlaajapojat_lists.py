@@ -55,8 +55,8 @@ def get_addresses(list):
     else:
         return [player.email], ''
 
-    print 'Did not find recipients for %s' % list 
+    print('Did not find recipients for %s' % list)
 
     # No match
-    return None, ''
+    return (None, '')
 
