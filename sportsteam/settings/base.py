@@ -80,21 +80,21 @@ MEDIA_URL = '/media/'
 # REDEFINE THIS IN LOCAL_SETTINGS.PY !
 SECRET_KEY = 'jlfksd)(flT#tsdj9fasdft43_:sdg9034%Qdf!#vfsd'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-# Stuff for loading static files?
-#TEMPLATE_CONTEXT_PROCESSORS = (
-#    'django.core.context_processors.debug',
-#    'django.core.context_processors.i18n',
-#    'django.core.context_processors.media',
-#    'django.core.context_processors.static',
-#    'django.contrib.auth.context_processors.auth',
-#    'django.contrib.messages.context_processors.messages',
-#)
+# A list containing the settings for all template engines to be used with
+# Django.
+# https://docs.djangoproject.com/en/1.9/ref/settings/#templates
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'DIRS': [path('templates')],
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+            ]
+        }
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -106,22 +106,14 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'sportsteam.urls'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    path('templates'),
-)
-
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'teamstats',
     'django.contrib.admin',
     'django.contrib.staticfiles',
-#    'south',
+    'teamstats',
 )
 
 # Load local settings. You can overwrite these default settings in
