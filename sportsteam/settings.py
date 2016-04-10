@@ -47,7 +47,7 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
-WSGI_APPLICATION = 'sportsteam.wsgi.application'
+WSGI_APPLICATION = 'sportsteam.apache.wsgi.application'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ( path('static/'), )
@@ -113,17 +113,17 @@ INSTALLED_APPS = (
     'teamstats',
     'django.contrib.admin',
     'django.contrib.staticfiles',
-    'south',
+#    'south',
 )
 
 # Load local settings. You can overwrite these default settings in
 # local_settings.py.
-try:
-    execfile(path('local_settings.py'))
-except IOError:
-    pass
 #try:
-#    from local_settings import *
+#    execfile(path('local_settings.py'))
 #except IOError:
 #    pass
+try:
+    from .local_settings import *
+except ImportError:
+    pass
 

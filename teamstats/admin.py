@@ -85,7 +85,7 @@ class OLD_MatchAdmin(admin.ModelAdmin):
                         matchplayer = MatchPlayer(match=match, player=player, goals=goals, assists=assists)
                         matchplayer.save()
             else:
-                print player_formset.errors
+                print(player_formset.errors)
 
         # Initialize formset with existing game stats
         if not valid_save:
@@ -110,7 +110,7 @@ class OLD_MatchAdmin(admin.ModelAdmin):
         # Add player information into the forms
         for (form, player) in zip(player_formset.forms, players):
             form.player = player
-            print player
+            print(player)
 
         my_context = {
             'player_formset': player_formset,
@@ -273,7 +273,7 @@ class BACKUP_SeasonAdmin(admin.ModelAdmin):
                         seasonplayer = SeasonPlayer(season=season, player=player, number=number)
                         seasonplayer.save()
             else:
-                print player_formset.errors
+                print(player_formset.errors)
 
         # Initialize formset with existing numbers
         if not valid_save:
