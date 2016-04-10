@@ -6,10 +6,18 @@
 
 # A helpful function to avoid writing absolute paths
 import os
-path = lambda x: os.path.join(os.path.abspath(os.path.dirname(__file__)), x)
-
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+path = lambda *args: os.path.join(
+    os.path.abspath(
+        os.path.dirname(
+            os.path.dirname(
+                os.path.dirname(
+                    __file__
+                )
+            )
+        )
+    ),
+    *args
+)
 
 TEAM_NAME = 'FC Team Name'
 # This is the slug of the team name. It is used in URLs and email
@@ -25,7 +33,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME':   path('sportsteam.sqlite'),
+        'NAME':   path('sportsteam', 'sportsteam.sqlite'),
     }
 }
 
@@ -47,7 +55,7 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
-WSGI_APPLICATION = 'sportsteam.apache.wsgi.application'
+WSGI_APPLICATION = 'sportsteam.wsgi.application'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = ( path('static/'), )
