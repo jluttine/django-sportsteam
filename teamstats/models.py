@@ -35,7 +35,7 @@ class Player(models.Model):
     class Meta:
         ordering = ('lastname', 'firstname')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.nickname == "":
             return self.lastname + " " + self.firstname
         else:
@@ -48,7 +48,7 @@ class League(models.Model):
     class Meta:
         ordering = ('id',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.id
 
 class Season(models.Model):
@@ -63,8 +63,8 @@ class Season(models.Model):
     class Meta:
         ordering = ('-year', 'league')
 
-    def __unicode__(self):
-        return unicode(self.league) + " " + self.year
+    def __str__(self):
+        return self.league + " " + self.year
 
 class SeasonPlayer(models.Model):
     season = models.ForeignKey(Season)
@@ -76,9 +76,9 @@ class SeasonPlayer(models.Model):
         ordering = ('number',)
         unique_together = (("season", "player",),)
 
-    def __unicode__(self):
-        return "#" + unicode(self.number) + " " + \
-               unicode(self.player) + " (" + unicode(self.season) + ")"
+    def __str__(self):
+        return "#" + str(self.number) + " " + \
+               str(self.player) + " (" + str(self.season) + ")"
 
 class Field(models.Model):
     name = models.CharField(max_length=40)
@@ -86,8 +86,8 @@ class Field(models.Model):
     class Meta:
         ordering = ('name',)
 
-    def __unicode__(self):
-        return self.name
+    def __str__(self):
+        return str(self.name)
 
 class Match(models.Model):
     season = models.ForeignKey(Season)
@@ -104,8 +104,8 @@ class Match(models.Model):
     class Meta:
         ordering = ('date',)
 
-    def __unicode__(self):
-        return self.opponent + self.date.strftime(" (%a %d.%m.%Y klo %H:%M)")
+    def __str__(self):
+        return str(self.opponent) + self.date.strftime(" (%a %d.%m.%Y klo %H:%M)")
 
 class MatchPlayer(models.Model):
     match = models.ForeignKey(Match)
@@ -117,8 +117,8 @@ class MatchPlayer(models.Model):
         ordering = ('match__date',)
         unique_together = (("match", "player",),)
 
-    def __unicode__(self):
-        return unicode(self.player) + ": " + unicode(self.match)
+    def __str__(self):
+        return str(self.player) + ": " + str(self.match)
 
 class EnrolledPlayer(models.Model):
     match = models.ForeignKey(Match)
@@ -172,8 +172,8 @@ class Video(models.Model):
             filename = ''
         return settings.MEDIA_URL + 'videos' + filename
 
-    def __unicode__(self):
-        return unicode(self.match) + " - " + self.title
+    def __str__(self):
+        return str(self.match) + " - " + self.title
 
 class SeekPoint(models.Model):
     video = models.ForeignKey(Video)
@@ -189,6 +189,6 @@ class SeekPoint(models.Model):
     class Meta:
         ordering = ('video__match__date', 'time',)
         
-    def __unicode__(self):
-        return unicode(self.video) + " " + self.minuteseconds() + " " + unicode(self.description)
+    def __str__(self):
+        return str(self.video) + " " + self.minuteseconds() + " " + str(self.description)
 
