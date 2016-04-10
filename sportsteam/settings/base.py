@@ -115,15 +115,3 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'teamstats',
 )
-
-# Load local settings. You can overwrite these default settings in
-# local_settings.py.
-#try:
-#    execfile(path('local_settings.py'))
-#except IOError:
-#    pass
-try:
-    from .local_settings import *
-except ImportError:
-    pass
-
