@@ -8,7 +8,7 @@ if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
 
 import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sportsteam.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sportsteam.settings.local")
 #os.environ['DJANGO_SETTINGS_MODULE'] = 'sportsteam.settings'
 
 from teamstats.models import *
