@@ -28,16 +28,12 @@ def get_addresses(list):
         emails = filter(None, emails)
         return emails, '[Tuhlaajapojat] '
 
-    # Check short aliases for most recent seasons of leagues
-    # (e.g., 'hakid'->'HaKiD 2015' if 2015 is the latest season of HaKiD).
+    # Try matching to full season IDs
     try:
-        season = Season.objects.filter(league__id__iexact=list).order_by('-year')[0]
-    except IndexError:
-        # Try matching to full season IDs
-        try:
-            season = Season.objects.get(id__iexact=list)
-        except Season.DoesNotExist:
-            season = None
+        season = Season.objects.get(id__iexact=list)
+    except Season.DoesNotExist:
+        season = None
+
     if season is not None:
         print('Matched season:', season)
         players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
