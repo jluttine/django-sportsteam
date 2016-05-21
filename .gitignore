@@ -6,3 +6,4 @@ local_settings.py
 *.sqlite
 _build
 sitestatic
+*.egg-info
