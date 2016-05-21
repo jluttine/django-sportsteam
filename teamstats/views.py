@@ -24,8 +24,9 @@ from __future__ import division
 
 from django.shortcuts import render_to_response, render, get_object_or_404
 from django.template import RequestContext, Context, loader
-from django.http import HttpResponse, HttpResponseRedirect
-from django.db.models import Sum, Q
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.db.models import Sum, Q, Avg, Count, F, Value
+from django.db.models.functions import Coalesce
 from django.core.urlresolvers import reverse
 from itertools import chain
 from django.conf import settings
@@ -38,15 +39,6 @@ from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm
 
 import caldav.views
 from datetime import datetime, timedelta
-
-
-
-
-
-def get_player_matches(player):
-    """ Return all matches of a player. """
-    return Match.objects.filter(season__players=player)
-
 
 
 def index(request,
@@ -89,20 +81,9 @@ def get_match_enrollments(match,
             enrolledplayers.append(player)
 
     return enrolledplayers
-    
-def get_match_goals(match):
-    if match.opponent_goals is not None:
-        matchplayers = MatchPlayer.objects.filter(match=match)
-        if not matchplayers:
-            goals = match.opponent_owngoals
-        else:
-            goals = matchplayers.aggregate(Sum('goals')).values()[0] + match.opponent_owngoals
-    else:
-        goals = None
 
-    return goals
 
-def show_season(request, 
+def show_season(request,
                 season_id,
                 season_class=Season,
                 league_class=League,
@@ -117,57 +98,34 @@ def show_season(request,
 
     try:
         season = season_class.objects.get(id__exact=season_id)
+    except season_class.DoesNotExist:
+        return Http404()
 
-        # Player stats
-        player_list = seasonplayer_class.objects.filter(season=season)
-        for player in player_list:
-            matches = MatchPlayer.objects.filter(player=player)
+    player_list = (
+        seasonplayer_class.objects
+        .filter(season=season_id)
+        .annotate_stats()
+    )
 
-            player.games = matches.count()
-            player.goals = matches.aggregate(goals=Sum('goals')).values()[0]
-            player.assists = matches.aggregate(assists=Sum('assists')).values()[0]
-            
-            if player.goals is None:
-                player.goals = 0
-            if player.assists is None:
-                player.assists = 0
+    # TODO: Show opponent own goals!
 
-            player.points = player.goals + player.assists
-            if player.games:
-                player.ppg = player.points / player.games
-            else:
-                player.ppg = 0.0
+    # Season matches
+    match_list = (
+        match_class.objects
+        .filter(season=season_id)
+        .annotate_result()
+        .annotate_enrollments(player_list)
+    )
 
-                #season_list = season_class.objects.all()
+    context = {
+        'season':      season,
+        'league_list': league_class.objects.all(),
+        'match_list':  match_list,
+        'player_list': player_list,
+        'team_name':   settings.TEAM_NAME,
+    }
 
-        # TODO: Show opponent own goals!
-
-        # Match list
-        match_list = match_class.objects.filter(season=season)
-        for match in match_list:
-            match.goals = get_match_goals(match)
-            match.result = (match.goals != None)
-            if not match.result:
-                match.player_list = get_match_enrollments(match,
-                                                          seasonplayer_class=seasonplayer_class, 
-                                                          enrolledplayer_class=enrolledplayer_class)
-                match.player_list = sorted(match.player_list, 
-                                           key=lambda player: player.player.shortname())
-                match.player_list = sorted(match.player_list, 
-                                           key=lambda player: player.choice)
-
-        context = {
-            'season':      season,
-            'league_list': league_class.objects.all(),
-            'match_list':  match_list,
-            'player_list': player_list,
-            'team_name':   settings.TEAM_NAME,
-            }
-        return render_to_response(template_name,
-                                  context)
-
-    except Season.DoesNotExist:
-        return HttpResponse("Kautta ei olemassa.")
+    return render_to_response(template_name, context)
 
 
 def show_all_players(request,
@@ -180,33 +138,15 @@ def show_all_players(request,
     View for showing statistics for all the players.
     '''
 
-    # Get all players
-    player_list = player_class.objects.all()
-
-    # Add player stats to the table one by one
-    for player in player_list:
-        matches = matchplayer_class.objects.filter(player__player=player)
-        player.games = matches.count()
-        player.goals = matches.aggregate(goals=Sum('goals')).values()[0]
-        player.assists = matches.aggregate(assists=Sum('assists')).values()[0]
-        if player.goals is None:
-            player.goals = 0
-        if player.assists is None:
-            player.assists = 0
-        player.points = player.goals + player.assists
-        if player.games:
-            player.ppg = player.points / player.games
-        else:
-            player.ppg = 0.0
+    player_list = player_class.objects.annotate_stats()
 
     context = {
         'player_list': player_list,
         'league_list': league_class.objects.all(),
         'team_name': settings.TEAM_NAME,
-        }
+    }
 
-    return render_to_response(template_name,
-                              context)
+    return render_to_response(template_name, context)
 
 def show_match(request,
                match_id,
@@ -227,84 +167,85 @@ def show_match(request,
     '''
 
     try:
-        match = match_class.objects.get(pk=match_id)
-
-        video_list = video_class.objects.filter(match=match)
-        for video in video_list:
-            #video.mp4 = unicode(video.url)[:-4] + '.mp4'
-            #video.ogg = unicode(video.url)[:-4] + '.ogg'
-            #video.mp4 = video.url
-            #video.ogg = video.url
-            #video.mp4 = video.url[:-4] + '.mp4'
-            #video.ogg = video.url[:-4] + '.ogg'
-            video.seekpoint_list = seekpoint_class.objects.filter(video=video)
-
-        match.goals = get_match_goals(match)
-        result = (match.goals != None)
-        match.played = result
-
-        if result:
-            # Print the result
-            player_list = matchplayer_class.objects.filter(match=match)
-            for player in player_list:
-                player.points = player.goals + player.assists
-
-            context = {
-                'match':       match,
-                'player_list': player_list,
-                'video_list':  video_list,
-                'league_list': league_class.objects.all(),
-                'team_name':   settings.TEAM_NAME,
-                }
-            return render(request,
-                          result_template_name,
-                          context)
-        else:
-            # Match not played yet, show match enrollments
-            
-            # Register posted enrollment (if one is posted)
-            try:
-                post_input = request.POST['choice'].split('-')
-                selected_player = int(post_input[0])
-                selected_choice = int(post_input[1])
-                try:
-                    enroller = enrolledplayer_class.objects.get(match=match,
-                                                                player__id=selected_player)
-                    if selected_choice == 1 or selected_choice == 2:
-                        enroller.enroll = (selected_choice == 1)
-                        enroller.save()
-                    else:
-                        enroller.delete()
-                except (enrolledplayer_class.DoesNotExist):
-                    if selected_choice == 1 or selected_choice == 2:
-                        player = seasonplayer_class.objects.get(id=selected_player)
-                        enroller = enrolledplayer_class(match=match,
-                                                        player=player,
-                                                        enroll=(selected_choice==1))
-                        enroller.save()
-            except (KeyError):
-                pass
-
-            # Get a list of players with enrollment statuses
-            players = sorted(get_match_enrollments(match,
-                                                   seasonplayer_class=seasonplayer_class, 
-                                                   enrolledplayer_class=enrolledplayer_class), 
-                             key=lambda player: player.choice)
-
-            context = {
-                'player_list': players,
-                'match':       match,
-                'league_list': league_class.objects.all(),
-                'team_name':   settings.TEAM_NAME,
-                }
-            return render(request,
-                          registration_template_name,
-                          context)
-
+        match = (
+            match_class.objects
+            .annotate_result()
+            .get(pk=match_id)
+        )
     except match_class.DoesNotExist:
-        return HttpResponse("Ottelua ei olemassa.")
+        raise Http404()
 
-def show_player(request, 
+    video_list = video_class.objects.filter(match=match)
+    for video in video_list:
+        #video.mp4 = unicode(video.url)[:-4] + '.mp4'
+        #video.ogg = unicode(video.url)[:-4] + '.ogg'
+        #video.mp4 = video.url
+        #video.ogg = video.url
+        #video.mp4 = video.url[:-4] + '.mp4'
+        #video.ogg = video.url[:-4] + '.ogg'
+        video.seekpoint_list = seekpoint_class.objects.filter(video=video)
+
+    if match.result:
+        # Print the result
+        player_list = (
+            matchplayer_class.objects
+            .annotate_points()
+            .filter(match=match)
+        )
+
+        context = {
+            'match':       match,
+            'player_list': player_list,
+            'video_list':  video_list,
+            'league_list': league_class.objects.all(),
+            'team_name':   settings.TEAM_NAME,
+            }
+
+        return render(request, result_template_name, context)
+
+    else:
+        # Match not played yet, show match enrollments
+
+        # Register posted enrollment (if one is posted)
+        try:
+            post_input = request.POST['choice'].split('-')
+            selected_player = int(post_input[0])
+            selected_choice = int(post_input[1])
+            try:
+                enroller = enrolledplayer_class.objects.get(match=match,
+                                                            player__id=selected_player)
+                if selected_choice == 1 or selected_choice == 2:
+                    enroller.enroll = (selected_choice == 1)
+                    enroller.save()
+                else:
+                    enroller.delete()
+            except (enrolledplayer_class.DoesNotExist):
+                if selected_choice == 1 or selected_choice == 2:
+                    player = seasonplayer_class.objects.get(id=selected_player)
+                    enroller = enrolledplayer_class(match=match,
+                                                    player=player,
+                                                    enroll=(selected_choice==1))
+                    enroller.save()
+        except (KeyError):
+            pass
+
+        # Get a list of players with enrollment statuses
+        players = sorted(get_match_enrollments(match,
+                                                seasonplayer_class=seasonplayer_class, 
+                                                enrolledplayer_class=enrolledplayer_class), 
+                            key=lambda player: player.choice)
+
+        context = {
+            'player_list': players,
+            'match':       match,
+            'league_list': league_class.objects.all(),
+            'team_name':   settings.TEAM_NAME,
+        }
+
+        return render(request, registration_template_name, context)
+
+
+def show_player(request,
                 player_id,
                 player_class=Player,
                 match_class=Match,
@@ -320,139 +261,65 @@ def show_player(request,
     statistics for all the seasons the player has attended and lists
     all games the player has played in or can register in.
     '''
-    
+
+    # Get the player
     try:
-        # Get the player
-        player = player_class.objects.get(pk=player_id)
-
-        try:
-            # Register enrollment (in/out/?) if one posted
-            post_input = request.POST['choice'].split('-')
-            selected_match = int(post_input[0])
-            selected_choice = int(post_input[1])
-            match = match_class.objects.get(id=selected_match)
-            try:
-                enroller = enrolledplayer_class.objects.get(match=match,
-                                                            player__player=player)
-                if selected_choice == 1 or selected_choice == 2:
-                    enroller.enroll = (selected_choice == 1)
-                    enroller.save()
-                else:
-                    enroller.delete()
-            except (enrolledplayer_class.DoesNotExist):
-                if selected_choice == 1 or selected_choice == 2:
-                    seasonplayer = seasonplayer_class.objects.get(season=match.season,
-                                                                  player=player)
-                    enroller = enrolledplayer_class(match=match,
-                                                    player=seasonplayer,
-                                                    enroll=(selected_choice==1))
-                    enroller.save()
-        except (KeyError, match_class.DoesNotExist):
-            pass
-
-        # TODO: Use related_names and remove this!
-        season_list = season_class.objects.all()
-
-        total_games = 0
-        total_goals = 0
-        total_assists = 0
-        total_points = 0
-
-        # TODO: Use related_names to get the code cleaner!
-        seasonplayer_list = []
-        for season in season_list:
-            try:
-                seasonplayer = seasonplayer_class.objects.get(season=season,
-                                                              player=player)
-                matchplayers = matchplayer_class.objects.filter(player=seasonplayer,
-                                                                match__opponent_goals__isnull=False)
-                #enrolledplayers = EnrolledPlayer.objects.filter(player=seasonplayer)
-
-                for matchplayer in matchplayers:
-                    matchplayer.match.result = True
-                    matchplayer.match.goals = matchplayer_class.objects.filter(match=matchplayer.match).aggregate(Sum('goals')).values()[0] + matchplayer.match.opponent_owngoals
-
-                enrolledplayers = list()
-                
-                if seasonplayer_class.objects.filter(season=season,
-                                                     player=player,
-                                                     passive=False).exists():
-                    matches = match_class.objects.filter(season=season,
-                                                         opponent_goals__isnull=True)
-                else:
-                    matches = []
-
-                for match in matches:
-                    match.result = False
-                    try:
-                        enrolledplayer = enrolledplayer_class.objects.get(match=match,
-                                                                          player=seasonplayer)
-                        if enrolledplayer.enroll:
-                            enrolledplayer.choice = 1
-                        else:
-                            enrolledplayer.choice = 2
-                    except (enrolledplayer_class.DoesNotExist):
-                        enrolledplayer = enrolledplayer_class(match=match,
-                                                              player=seasonplayer,
-                                                              enroll=True)
-                        enrolledplayer.choice = 3
-                    enrolledplayers.append(enrolledplayer)
-
-                seasonplayer.matchplayer_list = list(chain(matchplayers, 
-                                                           enrolledplayers))
-
-                # Compute season statistics
-                games = matchplayers.count()
-                goals = matchplayers.aggregate(Sum('goals')).values()[0]
-                assists = matchplayers.aggregate(Sum('assists')).values()[0]
-                if goals is None:
-                    goals = 0
-                if assists is None:
-                    assists = 0
-                points = goals + assists
-
-                # Add season stats to total stats
-                total_games += games
-                total_goals += goals
-                total_assists += assists
-                total_points += points
-
-                # Add season stats
-                seasonplayer.games = games
-                seasonplayer.goals = goals
-                seasonplayer.assists = assists
-                seasonplayer.points = goals + assists
-                if games:
-                    seasonplayer.ppg = seasonplayer.points / games
-                else:
-                    seasonplayer.ppg = 0.0
-                
-                seasonplayer_list.append(seasonplayer)
-
-            except seasonplayer_class.DoesNotExist:
-                pass
-
-        # Add total stats
-        player.games = total_games
-        player.goals = total_goals
-        player.assists = total_assists
-        player.points = total_points
-        if total_games:
-            player.ppg = total_points / total_games
-        else:
-            player.ppg = 0.0
-
-        context = {
-            'player':            player,
-            'seasonplayer_list': seasonplayer_list,
-            'league_list':       league_class.objects.all(),
-            'team_name':         settings.TEAM_NAME,
-            }
-        return render(request,
-                      template_name,
-                      context)
+        player = (
+            player_class.objects
+            .annotate_stats()
+            .get(pk=player_id)
+        )
     except player_class.DoesNotExist:
-        return HttpResponse("Pelaajaa ei olemassa.")
+        raise Http404()
+
+    try:
+        # Register enrollment (in/out/?) if one posted
+        post_input = request.POST['choice'].split('-')
+        selected_match = int(post_input[0])
+        selected_choice = int(post_input[1])
+        match = match_class.objects.get(id=selected_match)
+        try:
+            enroller = enrolledplayer_class.objects.get(match=match,
+                                                        player__player=player)
+            if selected_choice == 1 or selected_choice == 2:
+                enroller.enroll = (selected_choice == 1)
+                enroller.save()
+            else:
+                enroller.delete()
+        except (enrolledplayer_class.DoesNotExist):
+            if selected_choice == 1 or selected_choice == 2:
+                seasonplayer = seasonplayer_class.objects.get(season=match.season,
+                                                                player=player)
+                enroller = enrolledplayer_class(match=match,
+                                                player=seasonplayer,
+                                                enroll=(selected_choice==1))
+                enroller.save()
+    except (KeyError, match_class.DoesNotExist):
+        pass
+
+    seasonplayer_list = (
+        seasonplayer_class.objects
+        .annotate_stats()
+        .filter(player=player)
+    )
+
+    match_list = (
+        player
+        .get_matches()
+        #.annotate_and_filter_player(player)
+        .annotate_result()
+    )
+
+    context = {
+        'player':            player,
+        'seasonplayer_list': seasonplayer_list,
+        'match_list':        match_list,
+        'league_list':       league_class.objects.all(),
+        'team_name':         settings.TEAM_NAME,
+        }
+    return render(request,
+                    template_name,
+                    context)
 
 
 def show_player_calendar(request, 
@@ -470,20 +337,12 @@ def show_player_calendar(request,
     Show player's match calendar.
     """
 
-    print("Kalenteria kysellaan")
-    print(request.GET)
-    print(request.method)
-    print(request.body)
-    print(request.OPTIONS.dict())
-    #print(request.META)
-    
     # Get the player
     try:
         player = player_class.objects.get(pk=player_id)
     except player_class.DoesNotExist:
         return HttpResponse("Pelaajaa ei olemassa.")
 
-    
     matches = get_player_matches(player)
 
     events = (caldav.views.create_event(uid=str(match.id),
@@ -672,86 +531,3 @@ def add_spl_matches(request, season_id,
     return render(request,
                   template_name,
                   context)
-    
-    
-
-
-## from datetime import datetime, timedelta
-## from django.http import HttpResponse, HttpResponseBadRequest
-## from django_caldav.views import CalDavView, CalDavFeedView
-## from django.shortcuts import get_object_or_404
-## #from example.our_calendar.models import OurCalendarEvent
-
-
-## class CalendarFeedView(CalDavFeedView):
-##     product_id = '-//example.com//Example//EN'
-##     timezone = 'UTC'
-##     now = datetime.now()
-##     #min_date = now + timedelta(days=-7)
-##     #max_date = now + timedelta(days=14)
-
-
-##     ## def get_object(self, request):
-##     ## #def get_object(self, request, player_id):
-##     ##     print("GETTING OBJECT")
-##     ##     return None
-##     ##     return get_object_or_404(Player, id=player_id)
-
-
-##     def items(self):
-##     #def items(self, player):
-##         return Match.objects.all() #filter(season__players=player)
-##         #return Match.objects.filter(season__players=player)
-
-
-##     def item_title(self, match):
-##         return "%s: %s" % (match.season.league, match.opponent)
-
-
-##     def item_description(self, match):
-##         return "TODO"
-
-
-##     def item_start_datetime(self, match):
-##         return match.date
-
-
-##     def item_end_datetime(self, match):
-##         return match.date + timedelta(hours=1)
-
-
-##     def item_location(self, match):
-##         return match.field
-
-
-##     def item_link(self, match):
-##         return "TODO" #"/{pk}.ics".format(pk=item.pk)
-
-
-##     ## def item_save(self, request, base_item, iCalendar_component, *args, **kwargs):
-##     ##     return HttpResponseBadRequest()
-
-
-
-
-## from django.utils.decorators import method_decorator
-## from django.views.decorators.csrf import csrf_exempt
-## class CalendarView(CalDavView):
-##     """
-##     A simple event calender
-##     """
-##     feed_view = CalendarFeedView
-
-##     @method_decorator(csrf_exempt)
-##     def dispatch(self, request, path, *args, **kwargs):
-##         print("IN DISPATCH YEY!")
-##         retval = super(CalendarView, self).dispatch(request, path, *args, **kwargs)
-##         #print("REQUEST")
-##         #print(request)
-##         print("RESPONSE")
-##         print(retval)
-##         if not retval:
-##             print("RESPONSE EMPTY")
-##         return retval
-
-

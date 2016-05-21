@@ -15,7 +15,7 @@ from teamstats.models import *
 
 def get_addresses(list):
 
-    print 'Trying to match a list: ' + list
+    print('Trying to match a list: ' + list)
 
     # Some aliases :)
     if list.lower() == 'vuokravaioma':
@@ -43,7 +43,7 @@ def get_addresses(list):
         players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
         emails = [player.player.email for player in players]
         emails = filter(None, emails)
-        return emails, '[Tuhlaajapojat-' + unicode(season.league) + '] '
+        return emails, '[Tuhlaajapojat-' + str(season.league) + '] '
     else:
         print('Did not match any season')
 
@@ -55,8 +55,8 @@ def get_addresses(list):
     else:
         return [player.email], ''
 
-    print 'Did not find recipients for %s' % list 
+    print('Did not find recipients for %s' % list)
 
     # No match
-    return None, ''
+    return (None, '')
 

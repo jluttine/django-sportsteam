@@ -1,25 +1,25 @@
 
-    <h1>
-        {% if match.home %}
-            {{ team_name }} - {{ match.opponent }}
-            {% if match.played %}
-	        {{ match.goals }} - {{ match.opponent_goals }}
-	    {% endif %}
-	{% else %}
-	    {{ match.opponent }} - {{ team_name }}
-            {% if match.played %}
-	        {{ match.opponent_goals }} - {{ match.goals }}
-	    {% endif %}
-	{% endif %}
-    </h1>
-    <p>
-      <a href="{% url 'show_season' match.season.id %}">
+<h1>
+    {% if match.home %}
+    {{ team_name }} - {{ match.opponent }}
+    {% if match.result %}
+	  {{ match.goals }} - {{ match.opponent_goals }}
+	  {% endif %}
+	  {% else %}
+	  {{ match.opponent }} - {{ team_name }}
+    {% if match.result %}
+	  {{ match.opponent_goals }} - {{ match.goals }}
+	  {% endif %}
+	  {% endif %}
+</h1>
+<p>
+    <a href="{% url 'show_season' match.season.id %}">
         {{ match.season }}
-      </a><br />
-      {{ match.date|date:"l j.n.Y G:i"|capfirst }}<br />
-      {{ match.field }}<br />
-      {% if match.comment %}
-      Kommentti: {{ match.comment }}<br />
-      {% endif %}
-    </p>
+    </a><br />
+    {{ match.date|date:"l j.n.Y G:i"|capfirst }}<br />
+    {{ match.field }}<br />
+    {% if match.comment %}
+    Kommentti: {{ match.comment }}<br />
+    {% endif %}
+</p>
 

@@ -14,10 +14,88 @@
 # License along with this program.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+
+# TODO/FIXME:
+# Really interesting post about higher level query API:
+# https://www.dabapps.com/blog/higher-level-query-api-django-orm/
+
 from django.db import models
+from django.db.models import Sum, Q, Avg, Count, F, Value, Case, When
+from django.db.models.functions import Coalesce
 
 from django.conf import settings
-#from sportsteam import settings
+
+
+class MatchQuerySet(models.query.QuerySet):
+
+
+    def annotate_result(self):
+        return (
+            self
+            .annotate(
+                goals=(
+                    Coalesce(Sum('matchplayer__goals'), Value(0))
+                    + F('opponent_owngoals')
+                ),
+                # Does this weird hack work? Trying to make a boolean isnull
+                # operation to tell whether the game has been played or not:
+                result=Count('opponent_goals')
+            )
+        )
+
+
+    def annotate_enrollments(self, player_list):
+        match_list = self.prefetch_related('enrolledplayer_set__player')
+        for match in match_list:
+            match.not_enrolled_players = match.exclude_enrolled_players(player_list)
+        return match_list
+
+
+class MatchPlayerQuerySet(models.query.QuerySet):
+
+
+    def annotate_points(self):
+        return self.annotate(points=F('goals') + F('assists'))
+
+
+class SeasonPlayerQuerySet(models.query.QuerySet):
+
+
+    def annotate_stats(self):
+        return (
+            self
+            .annotate(
+                games=Count('matchplayer'),
+                goals=Coalesce(Sum('matchplayer__goals'), Value(0)),
+                assists=Coalesce(Sum('matchplayer__assists'), Value(0)),
+            )
+            .annotate(
+                points=F('goals') + F('assists'),
+            )
+            .annotate(
+                ppg=Coalesce(F('points')/F('games'), Value(0)),
+            )
+        )
+
+
+class PlayerQuerySet(models.query.QuerySet):
+
+    def annotate_stats(self):
+        return(
+            self
+            .annotate(
+                games=Count('seasonplayer__matchplayer'),
+                goals=Coalesce(Sum('seasonplayer__matchplayer__goals'), Value(0)),
+                assists=Coalesce(Sum('seasonplayer__matchplayer__assists'), Value(0)),
+            )
+            .annotate(
+                points=F('goals') + F('assists'),
+            )
+            .annotate(
+                ppg=Coalesce(F('points')/F('games'), Value(0)),
+            )
+        )
+
 
 class Player(models.Model):
     id = models.CharField(max_length=60, primary_key=True)
@@ -25,7 +103,9 @@ class Player(models.Model):
     lastname = models.CharField(max_length=30)
     nickname = models.CharField(max_length=30, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
- 
+
+    objects = PlayerQuerySet.as_manager()
+
     def shortname(self):
         if self.nickname:
             return self.nickname
@@ -35,11 +115,43 @@ class Player(models.Model):
     class Meta:
         ordering = ('lastname', 'firstname')
 
-    def __unicode__(self):
+
+    def get_seasons(self, active_player=True):
+        seasons = Season.objects.filter(seasonplayer__player=self)
+        if active_player:
+            seasons = seasons.filter(seasonplayer__passive=False)
+        return seasons
+
+
+    def get_matches(self):
+        played_match = Q(matchplayer__player__player=self)
+        might_enroll = Q(
+            opponent_goals__isnull=True,
+            season__in=self.get_seasons(active_player=True)
+        )
+        return (
+            Match.objects
+            .annotate(
+                player_goals=Sum(Case(
+                    When(matchplayer__player__player=self, then='matchplayer__goals')
+                )),
+                player_assists=Sum(Case(
+                    When(matchplayer__player__player=self, then='matchplayer__assists')
+                )),
+                player_enrolled=Sum(Case(
+                    When(enrolledplayer__player__player=self, then='enrolledplayer__enroll')
+                ))
+            )
+            .filter(played_match | might_enroll)
+        )
+
+
+    def __str__(self):
         if self.nickname == "":
             return self.lastname + " " + self.firstname
         else:
             return self.lastname + " " + "\"" + self.nickname + "\"" + " " + self.firstname
+
 
 class League(models.Model):
     id = models.CharField(max_length=20, primary_key=True)
@@ -48,8 +160,9 @@ class League(models.Model):
     class Meta:
         ordering = ('id',)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.id
+
 
 class Season(models.Model):
     id = models.CharField(max_length=60, primary_key=True)
@@ -63,8 +176,9 @@ class Season(models.Model):
     class Meta:
         ordering = ('-year', 'league')
 
-    def __unicode__(self):
-        return unicode(self.league) + " " + self.year
+    def __str__(self):
+        return str(self.league) + " " + str(self.year)
+
 
 class SeasonPlayer(models.Model):
     season = models.ForeignKey(Season)
@@ -72,13 +186,16 @@ class SeasonPlayer(models.Model):
     number = models.IntegerField()
     passive = models.BooleanField()
 
+    objects = SeasonPlayerQuerySet.as_manager()
+
     class Meta:
         ordering = ('number',)
         unique_together = (("season", "player",),)
 
-    def __unicode__(self):
-        return "#" + unicode(self.number) + " " + \
-               unicode(self.player) + " (" + unicode(self.season) + ")"
+    def __str__(self):
+        return "#" + str(self.number) + " " + \
+               str(self.player) + " (" + str(self.season) + ")"
+
 
 class Field(models.Model):
     name = models.CharField(max_length=40)
@@ -86,8 +203,9 @@ class Field(models.Model):
     class Meta:
         ordering = ('name',)
 
-    def __unicode__(self):
-        return self.name
+    def __str__(self):
+        return str(self.name)
+
 
 class Match(models.Model):
     season = models.ForeignKey(Season)
@@ -101,11 +219,25 @@ class Match(models.Model):
     opponent_owngoals = models.IntegerField(blank=True,default=0)
     comment = models.TextField(blank=True,null=True)
 
+    objects = MatchQuerySet.as_manager()
+
     class Meta:
         ordering = ('date',)
 
-    def __unicode__(self):
-        return self.opponent + self.date.strftime(" (%a %d.%m.%Y klo %H:%M)")
+    def __str__(self):
+        return str(self.opponent) + self.date.strftime(" (%a %d.%m.%Y klo %H:%M)")
+
+
+    def exclude_enrolled_players(self, player_list):
+        return [
+            player
+            for player in player_list
+            if player not in [
+                    enrolled_player.player
+                    for enrolled_player in self.enrolledplayer_set.all()
+            ]
+        ]
+
 
 class MatchPlayer(models.Model):
     match = models.ForeignKey(Match)
@@ -113,17 +245,26 @@ class MatchPlayer(models.Model):
     goals = models.IntegerField(default=0)
     assists = models.IntegerField(default=0)
 
+    objects = MatchPlayerQuerySet.as_manager()
+
     class Meta:
         ordering = ('match__date',)
         unique_together = (("match", "player",),)
 
-    def __unicode__(self):
-        return unicode(self.player) + ": " + unicode(self.match)
+    def __str__(self):
+        return str(self.player) + ": " + str(self.match)
+
 
 class EnrolledPlayer(models.Model):
     match = models.ForeignKey(Match)
     player = models.ForeignKey(SeasonPlayer)
     enroll = models.BooleanField()
+
+
+    class Meta:
+        ordering = ('-enroll', 'player')
+        unique_together = (('match', 'player'))
+
 
 class Video(models.Model):
     match = models.ForeignKey(Match)
@@ -172,8 +313,8 @@ class Video(models.Model):
             filename = ''
         return settings.MEDIA_URL + 'videos' + filename
 
-    def __unicode__(self):
-        return unicode(self.match) + " - " + self.title
+    def __str__(self):
+        return str(self.match) + " - " + self.title
 
 class SeekPoint(models.Model):
     video = models.ForeignKey(Video)
@@ -189,6 +330,6 @@ class SeekPoint(models.Model):
     class Meta:
         ordering = ('video__match__date', 'time',)
         
-    def __unicode__(self):
-        return unicode(self.video) + " " + self.minuteseconds() + " " + unicode(self.description)
+    def __str__(self):
+        return str(self.video) + " " + self.minuteseconds() + " " + str(self.description)
 

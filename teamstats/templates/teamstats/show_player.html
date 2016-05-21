@@ -93,90 +93,96 @@
 
 {% if seasonplayer_list %}
 
-  <script language="javascript">
-    choice = {}
-    {% for seasonplayer in seasonplayer_list %}
-      {% for matchplayer in seasonplayer.matchplayer_list %}
-        {% if not matchplayer.match.result %}
-          choice["{{ matchplayer.match.id }}"] = {{ matchplayer.choice }};
-        {% endif %}
-      {% endfor %}
-    {% endfor %}
-  </script>
+<script language="javascript">
+ choice = {}
+ {% for match in match_list %}
+ {% if not match.result %}
+ choice["{{ match.id }}"] =
+ {% if match.player_enrolled == True %}
+ 1
+ {% elif match.player_enrolled == False %}
+ 2
+ {% else %}
+ 3
+ {% endif %}
+ ;
+ {% endif %}
+ {% endfor %}
+</script>
 
   {% include "teamstats/registration_functions.html" %}
 
-  {% for seasonplayer in seasonplayer_list %}
-    <h2>
-      <a href="{% url 'show_season' seasonplayer.season.id %}">
-        {{ seasonplayer.season }}
+  {% regroup match_list by season as season_list %}
+  {% for season in season_list %}
+  <h2>
+      <a href="{% url 'show_season' season.grouper.id %}">
+          {{ season.grouper }}
       </a>
-    </h2>
-    <table>
-      {% for matchplayer in seasonplayer.matchplayer_list %}
-        <tr>
-  	  <td class="center">
-            {{ matchplayer.match.date|date:"D"|lower }}
+  </h2>
+  <table>
+      {% for match in season.list %}
+      <tr>
+  	      <td class="center">
+              {{ match.date|date:"D"|lower }}
           </td>
-	  <td class="right">
-            {{ matchplayer.match.date|date:"j.n." }}
+	        <td class="right">
+              {{ match.date|date:"j.n." }}
           </td>
-	  <td class="left">
-            {{ matchplayer.match.date|date:"G:i" }}
+	        <td class="left">
+              {{ match.date|date:"G:i" }}
           </td>
-	  <td class="center">
-            <a href="{% url 'show_match' matchplayer.match.id %}">
-              {{ matchplayer.match.opponent }}
-            </a>
+	        <td class="center">
+              <a href="{% url 'show_match' match.id %}">
+                  {{ match.opponent }}
+              </a>
           </td>
-	  {% if matchplayer.match.result %}
-	    <td class="right">
-              {{ matchplayer.match.goals }}
-            </td>
-	    <td>
+	        {% if match.result %}
+	        <td class="right">
+              {{ match.goals }}
+          </td>
+	        <td>
               -
-            </td>
-	    <td class="left">
-              {{ matchplayer.match.opponent_goals }}
-            </td>
-	    <td class="right">
-              ({{ matchplayer.goals }}
-            </td>
-	    <td>
+          </td>
+	        <td class="left">
+              {{ match.opponent_goals }}
+          </td>
+	        <td class="right">
+              ({{ match.player_goals }}
+          </td>
+	        <td>
               +
-            </td>
-	    <td class="left">
-              {{ matchplayer.assists }})
-            </td>
-	  {% else %}
-  	    <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-	  {% endif %}
-
-          {% if matchplayer.match.result %}
-            <td></td>
-            <td></td>
-            <td></td>
+          </td>
+	        <td class="left">
+              {{ match.player_assists }})
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+	        {% else %}
+  	      <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          {% if match.player_enrolled == True %}
+          <td class="choice1">IN</td>
+          {% elif match.player_enrolled == False %}
+          <td class="choice2">OUT</td>
           {% else %}
-            <td class="choice{{ matchplayer.choice }}">
-              {% ifequal matchplayer.choice 1 %}IN{% endifequal %}
-              {% ifequal matchplayer.choice 2 %}OUT{% endifequal %}
-              {% ifequal matchplayer.choice 3 %}?{% endifequal %}
-            </td>
-            <td>
-              {% with matchplayer.match.id as id %}
-                {% include "teamstats/registration_buttons.html" %}
-              {% endwith %}
-            </td>
+          <td class="choice3">?</td>
           {% endif %}
-        </tr>
+          <td>
+              {% with match.id as id %}
+              {% include "teamstats/registration_buttons.html" %}
+              {% endwith %}
+          </td>
+          {% endif %}
+      </tr>
       {% endfor %}
-    </table>
+  </table>
   {% endfor %}
+
 {% endif %}
 
 {% endblock %}
