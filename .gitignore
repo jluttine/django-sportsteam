@@ -2,8 +2,9 @@
 *~
 *.gz
 *.json
-local_settings.py
 *.sqlite
 _build
 sitestatic
 *.egg-info
+
+sportsteam/settings/local.py
