@@ -13,19 +13,9 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
+
 import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", 'sportsteam.settings.default')
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sportsteam.settings")
-
-# This application object is used by any WSGI server configured to use this
-# file. This includes Django's development server, if the WSGI_APPLICATION
-# setting points here.
-import django.core
-import django.core.handlers.wsgi
-application = django.core.handlers.wsgi.WSGIHandler()
-#from django.core.wsgi import get_wsgi_application
-#application = get_wsgi_application()
-
-# Apply WSGI middleware here.
-# from helloworld.wsgi import HelloWorldApplication
-# application = HelloWorldApplication(application)
+from django.core.handlers.wsgi import WSGIHandler
+application = WSGIHandler()
