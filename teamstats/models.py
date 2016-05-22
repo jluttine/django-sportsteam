@@ -20,8 +20,10 @@
 # https://www.dabapps.com/blog/higher-level-query-api-django-orm/
 
 from django.db import models
-from django.db.models import Sum, Q, Avg, Count, F, Value, Case, When
+from django.db.models import (Sum, Q, Avg, Count, F, Value, Case, When,
+                              ExpressionWrapper)
 from django.db.models.functions import Coalesce
+from decimal import Decimal
 
 from django.conf import settings
 
@@ -58,6 +60,14 @@ class MatchPlayerQuerySet(models.query.QuerySet):
         return self.annotate(points=F('goals') + F('assists'))
 
 
+PPG_ANNOTATION = Coalesce(
+    ExpressionWrapper(
+        Decimal('1.0') * F('points') / F('games'),
+        output_field=models.FloatField()
+    ),
+    Value(0.0)
+)
+
 class SeasonPlayerQuerySet(models.query.QuerySet):
 
 
@@ -73,7 +83,7 @@ class SeasonPlayerQuerySet(models.query.QuerySet):
                 points=F('goals') + F('assists'),
             )
             .annotate(
-                ppg=Coalesce(F('points')/F('games'), Value(0)),
+                ppg=PPG_ANNOTATION
             )
         )
 
@@ -92,7 +102,7 @@ class PlayerQuerySet(models.query.QuerySet):
                 points=F('goals') + F('assists'),
             )
             .annotate(
-                ppg=Coalesce(F('points')/F('games'), Value(0)),
+                ppg=PPG_ANNOTATION
             )
         )
 
