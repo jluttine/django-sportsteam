@@ -372,13 +372,13 @@ def get_mailing_list(request, list_name):
         pass
     else:
         return to_json(
-                emails=[player.email] if player.email else [],
+                emails=[player.email] if player.email else None,
                 tag=''
         )
 
     # No match
     return to_json(
-        emails=[],
+        emails=None,
         tag=''
     )
 
