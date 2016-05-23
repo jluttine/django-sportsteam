@@ -349,7 +349,7 @@ def get_mailing_list(request, list_name):
         emails = [player.email for player in players if player.email]
         return to_json(
             emails=emails,
-            tag='[{0}] '.format(settings.TEAM_TAG)
+            tag='[{0}]'.format(settings.TEAM_TAG)
         )
 
     # Try matching to full season IDs
