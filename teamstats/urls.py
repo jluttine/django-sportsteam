@@ -59,7 +59,7 @@ urlpatterns = [
         views.show_player,
         name="show_player"),
 
-    url(r'email/(?P<list_name>.+)/$',
+    url(r'^api/email/(?P<list_name>.+)/$',
         views.get_mailing_list,
         name="get_mailing_list"),
 
