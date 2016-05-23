@@ -34,6 +34,8 @@ from django.forms.formsets import formset_factory
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 
+import json
+
 from teamstats.models import *
 from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm
 
@@ -324,24 +326,30 @@ def show_player(request,
 
 def get_mailing_list(request, list_name):
 
+    def to_json(tag, emails):
+        # return HttpResponse(
+        #     json.dumps(dict(emails=emails, tag=tag), ensure_ascii=False),
+        #     content_type="application/json; charset=utf-8"
+        # )
+        return JsonResponse(
+            dict(emails=emails, tag=tag),
+            json_dumps_params=dict(ensure_ascii=False),
+        )
+
     if list_name.lower() == 'webmaster':
         emails = [admin[1] for admin in settings.ADMINS]
-        return JsonResponse(
-            dict(
-                emails=emails,
-                tag='[{0}-Webmaster]'.format(settings.TEAM_TAG)
-            )
+        return to_json(
+            emails=emails,
+            tag='[{0}-Webmaster]'.format(settings.TEAM_TAG)
         )
 
     # Try if for everyone
     if list_name.lower() == settings.TEAM_SLUG:
         players = Player.objects.all()
         emails = [player.email for player in players if player.email]
-        return JsonResponse(
-            dict(
-                emails=emails,
-                tag='[{0}] '.format(settings.TEAM_TAG)
-            )
+        return to_json(
+            emails=emails,
+            tag='[{0}] '.format(settings.TEAM_TAG)
         )
 
     # Try matching to full season IDs
@@ -352,11 +360,9 @@ def get_mailing_list(request, list_name):
     else:
         players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
         emails = [player.player.email for player in players]
-        return JsonResponse(
-            dict(
-                emails=emails,
-                tag='[{0}-{1}]'.format(settings.TEAM_TAG, season.league)
-            )
+        return to_json(
+            emails=emails,
+            tag='[{0}-{1}]'.format(settings.TEAM_TAG, season.league)
         )
 
     # Try matching to player IDs
@@ -365,20 +371,16 @@ def get_mailing_list(request, list_name):
     except Player.DoesNotExist:
         pass
     else:
-        return JsonResponse(
-            dict(
+        return to_json(
                 emails=[player.email] if player.email else [],
                 tag=''
-            )
         )
 
     # No match
-    return JsonResponse(
-        dict(
-            emails=[],
-            tag=''
-            )
-        )
+    return to_json(
+        emails=[],
+        tag=''
+    )
 
 
 def show_player_calendar(request, 
