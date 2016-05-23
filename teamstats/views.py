@@ -24,7 +24,7 @@ from __future__ import division
 
 from django.shortcuts import render_to_response, render, get_object_or_404
 from django.template import RequestContext, Context, loader
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.db.models import Sum, Q, Avg, Count, F, Value
 from django.db.models.functions import Coalesce
 from django.core.urlresolvers import reverse
@@ -320,6 +320,58 @@ def show_player(request,
     return render(request,
                     template_name,
                     context)
+
+
+def get_mailing_list(request, list_name):
+
+    # Try if for everyone
+    if list_name.lower() == settings.TEAM_SLUG:
+        players = Player.objects.all()
+        emails = [player.email for player in players if player.email]
+        emails = filter(None, emails)
+        return JsonResponse(
+            dict(
+                emails=emails,
+                tag='[{0}] '.format(settings.TEAM_TAG)
+            )
+        )
+
+    # Try matching to full season IDs
+    try:
+        season = Season.objects.get(id__iexact=list_name)
+    except Season.DoesNotExist:
+        pass
+    else:
+        players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
+        emails = [player.player.email for player in players]
+        emails = filter(None, emails)
+        return JsonResponse(
+            dict(
+                emails=emails,
+                tag='[{0}-{1}]'.format(settings.TEAM_TAG, season.league)
+            )
+        )
+
+    # Try matching to player IDs
+    try:
+        player = Player.objects.get(id__iexact=list_name)
+    except Player.DoesNotExist:
+        pass
+    else:
+        return JsonResponse(
+            dict(
+                emails=[player.email] if player.email else [],
+                tag=''
+            )
+        )
+
+    # No match
+    return JsonResponse(
+        dict(
+            emails=[],
+            tag=''
+            )
+        )
 
 
 def show_player_calendar(request, 

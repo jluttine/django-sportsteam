@@ -22,7 +22,9 @@ TEAM_NAME = 'FC Team Name'
 # This is the slug of the team name. It is used in URLs and email
 # addresses etc. It should be in lower case, no whitespace, no special
 # characters.
-SLUG = 'teamname'
+TEAM_SLUG = 'teamname'
+# The tag used in email subject field as "[TEAM_TAG] Original subject"
+TEAM_TAG = 'Team Name'
 
 ADMINS = (
 )
