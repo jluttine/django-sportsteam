@@ -324,6 +324,15 @@ def show_player(request,
 
 def get_mailing_list(request, list_name):
 
+    if list_name.lower() == 'webmaster':
+        emails = [admin[1] for admin in settings.ADMINS]
+        return JsonResponse(
+            dict(
+                emails=emails,
+                tag='[{0}-Webmaster]'.format(settings.TEAM_TAG)
+            )
+        )
+
     # Try if for everyone
     if list_name.lower() == settings.TEAM_SLUG:
         players = Player.objects.all()
