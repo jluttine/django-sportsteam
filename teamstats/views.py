@@ -337,7 +337,6 @@ def get_mailing_list(request, list_name):
     if list_name.lower() == settings.TEAM_SLUG:
         players = Player.objects.all()
         emails = [player.email for player in players if player.email]
-        emails = filter(None, emails)
         return JsonResponse(
             dict(
                 emails=emails,
@@ -353,7 +352,6 @@ def get_mailing_list(request, list_name):
     else:
         players = SeasonPlayer.objects.filter(season__id=season.id,passive=False)
         emails = [player.player.email for player in players]
-        emails = filter(None, emails)
         return JsonResponse(
             dict(
                 emails=emails,
