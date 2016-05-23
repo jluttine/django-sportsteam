@@ -1,3 +1,3 @@
-from .base import *
+from sportsteam.settings.base import *
 
 DEBUG = False
