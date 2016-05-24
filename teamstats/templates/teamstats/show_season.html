@@ -133,7 +133,7 @@
         <td></td>
         <td></td>
         <td class="registrations">
-            {% regroup match.enrolledplayer_set.all by enroll as enroll_list %}
+            {% regroup match.ordered_enrolledplayer_set by enroll as enroll_list %}
             {% for enroll in enroll_list %}
             <span
                 {% if enroll.grouper == True %}
@@ -146,7 +146,7 @@
                 ({{ enroll.list|length }}):
                 {% for player in enroll.list %}
                 <a href="{% url 'show_player' player.player.player.id %}">
-                    {{ player.player.player.shortname }}
+                    {{ player.shortname }}
                 </a>
                 {% endfor %}
             </span>
@@ -156,7 +156,7 @@
                 ? ({{ match.not_enrolled_players|length }}):
                 {% for player in match.not_enrolled_players %}
                 <a href="{% url 'show_player' player.player.id %}">
-                    {{ player.player.shortname }}
+                    {{ player.shortname }}
                 </a>
                 {% endfor %}
             </span>

@@ -21,7 +21,7 @@
 
 from django.db import models
 from django.db.models import (Sum, Q, Avg, Count, F, Value, Case, When,
-                              ExpressionWrapper)
+                              ExpressionWrapper, Prefetch)
 from django.db.models.functions import Coalesce
 from decimal import Decimal
 
@@ -47,9 +47,31 @@ class MatchQuerySet(models.query.QuerySet):
 
 
     def annotate_enrollments(self, player_list):
-        match_list = self.prefetch_related('enrolledplayer_set__player')
+
+        enrolled_players = (
+            EnrolledPlayer.objects
+            .annotate_shortname()
+            .order_by('-enroll', 'shortname')
+        )
+        match_list = (
+            self.prefetch_related(
+                Prefetch(
+                    'enrolledplayer_set',
+                    enrolled_players,
+                    to_attr='ordered_enrolledplayer_set'
+                ),
+            )
+        )
+
+        player_list = (
+            player_list
+            .filter(passive=False)
+            .annotate_shortname()
+            .order_by('shortname')
+        )
         for match in match_list:
             match.not_enrolled_players = match.exclude_enrolled_players(player_list)
+
         return match_list
 
 
@@ -88,6 +110,33 @@ class SeasonPlayerQuerySet(models.query.QuerySet):
         )
 
 
+    def annotate_shortname(self):
+        return self.annotate(
+            shortname=Coalesce(
+                Case(
+                    When(player__nickname__exact='', then=None),
+                    default='player__nickname'
+                ),
+                'player__firstname',
+            )
+        )
+
+
+class EnrolledPlayerQuerySet(models.query.QuerySet):
+
+
+    def annotate_shortname(self):
+        return self.annotate(
+            shortname=Coalesce(
+                Case(
+                    When(player__player__nickname__exact='', then=None),
+                    default='player__player__nickname'
+                ),
+                'player__player__firstname',
+            )
+        )
+
+
 class PlayerQuerySet(models.query.QuerySet):
 
     def annotate_stats(self):
@@ -116,11 +165,11 @@ class Player(models.Model):
 
     objects = PlayerQuerySet.as_manager()
 
-    def shortname(self):
-        if self.nickname:
-            return self.nickname
-        else:
-            return self.firstname
+    # def shortname(self):
+    #     if self.nickname:
+    #         return self.nickname
+    #     else:
+    #         return self.firstname
 
     class Meta:
         ordering = ('lastname', 'firstname')
@@ -239,13 +288,15 @@ class Match(models.Model):
 
 
     def exclude_enrolled_players(self, player_list):
+        enrolled_players = [
+            enrolled_player.player
+            for enrolled_player in self.ordered_enrolledplayer_set
+            #for enrolled_player in self.enrolledplayer_set.all()
+        ]
         return [
             player
             for player in player_list
-            if player not in [
-                    enrolled_player.player
-                    for enrolled_player in self.enrolledplayer_set.all()
-            ]
+            if player not in enrolled_players
         ]
 
 
@@ -269,6 +320,8 @@ class EnrolledPlayer(models.Model):
     match = models.ForeignKey(Match)
     player = models.ForeignKey(SeasonPlayer)
     enroll = models.BooleanField()
+
+    objects = EnrolledPlayerQuerySet.as_manager()
 
 
     class Meta:
