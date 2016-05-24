@@ -116,7 +116,7 @@ def show_season(request,
         match_class.objects
         .filter(season=season_id)
         .annotate_result()
-        .annotate_enrollments(player_list.filter(passive=False))
+        .annotate_enrollments(player_list)
     )
 
     context = {
