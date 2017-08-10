@@ -1,2 +1,5 @@
 include versioneer.py
 include sportsteam/_version.py
+
+recursive-include teamstats/static *
+recursive-include teamstats/templates *
