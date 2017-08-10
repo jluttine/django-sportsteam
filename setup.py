@@ -40,16 +40,17 @@ if __name__ == "__main__":
                 'ipython',
             ]
         },
-        packages         = find_packages(),
-        name             = NAME,
-        version          = VERSION,
-        author           = AUTHOR,
-        author_email     = AUTHOR_EMAIL,
-        description      = DESCRIPTION,
-        license          = LICENSE,
-        url              = URL,
-        long_description = read('README.rst'),
-        classifiers = [
+        packages             = find_packages(),
+        include_package_data = True,
+        name                 = NAME,
+        version              = VERSION,
+        author               = AUTHOR,
+        author_email         = AUTHOR_EMAIL,
+        description          = DESCRIPTION,
+        license              = LICENSE,
+        url                  = URL,
+        long_description     = read('README.rst'),
+        classifiers          = [
             'Programming Language :: Python :: 3 :: Only',
             'Development Status :: 4 - Beta',
             'License :: OSI Approved :: GNU Affero General Public License v3',
@@ -57,4 +58,3 @@ if __name__ == "__main__":
             'Framework :: Django',
         ],
     )
-
