@@ -331,17 +331,17 @@ class EnrolledPlayer(models.Model):
 
 class Video(models.Model):
     match = models.ForeignKey(Match)
-    mp4 = models.FilePathField(path=(settings.MEDIA_ROOT+'videos/'),
+    mp4 = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
                                match=".*\.mp4$",
                                recursive=True,
                                blank=True,
                                null=True)
-    ogg = models.FilePathField(path=(settings.MEDIA_ROOT+'videos/'),
+    ogg = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
                                match=".*\.ogv$",
                                recursive=True,
                                blank=True,
                                null=True)
-    webm = models.FilePathField(path=(settings.MEDIA_ROOT+'videos/'),
+    webm = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
                                 match=".*\.webm$",
                                 recursive=True,
                                 blank=True,
@@ -358,7 +358,7 @@ class Video(models.Model):
             filename = self.mp4.replace(path, '', 1)
         else:
             filename = ''
-        return settings.MEDIA_URL + 'videos' + filename
+        return settings.MEDIA_URL + 'videos/' + filename
 
     def url_ogg(self):
         path = self._meta.get_field('ogg').path
@@ -366,7 +366,7 @@ class Video(models.Model):
             filename = self.ogg.replace(path, '', 1)
         else:
             filename = ''
-        return settings.MEDIA_URL + 'videos' + filename
+        return settings.MEDIA_URL + 'videos/' + filename
 
     def url_webm(self):
         path = self._meta.get_field('webm').path
@@ -374,7 +374,7 @@ class Video(models.Model):
             filename = self.webm.replace(path, '', 1)
         else:
             filename = ''
-        return settings.MEDIA_URL + 'videos' + filename
+        return settings.MEDIA_URL + 'videos/' + filename
 
     def __str__(self):
         return str(self.match) + " - " + self.title
