@@ -41,6 +41,11 @@ if __name__ == "__main__":
             ]
         },
         packages             = find_packages(),
+        package_data         = {
+            '': [
+                "templates/*",
+            ],
+        },
         include_package_data = True,
         name                 = NAME,
         version              = VERSION,
