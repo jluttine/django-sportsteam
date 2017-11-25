@@ -331,21 +331,21 @@ class EnrolledPlayer(models.Model):
 
 class Video(models.Model):
     match = models.ForeignKey(Match)
-    mp4 = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
+    mp4 = models.FilePathField(path=(settings.MEDIA_ROOT+'videos/'),
                                match=".*\.mp4$",
                                recursive=True,
                                blank=True,
                                null=True)
-    ogg = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
+    ogg = models.FilePathField(path=(settings.MEDIA_ROOT+'videos/'),
                                match=".*\.ogv$",
                                recursive=True,
                                blank=True,
-                               null=True) 
-    webm = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
+                               null=True)
+    webm = models.FilePathField(path=(settings.MEDIA_ROOT+'videos/'),
                                 match=".*\.webm$",
                                 recursive=True,
                                 blank=True,
-                                null=True) 
+                                null=True)
     title = models.CharField(max_length=30)
     part = models.IntegerField()
 
@@ -392,7 +392,6 @@ class SeekPoint(models.Model):
 
     class Meta:
         ordering = ('video__match__date', 'time',)
-        
+
     def __str__(self):
         return str(self.video) + " " + self.minuteseconds() + " " + str(self.description)
-
