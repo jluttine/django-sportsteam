@@ -5,18 +5,6 @@
 
 # A helpful function to avoid writing absolute paths
 import os
-path = lambda *args: os.path.join(
-    os.path.abspath(
-        os.path.dirname(
-            os.path.dirname(
-                os.path.dirname(
-                    __file__
-                )
-            )
-        )
-    ),
-    *args
-)
 
 TEAM_NAME = 'FC Team Name'
 # This is the slug of the team name. It is used in URLs and email
@@ -52,18 +40,12 @@ USE_I18N = True
 WSGI_APPLICATION = 'sportsteam.wsgi.application'
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = ( path('static/'), )
-STATIC_ROOT = path('sitestatic/')
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 # This will be deprecated in Django 1.4
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
-
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = path('media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -81,7 +63,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'APP_DIRS': True,
-        'DIRS': [path('templates')],
+        'DIRS': [],
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
