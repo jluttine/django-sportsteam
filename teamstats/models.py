@@ -206,7 +206,7 @@ class Player(models.Model):
 
 
     def __str__(self):
-        if self.nickname == "":
+        if not self.nickname:
             return self.lastname + " " + self.firstname
         else:
             return self.lastname + " " + "\"" + self.nickname + "\"" + " " + self.firstname
