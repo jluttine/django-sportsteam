@@ -25,7 +25,7 @@ from __future__ import division
 from django.shortcuts import render_to_response, render, get_object_or_404
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
-from django.db.models import Sum, Q, Avg, Count, F, Value
+from django.db.models import Sum, Q, Avg, Count, F, Value, BooleanField
 from django.db.models.functions import Coalesce
 from django.core.urlresolvers import reverse
 from itertools import chain
@@ -56,7 +56,7 @@ def index(request,
     return render_to_response(template_name,
                               context)
 
-def get_match_enrollments(match, 
+def get_match_enrollments(match,
                           seasonplayer_class=SeasonPlayer,
                           enrolledplayer_class=EnrolledPlayer):
     """
@@ -78,7 +78,7 @@ def get_match_enrollments(match,
             ind = ind + 1
         else:
             player.choice = 3
-        
+
         if player.choice == 1 or not player.passive:
             enrolledplayers.append(player)
 
@@ -233,8 +233,8 @@ def show_match(request,
 
         # Get a list of players with enrollment statuses
         players = sorted(get_match_enrollments(match,
-                                                seasonplayer_class=seasonplayer_class, 
-                                                enrolledplayer_class=enrolledplayer_class), 
+                                                seasonplayer_class=seasonplayer_class,
+                                                enrolledplayer_class=enrolledplayer_class),
                             key=lambda player: player.choice)
 
         context = {
@@ -305,11 +305,85 @@ def show_player(request,
         .filter(player=player)
     )
 
-    match_list = (
-        player
-        .get_matches()
-        #.annotate_and_filter_player(player)
-        .annotate_result()
+    active_seasons = [
+        seasonplayer.season
+        for seasonplayer in seasonplayer_list
+        if not seasonplayer.passive
+    ]
+
+    #
+    # Fetch all matches the player has played
+    #
+
+    matchplayers = (
+        MatchPlayer.objects
+        .filter(
+            player__player=player,
+            match__opponent_goals__isnull=False,
+        )
+        .prefetch_related("match")
+        .annotate(
+            match_goals=Sum("match__matchplayer__goals") + F("match__opponent_owngoals"),
+        )
+    )
+
+    def get_annotated_match(matchplayer):
+        match = matchplayer.match
+        match.result = True
+        match.goals = matchplayer.match_goals
+        match.player_goals = matchplayer.goals
+        match.player_assists = matchplayer.assists
+        return match
+
+    played_matches = [get_annotated_match(matchplayer) for matchplayer in matchplayers]
+
+
+    #
+    # Fetch enrolled matches
+    #
+
+    enrolledplayers = (
+        EnrolledPlayer.objects
+        .filter(
+            player__player=player,
+            match__opponent_goals__isnull=True,
+        )
+        .prefetch_related("match")
+    )
+
+    def get_annotated_enrolled_match(enrolledplayer):
+        match = enrolledplayer.match
+        match.player_enrolled = enrolledplayer.enroll
+        return match
+
+    enrolled_matches = [
+        get_annotated_enrolled_match(enrolledplayer)
+        for enrolledplayer in enrolledplayers
+    ]
+
+
+    #
+    # Upcoming not-enrolled matches
+    #
+    upcoming_matches = (
+        Match.objects
+        .filter(
+            season__in=active_seasons,
+            opponent_goals__isnull=True,
+        )
+        .exclude(
+            enrolledplayer__player__player=player,
+        )
+    )
+
+
+    #
+    # Merge three match lists and sort
+    #
+
+    match_list = sorted(
+        list(played_matches) + list(enrolled_matches) + list(upcoming_matches),
+        key=lambda x: (x.season, x.date)
     )
 
     context = {
@@ -383,7 +457,7 @@ def get_mailing_list(request, list_name):
     )
 
 
-def show_player_calendar(request, 
+def show_player_calendar(request,
                          player_id,
                          player_class=Player,
                          match_class=Match,
@@ -418,7 +492,7 @@ def show_player_calendar(request,
     return HttpResponse(caldav.views.events(events))
 
 
-def show_season_calendar(request, 
+def show_season_calendar(request,
                          season_id,
                          player_class=Player,
                          match_class=Match,
@@ -471,21 +545,21 @@ def edit_match_result(request, match_id,
         match = Match.objects.get(id=match_id)
     except Match.DoesNotExist:
         raise Http404
-    
+
     players = SeasonPlayer.objects.filter(season=match.season)
 
-    PlayerFormSet = formset_factory(MatchPlayerForm, 
+    PlayerFormSet = formset_factory(MatchPlayerForm,
                                     extra=len(players))
 
-    
+
     valid_save = False
 
     if request.method == 'POST':
         cancel = request.POST.get('cancel', None)
         if cancel:
-            return HttpResponseRedirect(reverse('show_match', 
+            return HttpResponseRedirect(reverse('show_match',
                                                 args=(match_id,)))
-                                                
+
         match_form = MatchChangeForm(request.POST, instance=match)
         player_formset = PlayerFormSet(request.POST)
         if player_formset.is_valid():
@@ -509,16 +583,16 @@ def edit_match_result(request, match_id,
                 except MatchPlayer.DoesNotExist:
                     if played:
                         # Create a new match player
-                        matchplayer = MatchPlayer(match=match, 
+                        matchplayer = MatchPlayer(match=match,
                                                   player=player,
                                                   goals=goals,
                                                   assists=assists)
                         matchplayer.save()
 
             match_form.save()
-            return HttpResponseRedirect(reverse('show_match', 
+            return HttpResponseRedirect(reverse('show_match',
                                                 args=(match_id,)))
-                        
+
     # Initialize formset with existing game stats
     if not valid_save:
         match_form = MatchChangeForm(instance=match)
@@ -537,7 +611,7 @@ def edit_match_result(request, match_id,
             form.fields['played'].initial = played
             form.fields['goals'].initial = goals
             form.fields['assists'].initial = assists
-            
+
     # Add player information into the forms
     for (form, player) in zip(player_formset.forms, players):
         form.player = player
@@ -568,21 +642,21 @@ def add_spl_matches(request, season_id,
         season = Season.objects.get(id=season_id)
     except Season.DoesNotExist:
         raise Http404
-    
+
     if request.method == 'POST':
         cancel = request.POST.get('cancel', None)
         if cancel:
-            return HttpResponseRedirect(reverse('show_season', 
+            return HttpResponseRedirect(reverse('show_season',
                                                 args=(season_id,)))
-        
+
         matches_form = SPLMatchAddForm(season, request.POST)
         if matches_form.is_valid():
             matches_form.save(season)
-            return HttpResponseRedirect(reverse('show_season', 
+            return HttpResponseRedirect(reverse('show_season',
                                                 args=(season_id,)))
     else:
         matches_form = SPLMatchAddForm(season)
-                        
+
     context = {
         'matches_form': matches_form,
         'league_list':  League.objects.all(),
