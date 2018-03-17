@@ -156,6 +156,52 @@ class PlayerQuerySet(models.query.QuerySet):
         )
 
 
+class Comparable():
+
+
+    def __cmp__(self, other):
+        def cmp_tuple(field):
+            if field.startswith('-'):
+                return getattr(other, field[1:]), getattr(self, field[1:])
+            else:
+                return getattr(self, field), getattr(other, field)
+
+        # build up a list of two-tuples of values from both models, based on
+        # the Meta.ordering
+        comparables = map(cmp_tuple, self._meta.ordering)
+        # flatten the list of two-tuples into two lists and pass that to cmp
+        (x, y) = zip(*comparables)
+        return (
+            0  if x == y else
+            -1 if x < y else
+            1
+        )
+
+
+    def __lt__(self, b):
+        return self.__cmp__(b) < 0
+
+
+    def __le__(self, b):
+        return self.__cmp__(b) <= 0
+
+
+    def __eq__(self, b):
+        return self.__cmp__(b) == 0
+
+
+    def __ne__(self, b):
+        return self.__cmp__(b) != 0
+
+
+    def __ge__(self, b):
+        return self.__cmp__(b) >= 0
+
+
+    def __gt__(self, b):
+        return self.__cmp__(b) > 0
+
+
 class Player(models.Model):
     id = models.CharField(max_length=60, primary_key=True)
     firstname = models.CharField(max_length=30)
@@ -212,7 +258,7 @@ class Player(models.Model):
             return self.lastname + " " + "\"" + self.nickname + "\"" + " " + self.firstname
 
 
-class League(models.Model):
+class League(models.Model, Comparable):
     id = models.CharField(max_length=20, primary_key=True)
     description = models.CharField(max_length=300,blank=True,null=True)
 
@@ -223,7 +269,7 @@ class League(models.Model):
         return self.id
 
 
-class Season(models.Model):
+class Season(models.Model, Comparable):
     id = models.CharField(max_length=60, primary_key=True)
     league = models.ForeignKey(League,
                                related_name='seasons')
