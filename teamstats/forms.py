@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*- 
-
 # Copyright (C) 2011,2012 Jaakko Luttinen
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,7 +21,7 @@ import datetime
 
 ## class SeasonChangeForm(forms.ModelForm):
 ##     class Meta:
-        
+
 
 class MatchAddForm(forms.ModelForm):
     class Meta:
@@ -47,7 +45,35 @@ class SeasonPlayerForm(forms.ModelForm):
     class Meta:
         model = SeasonPlayer
         exclude = ('season',)
-        
+
+
+class TournamentMatchResultForm(forms.Form):
+
+
+    home_goals = forms.IntegerField(label="Kotimaalit", initial=0)
+    away_goals = forms.IntegerField(label="Vierasmaalit", initial=0)
+
+
+    def __init__(self, home_team, away_team, *args, **kwargs):
+        self.home_team = home_team
+        self.away_team = away_team
+        return super().__init__(*args, **kwargs)
+
+
+    def save(self):
+        for home_player in self.home_team:
+            TournamentPlayerPoints(
+                tournamentplayer=home_player,
+                points=self.cleaned_data["home_goals"],
+            ).save()
+        for away_player in self.away_team:
+            TournamentPlayerPoints(
+                tournamentplayer=away_player,
+                points=self.cleaned_data["away_goals"],
+            ).save()
+        return
+
+
 class SPLMatchAddForm(forms.Form):
     """
     Form for inputting match data from SPL.
@@ -55,7 +81,7 @@ class SPLMatchAddForm(forms.Form):
 
     """ A field for adding several matches """
     year = forms.IntegerField()
-    matches = forms.CharField(widget=forms.Textarea(attrs={'cols': 80, 
+    matches = forms.CharField(widget=forms.Textarea(attrs={'cols': 80,
                                                            'rows': 30}))
 
     def __init__(self, season, *args, **kwargs):
@@ -78,14 +104,14 @@ class SPLMatchAddForm(forms.Form):
         for line in lines:
             if len(line) > 0:
                 cols = line.split("\t")
-                datestr = '%s%d %s' % (cols[0].strip(), 
+                datestr = '%s%d %s' % (cols[0].strip(),
                                        cleaned_data['year'],
                                        cols[1].strip())
                 date = datetime.datetime.strptime(datestr, "%d.%m.%Y %H:%M")
                 try:
                     field = Field.objects.get(name=cols[2].strip())
                 except Field.DoesNotExist:
-                    raise forms.ValidationError(u"Tuntematon kenttä '%s'" 
+                    raise forms.ValidationError(u"Tuntematon kenttä '%s'"
                                                 % cols[2].strip())
                 home = cols[3].strip()
                 visitor = cols[4].strip()
@@ -107,11 +133,8 @@ class SPLMatchAddForm(forms.Form):
 
         for match in matches:
             match.save()
-        
+
         return cleaned_data
 
     def save(self, season):
         pass
-
-
-

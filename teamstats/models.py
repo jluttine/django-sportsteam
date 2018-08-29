@@ -441,3 +441,33 @@ class SeekPoint(models.Model):
 
     def __str__(self):
         return str(self.video) + " " + self.minuteseconds() + " " + str(self.description)
+
+
+class Tournament(models.Model):
+    name = models.CharField(max_length=20, unique=True)
+    players = models.ManyToManyField(Player, through='TournamentPlayer')
+
+    def __str__(self):
+        return str(self.name)
+
+
+class TournamentPlayer(models.Model):
+    tournament = models.ForeignKey(Tournament)
+    player = models.ForeignKey(Player)
+
+    class Meta:
+        unique_together = (("tournament", "player",),)
+
+    def __str__(self):
+        return str(self.player) + " @ " + str(self.tournament)
+
+
+class TournamentPlayerPoints(models.Model):
+    tournamentplayer = models.ForeignKey(TournamentPlayer)
+    points = models.IntegerField()
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self):
+        return str(self.points)

@@ -46,8 +46,8 @@ class OLD_MatchAdmin(admin.ModelAdmin):
             raise PermissionDenied
 
         self.form = MatchAddForm
-        
-        return super(MatchAdmin, self).add_view(request, 
+
+        return super(MatchAdmin, self).add_view(request,
                                                 form_url=form_url,
                                                 extra_context=extra_context)
 
@@ -55,7 +55,7 @@ class OLD_MatchAdmin(admin.ModelAdmin):
 
         if not self.has_add_permission(request):
             raise PermissionDenied
-        
+
         self.form = MatchChangeForm
 
         match = Match.objects.get(id=object_id)
@@ -64,7 +64,7 @@ class OLD_MatchAdmin(admin.ModelAdmin):
         PlayerFormSet = forms.formsets.formset_factory(MatchPlayerForm, extra=0)
 
         valid_save = False
-        
+
         if request.method == 'POST':
             player_formset = PlayerFormSet(request.POST, request.FILES)
             if player_formset.is_valid():
@@ -126,7 +126,7 @@ class SeasonPlayerInline(admin.TabularInline):
 
 class SeasonAdmin(admin.ModelAdmin):
     inlines = [SeasonPlayerInline]
-    
+
 
 admin.site.register(Player)
 admin.site.register(Field)
@@ -142,8 +142,25 @@ admin.site.register(EnrolledPlayer)
 #admin.site.register(SeekPoint)
 
 
+class TournamentPlayerPointsInline(admin.TabularInline):
+    model = TournamentPlayerPoints
+    extra = 1
 
 
+class TournamentPlayerInline(admin.TabularInline):
+    model = TournamentPlayer
+    extra = 20
+
+class TournamentAdmin(admin.ModelAdmin):
+    inlines = [TournamentPlayerInline]
+
+
+class TournamentPlayerAdmin(admin.ModelAdmin):
+    inlines = [TournamentPlayerPointsInline]
+
+
+admin.site.register(Tournament, TournamentAdmin)
+admin.site.register(TournamentPlayer, TournamentPlayerAdmin)
 
 
 
@@ -165,9 +182,9 @@ admin.site.register(EnrolledPlayer)
 
 class OLD_SeasonAdmin(admin.ModelAdmin):
     #change_form_template = "admin/stats/season_change_form.html"
-    
+
     inlines = [SeasonPlayerInline]
-    
+
     def change_view(self, request, object_id, extra_context=None):
 
         if not self.has_add_permission(request):
@@ -177,17 +194,17 @@ class OLD_SeasonAdmin(admin.ModelAdmin):
             season = Season.objects.get(id=object_id)
         except Season.DoesNotExist:
             raise Http404
-        
+
         #inline_instance = SeasonPlayerInline(self.model, self.admin_site)
         #self.inline_instances.append(inline_instance)
-        
+
         players = Player.objects.all()
-        PlayerFormSet = forms.formsets.formset_factory(SeasonPlayerForm, 
+        PlayerFormSet = forms.formsets.formset_factory(SeasonPlayerForm,
                                                        extra=len(players),
                                                        can_delete=False)
 
         valid_save = False
-        
+
         if request.method == 'POST':
             player_formset = PlayerFormSet(request.POST)
             if player_formset.is_valid():
@@ -240,10 +257,10 @@ class OLD_SeasonAdmin(admin.ModelAdmin):
         return super(SeasonAdmin, self).change_view(request,
                                                     object_id,
                                                     extra_context=my_context)
-    
+
 class BACKUP_SeasonAdmin(admin.ModelAdmin):
     change_form_template = "admin/stats/season_change_form.html"
-    
+
     def change_view(self, request, object_id, extra_context=None):
 
         if not self.has_add_permission(request):
@@ -253,7 +270,7 @@ class BACKUP_SeasonAdmin(admin.ModelAdmin):
         PlayerFormSet = forms.formsets.formset_factory(SeasonPlayerForm, extra=0)
 
         valid_save = False
-        
+
         if request.method == 'POST':
             player_formset = PlayerFormSet(request.POST, request.FILES)
             if player_formset.is_valid():
@@ -296,4 +313,3 @@ class BACKUP_SeasonAdmin(admin.ModelAdmin):
             'player_formset': player_formset,
         }
         return super(SeasonAdmin, self).change_view(request, object_id, extra_context=my_context)
-    

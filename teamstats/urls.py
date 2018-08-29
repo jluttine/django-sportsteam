@@ -59,6 +59,11 @@ urlpatterns = [
         views.show_player,
         name="show_player"),
 
+    url(r'^turnaukset/(?P<name>.+)/$',
+        views.show_tournament,
+        name="show_tournament"
+    ),
+
     url(r'^api/email/(?P<list_name>.+)/$',
         views.get_mailing_list,
         name="get_mailing_list"),

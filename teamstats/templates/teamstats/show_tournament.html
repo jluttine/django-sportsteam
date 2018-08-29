@@ -1,0 +1,64 @@
+{% extends "teamstats/base.html" %}
+
+{% block content %}
+
+<h1>{{ tournament }}</h1>
+
+<h2>Ranking-tilanne</h2>
+
+<table>
+    <tr>
+        <th>Turnauspisteet</th>
+        <th>Pelaaja</th>
+        <th>Uran PPG</th>
+        {% for round in rounds %}
+        <th>K{{ round }}</th>
+        {% endfor %}
+    </tr>
+    {% for player in tournamentplayers %}
+    <tr>
+        <td><b>{{ player.tournament_points }}</b></td>
+        <td>{{ player.player }}</td>
+        <td>{{ player.ppg|floatformat:3 }}</td>
+        {% for points in player.tournamentplayerpoints_set.all %}
+        <td> {{ points.points }} </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+<form method="post" action="">
+    {% csrf_token %}
+    <input name="delete" type="submit" value="Poista viimeisin tulos" />
+</form>
+
+
+
+<h2>Seuraava ottelu</h2>
+
+<h3>Kotijoukkue</h3>
+<ul>
+{% for tournamentplayer in home_team %}
+    <li> {{ tournamentplayer.player }} </li>
+{% endfor %}
+</ul>
+
+<h3>Vierasjoukkue</h3>
+<ul>
+{% for tournamentplayer in away_team %}
+    <li> {{ tournamentplayer.player }} </li>
+{% endfor %}
+</ul>
+
+<h3>Syötä tulos</h3>
+
+<form method="post" action="">
+    {% csrf_token %}
+
+    {{ result_form }}
+
+    <br />
+    <input name="save" type="submit" value="Tallenna tulos" />
+
+</form>
+{% endblock %}

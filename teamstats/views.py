@@ -25,7 +25,7 @@ from __future__ import division
 from django.shortcuts import render_to_response, render, get_object_or_404
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
-from django.db.models import Sum, Q, Avg, Count, F, Value, BooleanField
+from django.db.models import Sum, Q, Avg, Count, F, Value, BooleanField, Subquery, OuterRef
 from django.db.models.functions import Coalesce
 from django.core.urlresolvers import reverse
 from itertools import chain
@@ -37,7 +37,7 @@ from django.utils import timezone
 import json
 
 from teamstats.models import *
-from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm
+from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm, TournamentMatchResultForm
 
 import caldav.views
 from datetime import datetime, timedelta
@@ -666,3 +666,122 @@ def add_spl_matches(request, season_id,
     return render(request,
                   template_name,
                   context)
+
+
+def show_tournament(request, name):
+
+    tournament = get_object_or_404(Tournament, name=name)
+
+    players = list(
+        TournamentPlayer.objects
+        .filter(tournament=tournament)
+        .annotate(
+            tournament_points=Coalesce(
+                Sum("tournamentplayerpoints__points"),
+                Value(0),
+            ),
+        )
+        .annotate(
+            games=Count("player__seasonplayer__matchplayer"),
+            goals=Coalesce(
+                Sum("player__seasonplayer__matchplayer__goals"),
+                Value(0),
+            ),
+            assists=Coalesce(
+                Sum("player__seasonplayer__matchplayer__assists"),
+                Value(0),
+            ),
+        )
+        .annotate(
+            points=F("goals") + F("assists"),
+        )
+        .annotate(
+            ppg=PPG_ANNOTATION,
+        )
+        .annotate(
+            # Django doesn't support annotations over multiple tables, thus we
+            # need to use Subquery. And that needs to be run *after* the normal
+            # annotations..
+            tournament_points=Coalesce(
+                Subquery(
+                    TournamentPlayerPoints.objects
+                    .filter(tournamentplayer=OuterRef("pk"))
+                    # For some weird reason, this is needed. See:
+                    # https://stackoverflow.com/a/42648980
+                    .order_by()
+                    # Aggregation is done by grouping by value and then
+                    # annotating
+                    .values("tournamentplayer")
+                    .annotate(sum=Sum("points"))
+                    # Just get the interesting column
+                    .values("sum")
+                ),
+                Value(0),
+            ),
+            tournament_matches=Coalesce(
+                Subquery(
+                    TournamentPlayerPoints.objects
+                    .filter(tournamentplayer=OuterRef("pk"))
+                    # For some weird reason, this is needed. See:
+                    # https://stackoverflow.com/a/42648980
+                    .order_by()
+                    # Aggregation is done by grouping by value and then
+                    # annotating
+                    .values("tournamentplayer")
+                    .annotate(count=Count("points"))
+                    # Just get the interesting column
+                    .values("count")
+                ),
+                Value(0),
+            ),
+        )
+        .order_by("-tournament_points", "-ppg")
+    )
+
+    if len(players) % 2 == 0:
+        home_team = players[:1] + players[3::2]
+        away_team = players[1:3] + players[4::2]
+    else:
+        home_team = players[::2]
+        away_team = players[1::2]
+
+    match_count = max(player.tournament_matches for player in players)
+
+    if request.method == 'POST':
+        if request.POST.get('delete', None):
+            # Delete last match
+            for player in players:
+                last = player.tournamentplayerpoints_set.last()
+                if last is not None:
+                    last.delete()
+            return HttpResponseRedirect(
+                reverse('show_tournament', args=(name,))
+            )
+        elif request.POST.get('save', None):
+            # Save match result
+            result_form = TournamentMatchResultForm(
+                home_team,
+                away_team,
+                request.POST,
+            )
+            if result_form.is_valid():
+                result_form.save()
+                return HttpResponseRedirect(
+                    reverse('show_tournament', args=(name,))
+                )
+
+    result_form = TournamentMatchResultForm(home_team, away_team)
+
+    context = {
+        "tournament":   tournament,
+        "tournamentplayers":       players,
+        "home_team": home_team,
+        "away_team": away_team,
+        "result_form": result_form,
+        "rounds": range(1, match_count + 1),
+        # For menu
+        'league_list': League.objects.all(),
+        'team_name': settings.TEAM_NAME,
+    }
+
+    return render(request, "teamstats/show_tournament.html", context)
