@@ -54,23 +54,24 @@ class TournamentMatchResultForm(forms.Form):
     away_goals = forms.IntegerField(label="Vierasmaalit", initial=0)
 
 
-    def __init__(self, home_team, away_team, *args, **kwargs):
+    def __init__(self, tournament, home_team, away_team, *args, **kwargs):
+        self.tournament = tournament
         self.home_team = home_team
         self.away_team = away_team
         return super().__init__(*args, **kwargs)
 
 
     def save(self):
-        for home_player in self.home_team:
-            TournamentPlayerPoints(
-                tournamentplayer=home_player,
-                points=self.cleaned_data["home_goals"],
-            ).save()
-        for away_player in self.away_team:
-            TournamentPlayerPoints(
-                tournamentplayer=away_player,
-                points=self.cleaned_data["away_goals"],
-            ).save()
+        match = TournamentMatch(
+            tournament=self.tournament,
+            home_goals=self.cleaned_data["home_goals"],
+            away_goals=self.cleaned_data["away_goals"],
+        )
+        match.save()
+
+        match.home_team = self.home_team
+        match.away_team = self.away_team
+        match.save()
         return
 
 

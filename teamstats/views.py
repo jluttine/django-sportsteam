@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright (C) 2011,2012 Jaakko Luttinen
 #
 # This program is free software: you can redistribute it and/or modify
@@ -35,6 +33,8 @@ from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 
 import json
+
+import numpy as np
 
 from teamstats.models import *
 from teamstats.forms import MatchPlayerForm, MatchChangeForm, SPLMatchAddForm, TournamentMatchResultForm
@@ -674,13 +674,9 @@ def show_tournament(request, name):
 
     players = list(
         TournamentPlayer.objects
+        # .prefetch_related('home_match')
+        # .prefetch_related('away_match')
         .filter(tournament=tournament)
-        .annotate(
-            tournament_points=Coalesce(
-                Sum("tournamentplayerpoints__points"),
-                Value(0),
-            ),
-        )
         .annotate(
             games=Count("player__seasonplayer__matchplayer"),
             goals=Coalesce(
@@ -702,64 +698,144 @@ def show_tournament(request, name):
             # Django doesn't support annotations over multiple tables, thus we
             # need to use Subquery. And that needs to be run *after* the normal
             # annotations..
-            tournament_points=Coalesce(
-                Subquery(
-                    TournamentPlayerPoints.objects
-                    .filter(tournamentplayer=OuterRef("pk"))
-                    # For some weird reason, this is needed. See:
-                    # https://stackoverflow.com/a/42648980
-                    .order_by()
-                    # Aggregation is done by grouping by value and then
-                    # annotating
-                    .values("tournamentplayer")
-                    .annotate(sum=Sum("points"))
-                    # Just get the interesting column
-                    .values("sum")
-                ),
-                Value(0),
-            ),
-            tournament_matches=Coalesce(
-                Subquery(
-                    TournamentPlayerPoints.objects
-                    .filter(tournamentplayer=OuterRef("pk"))
-                    # For some weird reason, this is needed. See:
-                    # https://stackoverflow.com/a/42648980
-                    .order_by()
-                    # Aggregation is done by grouping by value and then
-                    # annotating
-                    .values("tournamentplayer")
-                    .annotate(count=Count("points"))
-                    # Just get the interesting column
-                    .values("count")
-                ),
-                Value(0),
-            ),
+            tournament_points=(
+                Coalesce(
+                    Subquery(
+                        TournamentPlayer.objects
+                        .filter(id=OuterRef("pk"))
+                        .annotate(sum=Sum("home_match__home_goals"))
+                        .values("sum")
+                    ),
+                    Value(0)
+                ) + Coalesce(
+                    Subquery(
+                        TournamentPlayer.objects
+                        .filter(id=OuterRef("pk"))
+                        .annotate(sum=Sum("away_match__away_goals"))
+                        .values("sum")
+                    ),
+                    Value(0)
+                )
+            )
         )
         .order_by("-tournament_points", "-ppg")
+        # .prefetch_related('home_match')
+        # .prefetch_related('away_match')
     )
 
-    if len(players) % 2 == 0:
-        home_team = players[:1] + players[3::2]
-        away_team = players[1:3] + players[4::2]
-    else:
-        home_team = players[::2]
-        away_team = players[1::2]
+    # players2 = (
+    #     players
+    #     .annotate(
+    #         **{
+    #             "with_{0}".format(ind):
+    #             Subquery(
+    #                 TournamentMatch.objects
+    #                 .filter(home_team=OuterRef("pk"))
+    #                 .filter(home_team=player)
+    #                 .count()
+    #             ) + Subquery(
+    #                 TournamentMatch.objects
+    #                 .filter(away_team=OuterRef("pk"))
+    #                 .filter(away_team=player)
+    #                 .count()
+    #             )
+    #             for (ind, player) in enumerate(list(players))
+    #         }
+    #     )
+    # )
 
-    match_count = max(player.tournament_matches for player in players)
+    matches = TournamentMatch.objects.filter(tournament=tournament)
+
+    #
+    # Construct a matrix of how many times players have been in the same team
+    #
+    N = len(players)
+    counts = np.zeros((N, N))
+    ids = {player.id: ind for (ind, player) in enumerate(players)}
+    for match in matches:
+        for team in (match.home_team, match.away_team):
+            ps = team.all()
+            for a in ps:
+                for b in ps:
+                    i = ids[a.id]
+                    j = ids[b.id]
+                    counts[i,j] = counts[i,j] + 1
+
+    #
+    # Form next teams
+    #
+
+    # Captains
+    #   A <- the best player
+    #   B <- the best player that has played the most with captain A
+
+    def pop_player(players, ind):
+        return (players[ind], players[:ind] + players[(ind+1):])
+
+    remaining_players = players
+    (captain_A, remaining_players) = pop_player(
+        remaining_players,
+        0
+    )
+    (captain_B, remaining_players) = pop_player(
+        remaining_players,
+        np.argmax(counts[0,1:])
+    )
+
+    # In turns, add to each team a player that has played the least with any of
+    # the players in the team
+
+    def foobar(team, other_team, remaining_players):
+
+        if len(remaining_players) == 0:
+            return (team, other_team)
+
+        # Uneven amount of players
+        if len(remaining_players) == 1 and (len(team) + len(other_team)) % 2 == 0:
+            # Add the last player to the other team just to even out the
+            # balance
+            return (team, other_team + remaining_players)
+
+        rows = [ids[player.id] for player in team]
+        columns = [ids[player.id] for player in remaining_players]
+
+        # Sort by common match counts
+        c = np.sort(counts[np.ix_(rows, columns)], axis=0)[::-1,:]
+
+        # Choose player with least common games
+        ind = np.lexsort(c)[0]
+        (chosen_player, remaining_players) = pop_player(
+            remaining_players,
+            ind
+        )
+        (b, a) = foobar(
+            other_team,
+            team + [chosen_player],
+            remaining_players,
+        )
+        # Switch the order of the teams back :)
+        return (a, b)
+
+    (home_team, away_team) = foobar(
+        [captain_A],
+        [captain_B],
+        # Reverse order so "worse" players are preferred when match counts are
+        # tied
+        remaining_players[::-1],
+    )
 
     if request.method == 'POST':
         if request.POST.get('delete', None):
-            # Delete last match
-            for player in players:
-                last = player.tournamentplayerpoints_set.last()
-                if last is not None:
-                    last.delete()
+            last_match = TournamentMatch.objects.all().last()
+            if last_match is not None:
+                last_match.delete()
             return HttpResponseRedirect(
                 reverse('show_tournament', args=(name,))
             )
         elif request.POST.get('save', None):
             # Save match result
             result_form = TournamentMatchResultForm(
+                tournament,
                 home_team,
                 away_team,
                 request.POST,
@@ -770,7 +846,39 @@ def show_tournament(request, name):
                     reverse('show_tournament', args=(name,))
                 )
 
-    result_form = TournamentMatchResultForm(home_team, away_team)
+    result_form = TournamentMatchResultForm(tournament, home_team, away_team)
+
+    matches = TournamentMatch.objects.filter(tournament=tournament)
+    match_count = matches.count()
+
+    def add(x, y):
+        return (
+            x if y is None else
+            y if x is None else
+            x + y
+        )
+
+    match_points = [
+        [
+            add(
+                (
+                    match.home_goals
+                    if player in match.home_team.all() else
+                    None
+                ),
+                (
+                    match.away_goals
+                    if player in match.away_team.all() else
+                    None
+                )
+            )
+            for match in matches
+        ]
+        for player in players
+    ]
+
+    for (player, p) in zip(players, match_points):
+        player.match_points = p
 
     context = {
         "tournament":   tournament,

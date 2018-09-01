@@ -20,8 +20,8 @@
         <td><b>{{ player.tournament_points }}</b></td>
         <td>{{ player.player }}</td>
         <td>{{ player.ppg|floatformat:3 }}</td>
-        {% for points in player.tournamentplayerpoints_set.all %}
-        <td> {{ points.points }} </td>
+        {% for points in player.match_points %}
+        <td> {{ points|default_if_none:"-" }} </td>
         {% endfor %}
     </tr>
     {% endfor %}

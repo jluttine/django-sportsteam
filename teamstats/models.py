@@ -462,12 +462,31 @@ class TournamentPlayer(models.Model):
         return str(self.player) + " @ " + str(self.tournament)
 
 
-class TournamentPlayerPoints(models.Model):
-    tournamentplayer = models.ForeignKey(TournamentPlayer)
-    points = models.IntegerField()
+class TournamentMatch(models.Model):
 
-    class Meta:
-        ordering = ("id",)
+    tournament = models.ForeignKey(Tournament)
 
-    def __str__(self):
-        return str(self.points)
+    home_team = models.ManyToManyField(
+        TournamentPlayer,
+        related_name="home_match",
+        blank=True,
+    )
+    home_goals = models.IntegerField()
+
+    away_team = models.ManyToManyField(
+        TournamentPlayer,
+        related_name="away_match",
+        blank=True,
+    )
+    away_goals = models.IntegerField()
+
+
+# class TournamentPlayerPoints(models.Model):
+#     tournamentplayer = models.ForeignKey(TournamentPlayer)
+#     points = models.IntegerField()
+
+#     class Meta:
+#         ordering = ("id",)
+
+#     def __str__(self):
+#         return str(self.points)

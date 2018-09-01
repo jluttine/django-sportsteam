@@ -131,37 +131,26 @@ class SeasonAdmin(admin.ModelAdmin):
 admin.site.register(Player)
 admin.site.register(Field)
 admin.site.register(Match, MatchAdmin)
-#admin.site.register(Match, MatchResultAdmin)
-#admin.site.register(MatchPlayer)
 admin.site.register(Season, SeasonAdmin) # Custom season form
-#admin.site.register(Season)
-#admin.site.register(SeasonPlayer)
 admin.site.register(Video, VideoAdmin)
 admin.site.register(League)
 admin.site.register(EnrolledPlayer)
-#admin.site.register(SeekPoint)
-
-
-class TournamentPlayerPointsInline(admin.TabularInline):
-    model = TournamentPlayerPoints
-    extra = 1
 
 
 class TournamentPlayerInline(admin.TabularInline):
     model = TournamentPlayer
-    extra = 20
+    extra = 1
+
+class TournamentMatchInline(admin.TabularInline):
+    model = TournamentMatch
+    extra = 1
 
 class TournamentAdmin(admin.ModelAdmin):
-    inlines = [TournamentPlayerInline]
-
-
-class TournamentPlayerAdmin(admin.ModelAdmin):
-    inlines = [TournamentPlayerPointsInline]
+    inlines = [TournamentPlayerInline, TournamentMatchInline]
 
 
 admin.site.register(Tournament, TournamentAdmin)
-admin.site.register(TournamentPlayer, TournamentPlayerAdmin)
-
+admin.site.register(TournamentMatch)
 
 
 
