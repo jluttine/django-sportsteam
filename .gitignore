@@ -8,3 +8,5 @@ sitestatic
 *.egg-info
 
 sportsteam/settings/local.py
+
+.direnv

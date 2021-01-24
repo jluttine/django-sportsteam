@@ -1,5 +1,6 @@
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls import include, url
+from django.urls import path
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -20,7 +21,7 @@ urlpatterns = [
     url(r'^', include(teamstats.urls)),
 
     # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+    path('admin/', admin.site.urls),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:

@@ -272,7 +272,8 @@ class League(models.Model, Comparable):
 class Season(models.Model, Comparable):
     id = models.CharField(max_length=60, primary_key=True)
     league = models.ForeignKey(League,
-                               related_name='seasons')
+                               related_name='seasons',
+                               on_delete=models.CASCADE)
     year = models.CharField(max_length=60)
     url = models.URLField(blank=True,null=True)
     comment = models.TextField(blank=True,null=True)
@@ -286,8 +287,8 @@ class Season(models.Model, Comparable):
 
 
 class SeasonPlayer(models.Model):
-    season = models.ForeignKey(Season)
-    player = models.ForeignKey(Player)
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
     number = models.IntegerField()
     passive = models.BooleanField()
 
@@ -313,13 +314,13 @@ class Field(models.Model):
 
 
 class Match(models.Model):
-    season = models.ForeignKey(Season)
+    season = models.ForeignKey(Season, on_delete=models.CASCADE)
     players = models.ManyToManyField(SeasonPlayer, \
                                      through='MatchPlayer')
     opponent = models.CharField(max_length=30)
     date = models.DateTimeField()
     home = models.BooleanField()
-    field = models.ForeignKey(Field)
+    field = models.ForeignKey(Field, on_delete=models.CASCADE)
     opponent_goals = models.IntegerField(blank=True,null=True)
     opponent_owngoals = models.IntegerField(blank=True,default=0)
     comment = models.TextField(blank=True,null=True)
@@ -347,8 +348,8 @@ class Match(models.Model):
 
 
 class MatchPlayer(models.Model):
-    match = models.ForeignKey(Match)
-    player = models.ForeignKey(SeasonPlayer)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    player = models.ForeignKey(SeasonPlayer, on_delete=models.CASCADE)
     goals = models.IntegerField(default=0)
     assists = models.IntegerField(default=0)
 
@@ -363,8 +364,8 @@ class MatchPlayer(models.Model):
 
 
 class EnrolledPlayer(models.Model):
-    match = models.ForeignKey(Match)
-    player = models.ForeignKey(SeasonPlayer)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    player = models.ForeignKey(SeasonPlayer, on_delete=models.CASCADE)
     enroll = models.BooleanField()
 
     objects = EnrolledPlayerQuerySet.as_manager()
@@ -376,7 +377,7 @@ class EnrolledPlayer(models.Model):
 
 
 class Video(models.Model):
-    match = models.ForeignKey(Match)
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
     mp4 = models.FilePathField(path=(settings.MEDIA_ROOT+'videos'),
                                match=".*\.mp4$",
                                recursive=True,
@@ -426,7 +427,7 @@ class Video(models.Model):
         return str(self.match) + " - " + self.title
 
 class SeekPoint(models.Model):
-    video = models.ForeignKey(Video)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
     time = models.TimeField()
     description = models.CharField(max_length=100)
 
@@ -452,8 +453,8 @@ class Tournament(models.Model):
 
 
 class TournamentPlayer(models.Model):
-    tournament = models.ForeignKey(Tournament)
-    player = models.ForeignKey(Player)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (("tournament", "player",),)
@@ -464,7 +465,7 @@ class TournamentPlayer(models.Model):
 
 class TournamentMatch(models.Model):
 
-    tournament = models.ForeignKey(Tournament)
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
 
     home_team = models.ManyToManyField(
         TournamentPlayer,

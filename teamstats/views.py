@@ -25,7 +25,7 @@ from django.template import RequestContext, Context, loader
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.db.models import Sum, Q, Avg, Count, F, Value, BooleanField, Subquery, OuterRef
 from django.db.models.functions import Coalesce
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from itertools import chain
 from django.conf import settings
 from django.forms.formsets import formset_factory
@@ -674,8 +674,6 @@ def show_tournament(request, name):
 
     players = list(
         TournamentPlayer.objects
-        # .prefetch_related('home_match')
-        # .prefetch_related('away_match')
         .filter(tournament=tournament)
         .annotate(
             games=Count("player__seasonplayer__matchplayer"),
@@ -719,30 +717,7 @@ def show_tournament(request, name):
             )
         )
         .order_by("-tournament_points", "-ppg")
-        # .prefetch_related('home_match')
-        # .prefetch_related('away_match')
     )
-
-    # players2 = (
-    #     players
-    #     .annotate(
-    #         **{
-    #             "with_{0}".format(ind):
-    #             Subquery(
-    #                 TournamentMatch.objects
-    #                 .filter(home_team=OuterRef("pk"))
-    #                 .filter(home_team=player)
-    #                 .count()
-    #             ) + Subquery(
-    #                 TournamentMatch.objects
-    #                 .filter(away_team=OuterRef("pk"))
-    #                 .filter(away_team=player)
-    #                 .count()
-    #             )
-    #             for (ind, player) in enumerate(list(players))
-    #         }
-    #     )
-    # )
 
     matches = TournamentMatch.objects.filter(tournament=tournament)
 
