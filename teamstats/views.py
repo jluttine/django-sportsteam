@@ -531,7 +531,7 @@ def edit_match_result(request, match_id,
                       league_class=League,
                       template_name="teamstats/edit_match_result.html"):
 
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         raise PermissionDenied
 
     # You could check some permissions in more detail:
