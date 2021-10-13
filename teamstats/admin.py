@@ -28,7 +28,7 @@ class VideoAdmin(admin.ModelAdmin):
 
 class MatchPlayerInline(admin.TabularInline):
     model = MatchPlayer
-    extra = 12
+    extra = 0
     #form = MatchPlayerForm
 
 class MatchAdmin(admin.ModelAdmin):
