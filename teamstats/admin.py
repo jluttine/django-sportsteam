@@ -26,13 +26,8 @@ class SeekPointInline(admin.TabularInline):
 class VideoAdmin(admin.ModelAdmin):
     inlines = [SeekPointInline]
 
-class MatchPlayerInline(admin.TabularInline):
-    model = MatchPlayer
-    extra = 0
-    #form = MatchPlayerForm
-
 class MatchAdmin(admin.ModelAdmin):
-    inlines = [MatchPlayerInline]
+    pass
 
 class OLD_MatchAdmin(admin.ModelAdmin):
 
