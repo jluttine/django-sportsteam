@@ -27,7 +27,7 @@ class VideoAdmin(admin.ModelAdmin):
     inlines = [SeekPointInline]
 
 class MatchAdmin(admin.ModelAdmin):
-    pass
+    exclude = ["opponent_goals", "opponent_owngoals"]
 
 class OLD_MatchAdmin(admin.ModelAdmin):
 
