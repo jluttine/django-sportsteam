@@ -20,7 +20,7 @@ Views for showing different statistics of the team.
 
 from __future__ import division
 
-from django.shortcuts import render_to_response, render, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.db.models import Sum, Q, Avg, Count, F, Value, BooleanField, Subquery, OuterRef
@@ -53,8 +53,7 @@ def index(request,
         'league_list': league_class.objects.all(),
         'team_name':   settings.TEAM_NAME,
         }
-    return render_to_response(template_name,
-                              context)
+    return render(request, template_name, context)
 
 def get_match_enrollments(match,
                           seasonplayer_class=SeasonPlayer,
@@ -127,7 +126,7 @@ def show_season(request,
         'team_name':   settings.TEAM_NAME,
     }
 
-    return render_to_response(template_name, context)
+    return render(request, template_name, context)
 
 
 def show_all_players(request,
@@ -148,7 +147,7 @@ def show_all_players(request,
         'team_name': settings.TEAM_NAME,
     }
 
-    return render_to_response(template_name, context)
+    return render(request, template_name, context)
 
 def show_match(request,
                match_id,
