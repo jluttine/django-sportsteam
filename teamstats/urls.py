@@ -15,7 +15,7 @@
 # <http://www.gnu.org/licenses/>.
 
 #from django.conf.urls.defaults import *
-from django.conf.urls import url
+from django.urls import path, re_path
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -27,49 +27,59 @@ from teamstats import views
 
 urlpatterns = [
 
-    url(r'^ottelut/(?P<match_id>\d+)/$',
+    path(
+        'ottelut/<int:match_id>/',
         views.show_match,
-        name="show_match"),
-
-    url(r'^ottelut/(?P<match_id>\d+)/edit/$',
-        views.edit_match_result,
-        name="edit_match_result"),
-
-    url(r'^kaudet/(?P<season_id>.+)/spl/$',
-        views.add_spl_matches,
-        name="add_spl_matches"),
-
-    url(r'^kaudet/(?P<season_id>.+)/kalenteri-(?P=season_id).ics$',
-        views.show_season_calendar,
-        name="show_season_calendar"),
-
-    url(r'^kaudet/(?P<season_id>.+)/$',
-        views.show_season,
-        name="show_season"),
-
-    url(r'^pelaajat/$',
-        views.show_all_players,
-        name="show_all_players"),
-
-    url(r'^pelaajat/(?P<player_id>.+)/calendar/$',
-        views.show_player_calendar,
-        name="show_player_calendar"),
-
-    url(r'^pelaajat/(?P<player_id>.+)/$',
-        views.show_player,
-        name="show_player"),
-
-    url(r'^turnaukset/(?P<name>.+)/$',
-        views.show_tournament,
-        name="show_tournament"
+        name="show_match",
     ),
-
-    url(r'^api/email/(?P<list_name>.+)/$',
+    path(
+        'ottelut/(<int:match_id>/edit/',
+        views.edit_match_result,
+        name="edit_match_result",
+    ),
+    path(
+        'kaudet/<str:season_id>/spl/',
+        views.add_spl_matches,
+        name="add_spl_matches",
+    ),
+    re_path(
+        r'^kaudet/(?P<season_id>.+)/kalenteri-(?P=season_id).ics$',
+        views.show_season_calendar,
+        name="show_season_calendar",
+    ),
+    path(
+        'kaudet/<str:season_id>/',
+        views.show_season,
+        name="show_season",
+    ),
+    path(
+        'pelaajat/',
+        views.show_all_players,
+        name="show_all_players",
+    ),
+    path(
+        'pelaajat/<str:player_id>/calendar/',
+        views.show_player_calendar,
+        name="show_player_calendar",
+    ),
+    path(
+        'pelaajat/<str:player_id>/',
+        views.show_player,
+        name="show_player",
+    ),
+    path(
+        'turnaukset/<str:name>/',
+        views.show_tournament,
+        name="show_tournament",
+    ),
+    path(
+        'api/email/<str:list_name>/',
         views.get_mailing_list,
-        name="get_mailing_list"),
-
-    url(r'^$',
+        name="get_mailing_list",
+    ),
+    path(
+        r'',
         views.index,
-        name="home"),
-
+        name="home",
+    ),
 ]

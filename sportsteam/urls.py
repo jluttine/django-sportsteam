@@ -1,5 +1,5 @@
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.conf.urls import include, url
+from django.conf.urls import include
 from django.urls import path
 
 from django.conf import settings
@@ -16,9 +16,9 @@ admin.autodiscover()
 urlpatterns = [
 
     # Robots.txt
-    url(r'^robots.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
+    path(r'robots.txt', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain")),
 
-    url(r'^', include(teamstats.urls)),
+    path(r'', include(teamstats.urls)),
 
     # Uncomment the next line to enable the admin:
     path('admin/', admin.site.urls),
