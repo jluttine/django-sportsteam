@@ -10,3 +10,4 @@ sitestatic
 sportsteam/settings/local.py
 
 .direnv
+.envrc
